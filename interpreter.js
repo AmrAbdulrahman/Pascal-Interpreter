@@ -99,29 +99,38 @@ class Interpreter {
   expr() {
     this.currentToken = this.getNextToken();
 
-    let left = this.currentToken;
+    let exprValue = this.currentToken;
     this.eat(INTEGER);
 
-    let op = this.currentToken;
-    this.eat([PLUS, MINUS, MULTIPLY, DIVISION, MODULAR]);
+    while (this.currentToken.type !== EOF) {
+      let op = this.currentToken;
+      this.eat([PLUS, MINUS, MULTIPLY, DIVISION, MODULAR]);
 
-    let right = this.currentToken;
-    this.eat(INTEGER);
+      let right = this.currentToken;
+      this.eat(INTEGER);
 
-    switch (op.type) {
-      case PLUS:
-        return left.value + right.value;
-      case MINUS:
-        return left.value - right.value;
-      case MULTIPLY:
-        return left.value * right.value;
-      case DIVISION:
-        return left.value / right.value;
-      case MODULAR:
-        return left.value % right.value;
-      default:
-        this.fail();
+      switch (op.type) {
+        case PLUS:
+          exprValue.value += right.value;
+          break;
+        case MINUS:
+          exprValue.value -= right.value;
+          break;
+        case MULTIPLY:
+          exprValue.value *= right.value;
+          break;
+        case DIVISION:
+          exprValue.value /= right.value;
+          break;
+        case MODULAR:
+          exprValue.value %= right.value;
+          break;
+        default: // unhandled arithmetic op
+          this.fail();
+      }
     }
+
+    return exprValue.value;
   }
 
   currentCharIsDigit() {
