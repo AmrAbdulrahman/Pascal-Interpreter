@@ -9,6 +9,10 @@ const MODULAR = 'MODULAR';
 const EOF = 'EOF';
 const SPACE = ' ';
 
+function isDigit(char) {
+  return isNaN(parseInt(char)) === false;
+}
+
 class Token {
   constructor(type, value) {
     this.type = type;
@@ -24,16 +28,15 @@ class Token {
   }
 }
 
-class Interpreter {
+class Lexer {
   constructor(text) {
     this.text = text;
     this.pos = 0;
-    this.currentToken = null;
     this.currentChar = this.text[this.pos];
   }
 
   fail() {
-    throw new Error(`Error parsing ${this.text}`);
+    throw new Error(`Invalid character`);
   }
 
   advance() {
@@ -55,7 +58,7 @@ class Interpreter {
   readNumber() {
     let numberStr = '';
 
-    while (Interpreter.isDigit(this.currentChar) === true) {
+    while (isDigit(this.currentChar) === true) {
       numberStr += this.currentChar;
       this.advance();
     }
@@ -76,8 +79,9 @@ class Interpreter {
 
       if (this.currentCharIsArithmeticOperator()) {
         const TYPE = this.getCurrentArithmeticOperatorType();
+        const operand = this.currentChar;
         this.advance();
-        return new Token(TYPE, this.currentChar);
+        return new Token(TYPE, operand);
       }
 
       this.fail();
@@ -86,55 +90,8 @@ class Interpreter {
     return new Token(EOF, null);
   }
 
-  eat(TOKEN_TYPE) {
-    TOKEN_TYPE = Array.isArray(TOKEN_TYPE) ? TOKEN_TYPE : [TOKEN_TYPE];
-
-    if (TOKEN_TYPE.indexOf(this.currentToken.type) !== -1) {
-      this.currentToken = this.getNextToken();
-    } else {
-      this.fail();
-    }
-  }
-
-  expr() {
-    this.currentToken = this.getNextToken();
-
-    let exprValue = this.currentToken;
-    this.eat(INTEGER);
-
-    while (this.currentToken.type !== EOF) {
-      let op = this.currentToken;
-      this.eat([PLUS, MINUS, MULTIPLY, DIVISION, MODULAR]);
-
-      let right = this.currentToken;
-      this.eat(INTEGER);
-
-      switch (op.type) {
-        case PLUS:
-          exprValue.value += right.value;
-          break;
-        case MINUS:
-          exprValue.value -= right.value;
-          break;
-        case MULTIPLY:
-          exprValue.value *= right.value;
-          break;
-        case DIVISION:
-          exprValue.value /= right.value;
-          break;
-        case MODULAR:
-          exprValue.value %= right.value;
-          break;
-        default: // unhandled arithmetic op
-          this.fail();
-      }
-    }
-
-    return exprValue.value;
-  }
-
   currentCharIsDigit() {
-    return Interpreter.isDigit(this.currentChar);
+    return isDigit(this.currentChar);
   }
 
   currentCharIsSpace() {
@@ -156,9 +113,73 @@ class Interpreter {
 
     return types[this.currentChar];
   }
+}
 
-  static isDigit(char) {
-    return isNaN(parseInt(char)) === false;
+class Interpreter {
+  constructor(lexer) {
+    this.lexer = lexer;
+    this.currentToken = this.lexer.getNextToken();
+  }
+
+  fail() {
+    throw new Error(`Invalid syntax`);
+  }
+
+  eat(TOKEN_TYPE) {
+    TOKEN_TYPE = Array.isArray(TOKEN_TYPE) ? TOKEN_TYPE : [TOKEN_TYPE];
+
+    if (TOKEN_TYPE.indexOf(this.currentToken.type) !== -1) {
+      this.currentToken = this.lexer.getNextToken();
+    } else {
+      this.fail();
+    }
+  }
+
+  factor() {
+    const token = this.currentToken;
+    this.eat(INTEGER);
+    return token.value;
+  }
+
+  operand() {
+    const token = this.currentToken;
+    this.eat([PLUS, MINUS, MULTIPLY, DIVISION, MODULAR]);
+    return token;
+  }
+
+  expr() {
+    let result = this.factor();
+
+    while (this.currentTokenIsArithmeticOperand()) {
+      let operand = this.operand();
+      let rightTerm = this.factor();
+
+      switch (operand.type) {
+        case PLUS:
+          result += rightTerm;
+          break;
+        case MINUS:
+          result -= rightTerm;
+          break;
+        case MULTIPLY:
+          result *= rightTerm;
+          break;
+        case DIVISION:
+          result /= rightTerm;
+          break;
+        case MODULAR:
+          result %= rightTerm;
+          break;
+        default: // unhandled arithmetic operand
+          this.fail();
+      }
+    }
+
+    return result;
+  }
+
+  currentTokenIsArithmeticOperand() {
+    return '+-*/%'.indexOf(this.currentToken.value) !== -1;
   }
 }
 
@@ -174,7 +195,8 @@ function ask() {
       return ask();
     }
 
-    let interpreter = new Interpreter(text);
+    let lexer = new Lexer(text);
+    let interpreter = new Interpreter(lexer);
     console.log(interpreter.expr());
     rl.close();
     ask();
