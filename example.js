@@ -2,6 +2,10 @@ const readline = require('readline');
 
 const INTEGER = 'INTEGER';
 const PLUS = 'PLUS';
+const MINUS = 'MINUS';
+const MULTIPLY = 'MULTIPLY';
+const DIVISION = 'DIVISION';
+const MODULAR = 'MODULAR';
 const EOF = 'EOF';
 
 class Token {
@@ -16,6 +20,31 @@ class Token {
 
   repr() {
     return this.toString();
+  }
+}
+
+class ArithmeticToken {
+  constructor(char) {
+    switch (char) {
+      case '+':
+        return new Token(PLUS, char);
+      case '-':
+        return new Token(MINUS, char);
+      case '*':
+        return new Token(MULTIPLY, char);
+      case '/':
+        return new Token(DIVISION, char);
+      case '%':
+        return new Token(MODULAR, char);
+    }
+  }
+
+  static isArithmeticOperator(char) {
+    return this.operators.indexOf(char) !== -1;
+  }
+
+  static get operators() {
+    return ['+', '-', '*', '/', '%'];
   }
 }
 
@@ -43,15 +72,17 @@ class Interpreter {
       return new Token(INTEGER, parseInt(current_char));
     }
 
-    if (current_char === '+') {
-      return new Token(PLUS, current_char);
+    if (ArithmeticToken.isArithmeticOperator(current_char)) {
+      return new ArithmeticToken(current_char);
     }
 
     this.fail();
   }
 
   eat(TOKEN_TYPE) {
-    if (this.current_token.type === TOKEN_TYPE) {
+    TOKEN_TYPE = Array.isArray(TOKEN_TYPE) ? TOKEN_TYPE : [TOKEN_TYPE];
+
+    if (TOKEN_TYPE.indexOf(this.current_token.type) !== -1) {
       this.current_token = this.get_next_token();
     } else {
       this.fail();
@@ -65,13 +96,25 @@ class Interpreter {
     this.eat(INTEGER);
 
     let op = this.current_token;
-    this.eat(PLUS);
+    this.eat([PLUS, MINUS, MULTIPLY, DIVISION, MODULAR]);
 
     let right = this.current_token;
     this.eat(INTEGER);
 
-    let result = left.value + right.value;
-    return result;
+    switch (op.type) {
+      case PLUS:
+        return left.value + right.value;
+      case MINUS:
+        return left.value - right.value;
+      case MULTIPLY:
+        return left.value * right.value;
+      case DIVISION:
+        return left.value / right.value;
+      case MODULAR:
+        return left.value % right.value;
+      default:
+        this.fail();
+    }
   }
 
 }
