@@ -79,9 +79,9 @@ class Lexer {
 
       if (this.currentCharIsArithmeticOperator()) {
         const TYPE = this.getCurrentArithmeticOperatorType();
-        const operand = this.currentChar;
+        const operator = this.currentChar;
         this.advance();
-        return new Token(TYPE, operand);
+        return new Token(TYPE, operator);
       }
 
       this.fail();
@@ -116,8 +116,8 @@ class Lexer {
 }
 
 class Interpreter {
-  constructor(lexer) {
-    this.lexer = lexer;
+  constructor(text) {
+    this.lexer = new Lexer(text);
     this.currentToken = this.lexer.getNextToken();
   }
 
@@ -135,42 +135,33 @@ class Interpreter {
     }
   }
 
+  operator(types) {
+    const token = this.currentToken;
+    this.eat(types.split('|'));
+    return token;
+  }
+
   factor() {
     const token = this.currentToken;
     this.eat(INTEGER);
     return token.value;
   }
 
-  operand() {
-    const token = this.currentToken;
-    this.eat([PLUS, MINUS, MULTIPLY, DIVISION, MODULAR]);
-    return token;
-  }
-
-  expr() {
+  term() {
     let result = this.factor();
 
-    while (this.currentTokenIsArithmeticOperand()) {
-      let operand = this.operand();
-      let rightTerm = this.factor();
+    while (this.currentTokenIs('MULTIPLY|DIVISION')) {
+      let operator = this.operator('MULTIPLY|DIVISION');
+      let rightFactor = this.factor();
 
-      switch (operand.type) {
-        case PLUS:
-          result += rightTerm;
-          break;
-        case MINUS:
-          result -= rightTerm;
-          break;
+      switch (operator.type) {
         case MULTIPLY:
-          result *= rightTerm;
+          result *= rightFactor;
           break;
         case DIVISION:
-          result /= rightTerm;
+          result /= rightFactor;
           break;
-        case MODULAR:
-          result %= rightTerm;
-          break;
-        default: // unhandled arithmetic operand
+        default: // unhandled arithmetic operator
           this.fail();
       }
     }
@@ -178,29 +169,31 @@ class Interpreter {
     return result;
   }
 
-  currentTokenIsArithmeticOperand() {
-    return '+-*/%'.indexOf(this.currentToken.value) !== -1;
+  expr() {
+    let result = this.term();
+
+    while (this.currentTokenIs('PLUS|MINUS')) {
+      let operator = this.operator('PLUS|MINUS');
+      let rightTerm = this.term();
+
+      switch (operator.type) {
+        case PLUS:
+          result += rightTerm;
+          break;
+        case MINUS:
+          result -= rightTerm;
+          break;
+        default: // unhandled arithmetic operator
+          this.fail();
+      }
+    }
+
+    return result;
+  }
+
+  currentTokenIs(types) {
+    return types.split('|').indexOf(this.currentToken.type) !== -1;
   }
 }
 
-function ask() {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-
-  rl.question('calc> ', (text) => {
-    if (!text.trim().length) {
-      rl.close();
-      return ask();
-    }
-
-    let lexer = new Lexer(text);
-    let interpreter = new Interpreter(lexer);
-    console.log(interpreter.expr());
-    rl.close();
-    ask();
-  });
-}
-
-ask();
+module.exports = Interpreter;
