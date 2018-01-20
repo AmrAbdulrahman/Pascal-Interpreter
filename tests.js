@@ -1,12 +1,13 @@
 const { describe, it } = require('mocha');
 const chai = require('chai');
 const Interpreter = require('./Interpreter');
+const expect = chai.expect;
 
 chai.should();
 
 function interpret(text) {
   let interpreter = new Interpreter(text);
-  return interpreter.expr();
+  return interpreter.run();
 }
 
 describe('Interpreter', () => {
@@ -40,5 +41,10 @@ describe('Interpreter', () => {
 
   it('grouping works', () => {
     interpret('20 / (4 * 5)').should.equal(1);
+  });
+
+  it('grouping works', () => {
+    let badGrouping = () => interpret('((4) * 5) (2)');
+    expect(badGrouping).to.throw();
   });
 });

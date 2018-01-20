@@ -8,6 +8,8 @@ const DIVISION = 'DIVISION';
 const MODULAR = 'MODULAR';
 const EOF = 'EOF';
 const SPACE = ' ';
+const OPENBRACE = 'OPENBRACE';
+const CLOSEBRACE = 'CLOSEBRACE';
 
 function isDigit(char) {
   return isNaN(parseInt(char)) === false;
@@ -68,13 +70,23 @@ class Lexer {
 
   getNextToken() {
     while (this.currentChar !== null) {
-      if (this.currentCharIsSpace()) {
+      if (this.currentCharIs(SPACE)) {
         this.skipWhiteSpace();
         continue;
       }
 
       if (this.currentCharIsDigit()) {
         return new Token(INTEGER, this.readNumber());
+      }
+
+      if (this.currentCharIs('(')) {
+        this.advance();
+        return new Token(OPENBRACE, '(');
+      }
+
+      if (this.currentCharIs(')')) {
+        this.advance();
+        return new Token(CLOSEBRACE, ')');
       }
 
       if (this.currentCharIsArithmeticOperator()) {
@@ -94,8 +106,8 @@ class Lexer {
     return isDigit(this.currentChar);
   }
 
-  currentCharIsSpace() {
-    return this.currentChar === SPACE;
+  currentCharIs(char) {
+    return this.currentChar === char;
   }
 
   currentCharIsArithmeticOperator() {
@@ -125,19 +137,17 @@ class Interpreter {
     throw new Error(`Invalid syntax`);
   }
 
-  eat(TOKEN_TYPE) {
-    TOKEN_TYPE = Array.isArray(TOKEN_TYPE) ? TOKEN_TYPE : [TOKEN_TYPE];
-
-    if (TOKEN_TYPE.indexOf(this.currentToken.type) !== -1) {
+  eat(...types) {
+    if (types.indexOf(this.currentToken.type) !== -1) {
       this.currentToken = this.lexer.getNextToken();
     } else {
       this.fail();
     }
   }
 
-  operator(types) {
+  operator(...types) {
     const token = this.currentToken;
-    this.eat(types.split('|'));
+    this.eat(...types);
     return token;
   }
 
@@ -147,19 +157,33 @@ class Interpreter {
     return token.value;
   }
 
-  term() {
-    let result = this.factor();
+  group() {
+    // GROUP : FACTOR|OPENBRACE EXPR CLOSEBRACE
 
-    while (this.currentTokenIs('MULTIPLY|DIVISION')) {
-      let operator = this.operator('MULTIPLY|DIVISION');
-      let rightFactor = this.factor();
+    if (this.currentTokenIs(OPENBRACE)) {
+       this.eat(OPENBRACE);
+       const result = this.expr();
+       this.eat(CLOSEBRACE);
+       return result;
+    }
+
+    return this.factor();
+  }
+
+  term() {
+    // TERM : GROUP ((MUL|DIV)GROUP)*
+    let result = this.group();
+
+    while (this.currentTokenIs(MULTIPLY, DIVISION)) {
+      let operator = this.operator(MULTIPLY, DIVISION);
+      let rightGroup = this.group();
 
       switch (operator.type) {
         case MULTIPLY:
-          result *= rightFactor;
+          result *= rightGroup;
           break;
         case DIVISION:
-          result /= rightFactor;
+          result /= rightGroup;
           break;
         default: // unhandled arithmetic operator
           this.fail();
@@ -169,11 +193,12 @@ class Interpreter {
     return result;
   }
 
+  // EXPR : TERM ((PLUS|MINUS)TERM)*
   expr() {
     let result = this.term();
 
-    while (this.currentTokenIs('PLUS|MINUS')) {
-      let operator = this.operator('PLUS|MINUS');
+    while (this.currentTokenIs(PLUS, MINUS)) {
+      let operator = this.operator(PLUS, MINUS);
       let rightTerm = this.term();
 
       switch (operator.type) {
@@ -191,8 +216,18 @@ class Interpreter {
     return result;
   }
 
-  currentTokenIs(types) {
-    return types.split('|').indexOf(this.currentToken.type) !== -1;
+  run() {
+    const value = this.expr();
+
+    if (this.lexer.getNextToken().type !== EOF) {
+      this.fail();
+    }
+
+    return value;
+  }
+
+  currentTokenIs(...types) {
+    return types.indexOf(this.currentToken.type) !== -1;
   }
 }
 
