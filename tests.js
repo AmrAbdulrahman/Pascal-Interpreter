@@ -1,6 +1,6 @@
 const { describe, it } = require('mocha');
 const chai = require('chai');
-const Interpreter = require('./Interpreter');
+const Interpreter = require('./src/Interpreter');
 const expect = chai.expect;
 
 chai.should();
