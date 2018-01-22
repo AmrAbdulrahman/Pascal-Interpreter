@@ -58,4 +58,11 @@ describe('Interpreter', () => {
     const interpreter = new Interpreter(parser);
     interpreter.printRPN().join(' ').should.equal('5 3 + 12 * 3 /');
   });
+
+  it('LISP', () => {
+    const lexer = new Lexer('2 + 3 * 5');
+    const parser = new Parser(lexer);
+    const interpreter = new Interpreter(parser);
+    interpreter.printLISP().join(' ').should.equal('( + 2 ( * 3 5 ) )');
+  });
 });

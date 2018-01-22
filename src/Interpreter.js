@@ -69,6 +69,29 @@ class Interpreter {
 
     return result;
   }
+
+  printLISP(node) {
+    if (!node) {
+      const ast = this.parser.parse();
+      return this.printLISP(ast);
+    }
+
+    let result = [node + ''];
+
+    if (node.left) {
+      result = result.concat(this.printLISP(node.left));
+    }
+
+    if (node.right) {
+      result = result.concat(this.printLISP(node.right));
+    }
+
+    if (node instanceof BinOp) {
+      result = ['(', ...result, ')'];
+    }
+
+    return result;
+  }
 }
 
 module.exports = Interpreter;
