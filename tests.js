@@ -1,13 +1,17 @@
 const { describe, it } = require('mocha');
 const chai = require('chai');
+const Lexer = require('./src/Lexer');
+const { Parser } = require('./src/Parser');
 const Interpreter = require('./src/Interpreter');
 const expect = chai.expect;
 
 chai.should();
 
 function interpret(text) {
-  let interpreter = new Interpreter(text);
-  return interpreter.run();
+  const lexer = new Lexer(text);
+  const parser = new Parser(lexer);
+  const interpreter = new Interpreter(parser);
+  return interpreter.interpret();
 }
 
 describe('Interpreter', () => {
