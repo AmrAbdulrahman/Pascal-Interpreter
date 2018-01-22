@@ -48,6 +48,27 @@ class Interpreter {
     const ast = this.parser.parse();
     return this.visit(ast);
   }
+
+  printRPN(node) {
+    if (!node) {
+      const ast = this.parser.parse();
+      return this.printRPN(ast);
+    }
+
+    let result = [];
+
+    if (node.left) {
+      result = result.concat(this.printRPN(node.left));
+    }
+
+    if (node.right) {
+      result = result.concat(this.printRPN(node.right));
+    }
+
+    result.push(node + '');
+
+    return result;
+  }
 }
 
 module.exports = Interpreter;

@@ -51,4 +51,11 @@ describe('Interpreter', () => {
     let badGrouping = () => interpret('((4) * 5) (2)');
     expect(badGrouping).to.throw();
   });
+
+  it('RPN', () => {
+    const lexer = new Lexer('(5 + 3) * 12 / 3');
+    const parser = new Parser(lexer);
+    const interpreter = new Interpreter(parser);
+    interpreter.printRPN().join(' ').should.equal('5 3 + 12 * 3 /');
+  });
 });
