@@ -84,14 +84,9 @@ class Parser {
   }
 
   factor() {
-    const token = this.currentToken;
-    this.eat(INTEGER);
-    return new Num(token);
-  }
+    // FACTOR : INTEGER | OPENBRACE EXPR CLOSEBRACE
 
-  group() {
-    // GROUP : FACTOR | OPENBRACE EXPR CLOSEBRACE
-
+    // (expr)
     if (this.currentTokenIs(OPENBRACE)) {
        this.eat(OPENBRACE);
        const exprNode = this.expr();
@@ -99,16 +94,19 @@ class Parser {
        return exprNode;
     }
 
-    return this.factor();
+    // INTEGER
+    const token = this.currentToken;
+    this.eat(INTEGER);
+    return new Num(token);
   }
 
   term() {
-    // TERM : GROUP ((MUL | DIV) GROUP)*
-    let node = this.group();
+    // TERM : FACTOR ((MUL | DIV) FACTOR)*
+    let node = this.factor();
 
     while (this.currentTokenIs(MULTIPLY, DIVISION)) {
       let operator = this.operator(MULTIPLY, DIVISION);
-      let rightNode = this.group();
+      let rightNode = this.factor();
 
       node = new BinOp(node, operator, rightNode);
     }
