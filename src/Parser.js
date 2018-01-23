@@ -59,6 +59,23 @@ class Num extends ASTNode {
   }
 }
 
+class UnaryOp extends ASTNode {
+  constructor(token, expr) {
+    super();
+
+    this.token = this.op = token;
+    this.expr = expr;
+  }
+
+  get name() {
+    return 'UnaryOp';
+  }
+
+  valueOf() {
+    return null;
+  }
+}
+
 class Parser {
   constructor(lexer) {
     this.lexer = lexer;
@@ -84,7 +101,18 @@ class Parser {
   }
 
   factor() {
-    // FACTOR : INTEGER | OPENBRACE EXPR CLOSEBRACE
+    // FACTOR : (PLUS | MINUS) FACTOR | INTEGER | OPENBRACE EXPR CLOSEBRACE
+    const token = this.currentToken;
+
+    if (this.currentTokenIs(PLUS)) {
+      this.eat(PLUS);
+      return new UnaryOp(token, this.factor());
+    }
+
+    if (this.currentTokenIs(MINUS)) {
+      this.eat(MINUS);
+      return new UnaryOp(token, this.factor());
+    }
 
     // (expr)
     if (this.currentTokenIs(OPENBRACE)) {
@@ -95,7 +123,6 @@ class Parser {
     }
 
     // INTEGER
-    const token = this.currentToken;
     this.eat(INTEGER);
     return new Num(token);
   }

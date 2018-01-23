@@ -44,6 +44,10 @@ class Interpreter {
     return node.value;
   }
 
+  visitUnaryOp(node) {
+    return (node.op.type === PLUS ? 1 : -1) * this.visit(node.expr);
+  }
+
   interpret() {
     const ast = this.parser.parse();
     return this.visit(ast);

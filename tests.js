@@ -52,6 +52,15 @@ describe('Interpreter', () => {
     expect(badGrouping).to.throw();
   });
 
+  it('unary operator', () => {
+    interpret('--1').should.equal(1);
+    interpret('+--+1').should.equal(1);
+    interpret('+-1').should.equal(-1);
+    interpret('-+-+-1').should.equal(-1);
+    interpret('--5').should.equal(5);
+    interpret('---5').should.equal(-5);
+  });
+
   it('RPN', () => {
     const lexer = new Lexer('(5 + 3) * 12 / 3');
     const parser = new Parser(lexer);
