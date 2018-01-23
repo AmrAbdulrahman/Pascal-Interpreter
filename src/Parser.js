@@ -8,73 +8,20 @@ const {
   EOF,
   SPACE,
   OPENBRACE,
-  CLOSEBRACE } = require('./constants');
+  CLOSEBRACE,
+  BEGIN,
+  END,
+  DOT,
+  ID,
+  ASSIGN,
+  SEMI,
+  } = require('./constants');
 
-class ASTNode {
-  get name() {
-    throw new Error('ASTNode must implement the name getter or property');
-  }
-
-  valueOf() {
-    throw new Error('ASTNode must implement the valueOf method');
-  }
-}
-
-class BinOp extends ASTNode {
-  constructor(left, op, right) {
-    super();
-
-    if (!(left instanceof ASTNode) || !(right instanceof ASTNode)) {
-      throw new Error('left and right nodes must be an AST instances');
-    }
-
-    this.left = left;
-    this.right = right;
-    this.token = this.op = op;
-  }
-
-  get name() {
-    return 'BinOp';
-  }
-
-  valueOf() {
-    return this.op.value;
-  }
-}
-
-class Num extends ASTNode {
-  constructor(token) {
-    super();
-
-    this.token = token;
-    this.value = token.value;
-  }
-
-  get name() {
-    return 'Num';
-  }
-
-  valueOf() {
-    return this.value;
-  }
-}
-
-class UnaryOp extends ASTNode {
-  constructor(token, expr) {
-    super();
-
-    this.token = this.op = token;
-    this.expr = expr;
-  }
-
-  get name() {
-    return 'UnaryOp';
-  }
-
-  valueOf() {
-    return null;
-  }
-}
+const {
+  BinOp,
+  UnaryOp,
+  Num,
+} = require('./ASTNodes');
 
 class Parser {
   constructor(lexer) {
