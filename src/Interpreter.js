@@ -6,6 +6,8 @@ const {
 
 const { Num, BinOp } = require('./Parser');
 
+const GLOBAL_SCOPE = {};
+
 class Interpreter {
   constructor(parser) {
     this.parser = parser;
@@ -19,6 +21,29 @@ class Interpreter {
     }
 
     throw new Error(`a method visit${methodName} is missing`);
+  }
+
+  visitCompound(node) {
+    node.children.forEach(statement => this.visit(statement));
+  }
+
+  visitAssign(node) {
+    const varName = node.left.value;
+    return (GLOBAL_SCOPE[varName] = this.visit(node.right));
+  }
+
+  visitNoOp(node) {
+    // do nothing here, void, blackhole...
+  }
+
+  visitVar(node) {
+    const varName = node.value;
+
+    if (GLOBAL_SCOPE[varName] === undefined) {
+      throw new Error(`Unknown variable (${varName})`);
+    }
+
+    return GLOBAL_SCOPE[varName];
   }
 
   visitBinOp(node) {
@@ -48,14 +73,20 @@ class Interpreter {
     return (node.op.type === PLUS ? 1 : -1) * this.visit(node.expr);
   }
 
-  interpret() {
-    const ast = this.parser.parse();
+  interpretProgram() {
+    const ast = this.parser.parseProgram();
+    this.visit(ast);
+    return GLOBAL_SCOPE;
+  }
+
+  interpretExpr() {
+    const ast = this.parser.parseExpr();
     return this.visit(ast);
   }
 
   printRPN(node) {
     if (!node) {
-      const ast = this.parser.parse();
+      const ast = this.parser.parseExpr();
       return this.printRPN(ast);
     }
 
@@ -76,7 +107,7 @@ class Interpreter {
 
   printLISP(node) {
     if (!node) {
-      const ast = this.parser.parse();
+      const ast = this.parser.parseExpr();
       return this.printLISP(ast);
     }
 

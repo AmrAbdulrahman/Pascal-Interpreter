@@ -11,6 +11,10 @@ class Token {
   repr() {
     return this.toString();
   }
+
+  is(...types) {
+    return types.indexOf(this.type) !== -1;
+  }
 }
 
 module.exports = Token;

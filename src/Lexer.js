@@ -1,4 +1,6 @@
 const {
+  SPACE,
+  NEWLINE,
   INTEGER,
   PLUS,
   MINUS,
@@ -6,12 +8,23 @@ const {
   DIVISION,
   MODULAR,
   EOF,
-  SPACE,
   OPENBRACE,
-  CLOSEBRACE } = require('./constants');
+  CLOSEBRACE,
+  BEGIN,
+  END,
+  DOT,
+  ID,
+  ASSIGN,
+  SEMI,
+  } = require('./constants');
 
 const Token = require('./Token');
-const { isDigit } = require('./utils');
+const { isDigit, isAlpha, isAlphaNumeric } = require('./utils');
+
+const RESERVED_KEYWORDS = {
+  BEGIN: new Token('BEGIN', 'BEGIN'),
+  END: new Token('END', 'END'),
+};
 
 class Lexer {
   constructor(text) {
@@ -24,8 +37,18 @@ class Lexer {
     throw new Error(`Invalid character`);
   }
 
-  advance() {
-    this.pos++;
+  peek() {
+    const peekPos = this.pos + 1;
+
+    if (peekPos >= this.text.length) {
+      return null;
+    }
+
+    return this.text[peekPos];
+  }
+
+  advance(count = 1) {
+    this.pos += count;
 
     if (this.pos >= this.text.length) {
       this.currentChar = null;
@@ -35,7 +58,7 @@ class Lexer {
   }
 
   skipWhiteSpace() {
-    while (this.currentChar === SPACE) {
+    while (this.currentChar === SPACE || this.currentChar === NEWLINE) {
       this.advance();
     }
   }
@@ -51,11 +74,41 @@ class Lexer {
     return parseInt(numberStr);
   }
 
+  readID() {
+    let idStr = '';
+
+    while (this.currentChar !== null && isAlphaNumeric(this.currentChar)) {
+      idStr += this.currentChar;
+      this.advance();
+    }
+
+    return RESERVED_KEYWORDS[idStr] || new Token(ID, idStr);
+  }
+
   getNextToken() {
     while (this.currentChar !== null) {
-      if (this.currentCharIs(SPACE)) {
+      if (this.currentCharIs(SPACE) || this.currentCharIs(NEWLINE)) {
         this.skipWhiteSpace();
         continue;
+      }
+
+      if (isAlpha(this.currentChar)) {
+        return this.readID();
+      }
+
+      if (this.currentChar === ':' && this.peek() === '=') {
+        this.advance(2);
+        return new Token(ASSIGN, ':=');
+      }
+
+      if (this.currentChar === ';') {
+        this.advance();
+        return new Token(SEMI, ';');
+      }
+
+      if (this.currentChar === '.') {
+        this.advance();
+        return new Token(DOT, '.');
       }
 
       if (this.currentCharIsDigit()) {
