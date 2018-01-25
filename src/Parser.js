@@ -32,8 +32,8 @@ const {
   PLUS,
   MINUS,
   MULTIPLY,
-  DIVISION,
-  MODULAR,
+  INTEGER_DIVISION,
+  FLOAT_DIVISION,
   EOF,
   SPACE,
   OPENBRACE,
@@ -62,15 +62,18 @@ class Parser {
     this.currentToken = lexer.getNextToken();
   }
 
-  fail() {
-    throw new Error('Invalid syntax');
+  fail(err) {
+    const row = this.currentToken.rowNumber;
+    const col = this.currentToken.colNumber;
+
+    throw new Error(`${row}:${col} Invalid syntax: ` + (err || 'unexpected token'));
   }
 
   eat(...types) {
     if (types.indexOf(this.currentToken.type) !== -1) {
       this.currentToken = this.lexer.getNextToken();
     } else {
-      this.fail();
+      this.fail(`Expected ${types.join('|')}`);
     }
   }
 
@@ -145,8 +148,8 @@ class Parser {
     // TERM : FACTOR ((MUL | DIV) FACTOR)*
     let node = this.factor();
 
-    while (this.currentToken.is(MULTIPLY, DIVISION)) {
-      let operator = this.operator(MULTIPLY, DIVISION);
+    while (this.currentToken.is(MULTIPLY, INTEGER_DIVISION, FLOAT_DIVISION)) {
+      let operator = this.operator(MULTIPLY, INTEGER_DIVISION, FLOAT_DIVISION);
       let rightNode = this.factor();
 
       node = new BinOp(node, operator, rightNode);

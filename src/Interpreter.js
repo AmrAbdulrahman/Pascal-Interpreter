@@ -2,7 +2,9 @@ const {
   PLUS,
   MINUS,
   MULTIPLY,
-  DIVISION } = require('./constants');
+  INTEGER_DIVISION,
+  FLOAT_DIVISION,
+} = require('./constants');
 
 const { Num, BinOp } = require('./Parser');
 
@@ -57,8 +59,10 @@ class Interpreter {
         return left - right;
       case MULTIPLY:
         return left * right;
-      case DIVISION:
+      case FLOAT_DIVISION:
         return left / right;
+      case INTEGER_DIVISION:
+        return Math.floor(left / right);
 
       default:
         throw new Error(`Unhandled operator type ${node.op.type}`);

@@ -95,11 +95,13 @@ describe('Interpreter', () => {
               number := 2;
               _a := number;
               b := 10 * _a + 10 * number div 4;
-              c := _a - - b
+              c := _a - - b;
+              integer := 5 div 2;
+              float := 5 / 2
           enD;
           x := 11;
       END.
       `
-    ).should.deep.equal({ number: 2, _a: 2, b: 25, c: 27, x: 11 });
+    ).should.deep.equal({ number: 2, _a: 2, b: 25, c: 27, x: 11, integer: 2, float: 2.5 });
   });
 });

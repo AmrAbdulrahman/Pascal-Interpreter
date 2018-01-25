@@ -5,8 +5,8 @@ const {
   PLUS,
   MINUS,
   MULTIPLY,
-  DIVISION,
-  MODULAR,
+  INTEGER_DIVISION,
+  FLOAT_DIVISION,
   EOF,
   OPENBRACE,
   CLOSEBRACE,
@@ -31,6 +31,8 @@ class Lexer {
     this.text = text;
     this.pos = 0;
     this.currentChar = this.text[this.pos];
+    this.rowNumber = 1;
+    this.colNumber = 0;
   }
 
   fail() {
@@ -45,6 +47,7 @@ class Lexer {
     const res = this.text.substr(this.pos, count);
 
     this.pos += count;
+    this.colNumber += count;
 
     if (this.pos < this.text.length) {
       this.currentChar = this.text[this.pos];
@@ -57,7 +60,10 @@ class Lexer {
 
   skipWhiteSpace() {
     while (this.currentChar === SPACE || this.currentChar === NEWLINE) {
-
+      if (this.currentChar === NEWLINE) {
+        this.rowNumber++;
+        this.colNumber = 0;
+      }
 
       this.advance();
     }
@@ -70,7 +76,7 @@ class Lexer {
       numberStr += this.advance();
     }
 
-    return new Token(INTEGER, parseInt(numberStr));
+    return this.newToken(INTEGER, parseInt(numberStr));
   }
 
   readID() {
@@ -82,7 +88,7 @@ class Lexer {
 
     const idUpperCase = idStr.toUpperCase();
 
-    return RESERVED_KEYWORDS[idUpperCase] || new Token(ID, idStr);
+    return RESERVED_KEYWORDS[idUpperCase] || this.newToken(ID, idStr);
   }
 
   getNextToken() {
@@ -93,45 +99,41 @@ class Lexer {
       }
 
       if (this.peek(this.pos, 2) === ':=') {
-        return new Token(ASSIGN, this.advance(2));
+        return this.newToken(ASSIGN, this.advance(2));
       }
 
       if (this.currentChar === ';') {
-        return new Token(SEMI, this.advance());
+        return this.newToken(SEMI, this.advance());
       }
 
       if (this.currentChar === '.') {
-        return new Token(DOT, this.advance());
+        return this.newToken(DOT, this.advance());
       }
 
       if (this.currentCharIs('(')) {
-        return new Token(OPENBRACE, this.advance());
+        return this.newToken(OPENBRACE, this.advance());
       }
 
       if (this.currentCharIs(')')) {
-        return new Token(CLOSEBRACE, this.advance());
+        return this.newToken(CLOSEBRACE, this.advance());
       }
 
       if (this.currentCharIsArithmeticOperator()) {
         return this.readArithmeticOperator();
       }
 
-      if (this.currentCharIsDigit()) {
+      if (isDigit(this.currentChar)) {
         return this.readNumber();
       }
 
-      if (isAlpha(this.currentChar) || this.currentChar === '_') {
+      if (isAlpha(this.currentChar) || this.currentCharIs('_')) {
         return this.readID();
       }
 
       this.fail();
     }
 
-    return new Token(EOF, null);
-  }
-
-  currentCharIsDigit() {
-    return isDigit(this.currentChar);
+    return this.newToken(EOF, null);
   }
 
   currentCharIs(char) {
@@ -140,9 +142,10 @@ class Lexer {
 
   currentCharIsArithmeticOperator() {
     return (
-      this.currentChar === '+' ||
-      this.currentChar === '-' ||
-      this.currentChar === '*' ||
+      this.currentCharIs('+') ||
+      this.currentCharIs('-') ||
+      this.currentCharIs('*') ||
+      this.currentCharIs('/') ||
       this.peek(this.pos, 4).toLowerCase() === 'div '
     );
   }
@@ -157,19 +160,28 @@ class Lexer {
         type = MINUS; break;
       case '*':
         type = MULTIPLY; break;
+      case '/':
+        type = FLOAT_DIVISION; break;
     }
 
     if (this.peek(this.pos, 4).toLowerCase() === 'div ') {
-      type = DIVISION;
+      type = INTEGER_DIVISION;
     }
 
     if (type === null) {
       throw new Error(`Unable to map arithmetic operator`);
     }
 
-    const operator = type === DIVISION ? this.advance(3) : this.advance();
+    const operator = type === INTEGER_DIVISION ? this.advance(3) : this.advance();
 
-    return new Token(type, operator);
+    return this.newToken(type, operator);
+  }
+
+  newToken(type, value) {
+    const row = this.rowNumber;
+    const col = this.colNumber - (value + '').length;
+
+    return new Token(type, value, row, col);
   }
 }
 

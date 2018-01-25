@@ -1,7 +1,9 @@
 class Token {
-  constructor(type, value) {
+  constructor(type, value, rowNumber, colNumber) {
     this.type = type;
     this.value = value;
+    this.rowNumber = rowNumber;
+    this.colNumber = colNumber;
   }
 
   toString() {
