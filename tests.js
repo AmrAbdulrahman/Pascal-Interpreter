@@ -90,13 +90,13 @@ describe('Interpreter', () => {
   it('interprets simple program', () => {
     interpretProgram(
       `
-      BEGIN
+      begin
           BEGIN
               number := 2;
               a := number;
               b := 10 * a + 10 * number / 4;
               c := a - - b
-          END;
+          enD;
           x := 11;
       END.
       `

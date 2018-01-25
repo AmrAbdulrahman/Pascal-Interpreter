@@ -82,7 +82,9 @@ class Lexer {
       this.advance();
     }
 
-    return RESERVED_KEYWORDS[idStr] || new Token(ID, idStr);
+    const idUpperCase = idStr.toUpperCase();
+
+    return RESERVED_KEYWORDS[idUpperCase] || new Token(ID, idStr);
   }
 
   getNextToken() {
