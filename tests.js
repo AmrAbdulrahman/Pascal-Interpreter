@@ -43,15 +43,15 @@ describe('Interpreter', () => {
   });
 
   it('division', () => {
-    interpretExpr('20 / 4').should.equal(5);
+    interpretExpr('20 div 4').should.equal(5);
   });
 
   it('mixed multiplication and division', () => {
-    interpretExpr('20 / 4 * 5').should.equal(25);
+    interpretExpr('20 div 4 * 5').should.equal(25);
   });
 
   it('grouping works', () => {
-    interpretExpr('20 / (4 * 5)').should.equal(1);
+    interpretExpr('20 div (4 * 5)').should.equal(1);
   });
 
   it('grouping works', () => {
@@ -74,10 +74,10 @@ describe('Interpreter', () => {
   });
 
   it('RPN', () => {
-    const lexer = new Lexer('(5 + 3) * 12 / 3');
+    const lexer = new Lexer('(5 + 3) * 12 div 3');
     const parser = new Parser(lexer);
     const interpreter = new Interpreter(parser);
-    interpreter.printRPN().join(' ').should.equal('5 3 + 12 * 3 /');
+    interpreter.printRPN().join(' ').should.equal('5 3 + 12 * 3 div');
   });
 
   it('LISP', () => {
@@ -94,7 +94,7 @@ describe('Interpreter', () => {
           BEGIN
               number := 2;
               a := number;
-              b := 10 * a + 10 * number / 4;
+              b := 10 * a + 10 * number div 4;
               c := a - - b
           enD;
           x := 11;

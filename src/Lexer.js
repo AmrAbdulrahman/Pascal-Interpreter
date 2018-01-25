@@ -37,28 +37,28 @@ class Lexer {
     throw new Error(`Invalid character`);
   }
 
-  peek() {
-    const peekPos = this.pos + 1;
-
-    if (peekPos >= this.text.length) {
-      return null;
-    }
-
-    return this.text[peekPos];
+  peek(from = this.pos + 1, len = 1) {
+    return this.text.substr(from, len);
   }
 
   advance(count = 1) {
+    const res = this.text.substr(this.pos, count);
+
     this.pos += count;
 
-    if (this.pos >= this.text.length) {
-      this.currentChar = null;
-    } else {
+    if (this.pos < this.text.length) {
       this.currentChar = this.text[this.pos];
+    } else {
+      this.currentChar = null;
     }
+
+    return res;
   }
 
   skipWhiteSpace() {
     while (this.currentChar === SPACE || this.currentChar === NEWLINE) {
+
+
       this.advance();
     }
   }
@@ -67,19 +67,17 @@ class Lexer {
     let numberStr = '';
 
     while (isDigit(this.currentChar) === true) {
-      numberStr += this.currentChar;
-      this.advance();
+      numberStr += this.advance();
     }
 
-    return parseInt(numberStr);
+    return new Token(INTEGER, parseInt(numberStr));
   }
 
   readID() {
     let idStr = '';
 
     while (this.currentChar !== null && isAlphaNumeric(this.currentChar)) {
-      idStr += this.currentChar;
-      this.advance();
+      idStr += this.advance();
     }
 
     const idUpperCase = idStr.toUpperCase();
@@ -94,44 +92,36 @@ class Lexer {
         continue;
       }
 
-      if (isAlpha(this.currentChar)) {
-        return this.readID();
-      }
-
-      if (this.currentChar === ':' && this.peek() === '=') {
-        this.advance(2);
-        return new Token(ASSIGN, ':=');
+      if (this.peek(this.pos, 2) === ':=') {
+        return new Token(ASSIGN, this.advance(2));
       }
 
       if (this.currentChar === ';') {
-        this.advance();
-        return new Token(SEMI, ';');
+        return new Token(SEMI, this.advance());
       }
 
       if (this.currentChar === '.') {
-        this.advance();
-        return new Token(DOT, '.');
-      }
-
-      if (this.currentCharIsDigit()) {
-        return new Token(INTEGER, this.readNumber());
+        return new Token(DOT, this.advance());
       }
 
       if (this.currentCharIs('(')) {
-        this.advance();
-        return new Token(OPENBRACE, '(');
+        return new Token(OPENBRACE, this.advance());
       }
 
       if (this.currentCharIs(')')) {
-        this.advance();
-        return new Token(CLOSEBRACE, ')');
+        return new Token(CLOSEBRACE, this.advance());
       }
 
       if (this.currentCharIsArithmeticOperator()) {
-        const TYPE = this.getCurrentArithmeticOperatorType();
-        const operator = this.currentChar;
-        this.advance();
-        return new Token(TYPE, operator);
+        return this.readArithmeticOperator();
+      }
+
+      if (this.currentCharIsDigit()) {
+        return this.readNumber();
+      }
+
+      if (isAlpha(this.currentChar)) {
+        return this.readID();
       }
 
       this.fail();
@@ -149,19 +139,37 @@ class Lexer {
   }
 
   currentCharIsArithmeticOperator() {
-    return '+-*/%'.indexOf(this.currentChar) !== -1;
+    return (
+      this.currentChar === '+' ||
+      this.currentChar === '-' ||
+      this.currentChar === '*' ||
+      this.peek(this.pos, 4).toLowerCase() === 'div '
+    );
   }
 
-  getCurrentArithmeticOperatorType() {
-    const types = {
-      '+': PLUS,
-      '-': MINUS,
-      '*': MULTIPLY,
-      '/': DIVISION,
-      '%': MODULAR,
-    };
+  readArithmeticOperator() {
+    let type = null;
 
-    return types[this.currentChar];
+    switch (this.currentChar) {
+      case '+':
+        type = PLUS; break;
+      case '-':
+        type = MINUS; break;
+      case '*':
+        type = MULTIPLY; break;
+    }
+
+    if (this.peek(this.pos, 4).toLowerCase() === 'div ') {
+      type = DIVISION;
+    }
+
+    if (type === null) {
+      throw new Error(`Unable to map arithmetic operator`);
+    }
+
+    const operator = type === DIVISION ? this.advance(3) : this.advance();
+
+    return new Token(type, operator);
   }
 }
 

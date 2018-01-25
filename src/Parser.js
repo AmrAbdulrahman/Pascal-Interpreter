@@ -103,10 +103,6 @@ class Parser {
       nodes.push(this.statement());
     }
 
-    // if (this.currentToken.is(ID)) {
-    //   this.fail();
-    // }
-
     return nodes;
   }
 
