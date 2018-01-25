@@ -93,13 +93,13 @@ describe('Interpreter', () => {
       begin
           BEGIN
               number := 2;
-              a := number;
-              b := 10 * a + 10 * number div 4;
-              c := a - - b
+              _a := number;
+              b := 10 * _a + 10 * number div 4;
+              c := _a - - b
           enD;
           x := 11;
       END.
       `
-    ).should.deep.equal({ number: 2, a: 2, b: 25, c: 27, x: 11 });
+    ).should.deep.equal({ number: 2, _a: 2, b: 25, c: 27, x: 11 });
   });
 });

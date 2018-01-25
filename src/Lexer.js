@@ -19,7 +19,7 @@ const {
   } = require('./constants');
 
 const Token = require('./Token');
-const { isDigit, isAlpha, isAlphaNumeric } = require('./utils');
+const { isDigit, isAlpha, matchIDCharset } = require('./utils');
 
 const RESERVED_KEYWORDS = {
   BEGIN: new Token('BEGIN', 'BEGIN'),
@@ -76,7 +76,7 @@ class Lexer {
   readID() {
     let idStr = '';
 
-    while (this.currentChar !== null && isAlphaNumeric(this.currentChar)) {
+    while (this.currentChar !== null && matchIDCharset(this.currentChar)) {
       idStr += this.advance();
     }
 
@@ -120,7 +120,7 @@ class Lexer {
         return this.readNumber();
       }
 
-      if (isAlpha(this.currentChar)) {
+      if (isAlpha(this.currentChar) || this.currentChar === '_') {
         return this.readID();
       }
 

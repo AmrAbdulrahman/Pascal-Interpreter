@@ -25,9 +25,14 @@ function isAlphaNumeric(char) {
   return isAlpha(char) || isNumeric(char);
 }
 
+function matchIDCharset(char) {
+  return isAlphaNumeric(char) || (char === '_');
+}
+
 module.exports = {
   isDigit,
   isAlpha,
   isNumeric,
   isAlphaNumeric,
+  matchIDCharset,
 };
