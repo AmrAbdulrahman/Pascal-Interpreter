@@ -1,7 +1,8 @@
 const {
   SPACE,
   NEWLINE,
-  INTEGER,
+  INTEGER_CONST,
+  REAL_CONST,
   PLUS,
   MINUS,
   MULTIPLY,
@@ -71,12 +72,21 @@ class Lexer {
 
   readNumber() {
     let numberStr = '';
+    let hasDot = false;
 
-    while (isDigit(this.currentChar) === true) {
+    while (isDigit(this.currentChar) === true || (this.currentCharIs('.') && !hasDot)) {
+      if (this.currentCharIs('.')) {
+        hasDot = true;
+      }
+
       numberStr += this.advance();
     }
 
-    return this.newToken(INTEGER, parseInt(numberStr));
+    if (hasDot) {
+      return this.newToken(REAL_CONST, parseFloat(numberStr));
+    }
+
+    return this.newToken(INTEGER_CONST, parseInt(numberStr));
   }
 
   readID() {
@@ -122,7 +132,7 @@ class Lexer {
         return this.readArithmeticOperator();
       }
 
-      if (isDigit(this.currentChar)) {
+      if (isDigit(this.currentChar) || this.currentCharIs('.')) {
         return this.readNumber();
       }
 

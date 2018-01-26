@@ -20,7 +20,8 @@ term: factor ((MUL | DIV) factor)*
 
 factor : PLUS factor
        | MINUS factor
-       | INTEGER
+       | INTEGER_CONST
+       | REAL_CONST
        | LPAREN expr RPAREN
        | variable
 
@@ -28,7 +29,8 @@ variable: ID
 */
 
 const {
-  INTEGER,
+  INTEGER_CONST,
+  REAL_CONST,
   PLUS,
   MINUS,
   MULTIPLY,
@@ -81,6 +83,7 @@ class Parser {
     // program : compound_statement DOT
     const compoundStatementNode = this.compound_statement();
     this.eat(DOT);
+
     return compoundStatementNode;
   }
 
@@ -127,6 +130,7 @@ class Parser {
     const leftNode = this.variable();
     const operatorNode = this.operator(ASSIGN);
     const rightNode = this.expr();
+
     return new Assign(leftNode, operatorNode, rightNode);
   }
 
@@ -159,7 +163,7 @@ class Parser {
   }
 
   factor() {
-    // FACTOR : (PLUS | MINUS) FACTOR | INTEGER | OPENBRACE EXPR CLOSEBRACE | Variable
+    // FACTOR : (PLUS | MINUS) FACTOR | INTEGER_CONST | REAL_CONST | OPENBRACE EXPR CLOSEBRACE | Variable
     const token = this.currentToken;
 
     // +factor
@@ -183,8 +187,8 @@ class Parser {
     }
 
     // INTEGER
-    if (this.currentToken.is(INTEGER)) {
-      this.eat(INTEGER);
+    if (this.currentToken.is(INTEGER_CONST, REAL_CONST)) {
+      this.eat(INTEGER_CONST, REAL_CONST);
       return new Num(token);
     }
 
