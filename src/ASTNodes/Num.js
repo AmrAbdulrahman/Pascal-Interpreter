@@ -8,10 +8,6 @@ module.exports = class Num extends ASTNode {
     this.value = token.value;
   }
 
-  get name() {
-    return 'Num';
-  }
-
   valueOf() {
     return this.value;
   }

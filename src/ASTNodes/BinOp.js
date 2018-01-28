@@ -13,10 +13,6 @@ module.exports = class BinOp extends ASTNode {
     this.token = this.op = op;
   }
 
-  get name() {
-    return 'BinOp';
-  }
-
   valueOf() {
     return this.op.value;
   }

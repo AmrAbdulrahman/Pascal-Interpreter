@@ -8,10 +8,6 @@ module.exports = class Var extends ASTNode {
     this.value = token.value;
   }
 
-  get name() {
-    return 'Var';
-  }
-
   valueOf() {
     return this.value;
   }

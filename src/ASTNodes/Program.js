@@ -12,10 +12,6 @@ module.exports = class Program extends ASTNode {
     this.block = block;
   }
 
-  get name() {
-    return this.constructor.name;
-  }
-
   valueOf() {
     return this.name.value;
   }

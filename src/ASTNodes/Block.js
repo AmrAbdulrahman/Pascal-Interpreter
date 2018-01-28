@@ -8,10 +8,6 @@ module.exports = class Block extends ASTNode {
     this.compound = compound;
   }
 
-  get name() {
-    return this.constructor.name;
-  }
-
   valueOf() {
     return this.name.value;
   }

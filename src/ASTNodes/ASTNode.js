@@ -1,6 +1,6 @@
 module.exports = class ASTNode {
   get name() {
-    throw new Error('ASTNode must implement the name getter or property');
+    return this.constructor.name;
   }
 
   valueOf() {

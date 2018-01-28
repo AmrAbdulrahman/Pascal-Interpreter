@@ -8,10 +8,6 @@ module.exports = class UnaryOp extends ASTNode {
     this.expr = expr;
   }
 
-  get name() {
-    return 'UnaryOp';
-  }
-
   valueOf() {
     return null;
   }

@@ -8,10 +8,6 @@ module.exports = class VariableDeclaration extends ASTNode {
     this.type = type;
   }
 
-  get name() {
-    return this.constructor.name;
-  }
-
   valueOf() {
     return this.children.length;
   }
