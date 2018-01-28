@@ -1,4 +1,5 @@
 module.exports = {
+  PROGRAM: 'PROGRAM',
   INTEGER_CONST: 'INTEGER_CONST',
   REAL_CONST: 'REAL_CONST',
   PLUS: 'PLUS',
@@ -15,6 +16,11 @@ module.exports = {
   ID: 'ID',
   ASSIGN: 'ASSIGN',
   SEMI: 'SEMI',
+  VAR: 'VAR',
+  COLON: 'COLON',
+  COMMA: 'COMMA',
+  INTEGER: 'INTEGER',
+  REAL: 'REAL',
   SPACE: ' ',
   NEWLINE: '\n',
 };

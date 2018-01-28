@@ -29,6 +29,7 @@ variable: ID
 */
 
 const {
+  PROGRAM,
   INTEGER_CONST,
   REAL_CONST,
   PLUS,
@@ -46,9 +47,16 @@ const {
   ID,
   ASSIGN,
   SEMI,
+  VAR,
+  COMMA,
+  COLON,
+  INTEGER,
+  REAL,
 } = require('./constants');
 
 const {
+  Program,
+  Block,
   BinOp,
   UnaryOp,
   Num,
@@ -56,6 +64,8 @@ const {
   NoOp,
   Var,
   Assign,
+  Type,
+  VariableDeclaration,
 } = require('./ASTNodes');
 
 class Parser {
@@ -80,11 +90,67 @@ class Parser {
   }
 
   program() {
-    // program : compound_statement DOT
-    const compoundStatementNode = this.compound_statement();
+    // program : PROGRAM variable SEMI block DOT
+    this.eat(PROGRAM);
+    const programName = this.variable();
+    this.eat(SEMI);
+    const blockNode = this.block();
     this.eat(DOT);
 
-    return compoundStatementNode;
+    return new Program(programName, blockNode);
+  }
+
+  block() {
+    // block : declarations compound_statement
+    const declarations = this.declarations();
+    const compound = this.compound_statement();
+
+    return new Block(declarations, compound);
+  }
+
+  declarations() {
+    // declarations : VAR (variable_declaration SEMI)+ | empty
+
+    if (this.currentToken.is(VAR)) {
+      const nodes = [];
+      this.eat(VAR);
+
+      do {
+        nodes.push(this.variable_declaration());
+        this.eat(SEMI);
+      } while (!this.currentToken.is(BEGIN));
+
+      return nodes;
+    }
+
+    return this.empty();
+  }
+
+  variable_declaration() {
+    // variable_declaration : ID (COMMA ID)* COLON type_spec
+    const variables = [this.variable()];
+
+    while (this.currentToken.is(COMMA)) {
+      this.eat(COMMA);
+      variables.push(this.variable());
+    }
+
+    this.eat(COLON);
+    const type = this.type_spec();
+
+    return new VariableDeclaration(variables, type);
+  }
+
+  type_spec() {
+    const token = this.currentToken;
+
+    if (this.currentToken.is(INTEGER)) {
+      this.eat(INTEGER);
+    } else {
+      this.eat(REAL);
+    }
+
+    return new Type(token);
   }
 
   compound_statement() {

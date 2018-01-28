@@ -90,28 +90,36 @@ describe('Interpreter', () => {
   it('interprets simple program', () => {
     interpretProgram(
       `
-      begin
-          BEGIN
-              number := 2;
-              _a := number;
-              b := 10 * _a + 10 * number div 4;
-              c := _a - - b;
-              integer := 5 div 2;
-              float := 5 / 2;
-              real:=5.5*5.5
-          enD;
-          x := 11;
-      END.
+      PROGRAM Part10;
+      VAR
+         number     : INTEGER;
+         a, b, c, x : INTEGER;
+         y          : REAL;
+
+      BEGIN {Part10}
+         BEGIN
+            number := 2;
+            a := number;
+            b := 10 * a + 10 * number DIV 4;
+            c := a - - b
+         END;
+         x := 11;
+         y := 20 / 7 + 3.14;
+         { writeln('a = ', a); }
+         { writeln('b = ', b); }
+         { writeln('c = ', c); }
+         { writeln('number = ', number); }
+         { writeln('x = ', x); }
+         { writeln('y = ', y); }
+      END.  {Part10}
       `
     ).should.deep.equal({
       number: 2,
-      _a: 2,
+      a: 2,
       b: 25,
       c: 27,
       x: 11,
-      integer: 2,
-      float: 2.5,
-      real: 30.25
+      y: 5.997142857142857,
     });
   });
 });

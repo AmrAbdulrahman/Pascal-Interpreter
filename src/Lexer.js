@@ -17,12 +17,26 @@ const {
   ID,
   ASSIGN,
   SEMI,
-  } = require('./constants');
+  COLON,
+  COMMA,
+} = require('./constants');
 
 const Token = require('./Token');
 const { isDigit, isAlpha, matchIDCharset } = require('./utils');
 
 const RESERVED_KEYWORDS = {
+  // program
+  PROGRAM: new Token('PROGRAM', 'PROGRAM'),
+
+  // types
+  INTEGER: new Token('INTEGER', 'INTEGER'),
+  REAL: new Token('REAL', 'REAL'),
+
+  // operators
+  DIV: new Token('DIV', 'DIV'),
+
+  // block
+  VAR: new Token('VAR', 'VAR'),
   BEGIN: new Token('BEGIN', 'BEGIN'),
   END: new Token('END', 'END'),
 };
@@ -70,6 +84,14 @@ class Lexer {
     }
   }
 
+  skipComment() {
+    while (this.currentChar !== '}') {
+      this.advance();
+    }
+
+    this.advance();
+  }
+
   readNumber() {
     let numberStr = '';
     let hasDot = false;
@@ -97,8 +119,18 @@ class Lexer {
     }
 
     const idUpperCase = idStr.toUpperCase();
+    const keyword = RESERVED_KEYWORDS[idUpperCase];
 
-    return RESERVED_KEYWORDS[idUpperCase] || this.newToken(ID, idStr);
+    if (keyword) {
+      const row = this.row;
+      const col = this.col - (keyword.value + '').length;
+
+      keyword.setLocation(row, col);
+
+      return keyword;
+    }
+
+    return this.newToken(ID, idStr);
   }
 
   getNextToken() {
@@ -108,8 +140,21 @@ class Lexer {
         continue;
       }
 
+      if (this.currentChar === '{') {
+        this.skipComment();
+        continue;
+      }
+
       if (this.peek(this.pos, 2) === ':=') {
         return this.newToken(ASSIGN, this.advance(2));
+      }
+
+      if (this.currentChar === ':') {
+        return this.newToken(COLON, this.advance());
+      }
+
+      if (this.currentChar === ',') {
+        return this.newToken(COMMA, this.advance());
       }
 
       if (this.currentChar === ';') {
@@ -132,7 +177,7 @@ class Lexer {
         return this.readArithmeticOperator();
       }
 
-      if (isDigit(this.currentChar) || this.currentCharIs('.')) {
+      if (isDigit(this.currentChar)) {
         return this.readNumber();
       }
 
@@ -188,10 +233,18 @@ class Lexer {
   }
 
   newToken(type, value) {
-    const row = this.rowNumber;
-    const col = this.colNumber - (value + '').length;
+    const row = this.row;
+    const col = this.col - (value + '').length;
 
     return new Token(type, value, row, col);
+  }
+
+  get row() {
+    return this.rowNumber;
+  }
+
+  get col() {
+    return this.colNumber;
   }
 }
 

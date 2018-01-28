@@ -25,12 +25,32 @@ class Interpreter {
     throw new Error(`a method visit${methodName} is missing`);
   }
 
+  visitProgram(node) {
+    this.visit(node.block);
+  }
+
+  visitBlock(node) {
+    node.declarations.forEach(declaration => this.visit(declaration));
+    this.visit(node.compound);
+  }
+
+  visitVariableDeclaration(node) {
+    node.variables.forEach(variable => {
+      GLOBAL_SCOPE[variable.value] = undefined;
+    });
+  }
+
   visitCompound(node) {
     node.children.forEach(statement => this.visit(statement));
   }
 
   visitAssign(node) {
     const varName = node.left.value;
+
+    if (Object.keys(GLOBAL_SCOPE).indexOf(varName) === -1) {
+      throw new Error(`Undeclared variable ${varName}`);
+    }
+
     return (GLOBAL_SCOPE[varName] = this.visit(node.right));
   }
 
@@ -41,7 +61,7 @@ class Interpreter {
   visitVar(node) {
     const varName = node.value;
 
-    if (GLOBAL_SCOPE[varName] === undefined) {
+    if (Object.keys(GLOBAL_SCOPE).indexOf(varName) === -1) {
       throw new Error(`Unknown variable (${varName})`);
     }
 

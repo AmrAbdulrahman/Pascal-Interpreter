@@ -6,4 +6,8 @@ module.exports = {
   Compound: require('./Compound'),
   NoOp: require('./NoOp'),
   Var: require('./Var'),
+  Block: require('./Block'),
+  Program: require('./Program'),
+  Type: require('./Type'),
+  VariableDeclaration: require('./VariableDeclaration'),
 };
