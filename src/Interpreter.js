@@ -1,3 +1,6 @@
+const NodeVisitor = require('./NodeVisitor');
+const SymbolTableBuilder = require('./SymbolTableBuilder');
+
 const {
   PLUS,
   MINUS,
@@ -8,21 +11,14 @@ const {
 
 const { Num, BinOp } = require('./Parser');
 
-const GLOBAL_SCOPE = {};
+const GLOBAL_MEMORY = {};
 
-class Interpreter {
+class Interpreter extends NodeVisitor {
   constructor(parser) {
+    super();
+
     this.parser = parser;
-  }
-
-  visit(node) {
-    const methodName = node.name;
-
-    if (this[`visit${methodName}`]) {
-      return this[`visit${methodName}`](node);
-    }
-
-    throw new Error(`a method visit${methodName} is missing`);
+    this.symbolsTableBuilder = new SymbolTableBuilder();
   }
 
   visitProgram(node) {
@@ -30,14 +26,16 @@ class Interpreter {
   }
 
   visitBlock(node) {
-    node.declarations.forEach(declaration => this.visit(declaration));
+    //node.declarations.forEach(declaration => this.visit(declaration));
+    node.declarations.forEach(varDeclarations => {
+      varDeclarations.forEach(varDeclaration => this.visit(varDeclaration));
+    });
+
     this.visit(node.compound);
   }
 
   visitVariableDeclaration(node) {
-    node.variables.forEach(variable => {
-      GLOBAL_SCOPE[variable.value] = undefined;
-    });
+    // do nothing
   }
 
   visitCompound(node) {
@@ -47,11 +45,7 @@ class Interpreter {
   visitAssign(node) {
     const varName = node.left.value;
 
-    if (Object.keys(GLOBAL_SCOPE).indexOf(varName) === -1) {
-      throw new Error(`Undeclared variable ${varName}`);
-    }
-
-    return (GLOBAL_SCOPE[varName] = this.visit(node.right));
+    return (GLOBAL_MEMORY[varName] = this.visit(node.right));
   }
 
   visitNoOp(node) {
@@ -59,13 +53,7 @@ class Interpreter {
   }
 
   visitVar(node) {
-    const varName = node.value;
-
-    if (Object.keys(GLOBAL_SCOPE).indexOf(varName) === -1) {
-      throw new Error(`Unknown variable (${varName})`);
-    }
-
-    return GLOBAL_SCOPE[varName];
+    return GLOBAL_MEMORY[node.value];
   }
 
   visitBinOp(node) {
@@ -97,59 +85,16 @@ class Interpreter {
     return (node.op.type === PLUS ? 1 : -1) * this.visit(node.expr);
   }
 
-  interpretProgram() {
-    const ast = this.parser.parseProgram();
+  interpret() {
+    const ast = this.parser.parse();
+
+    this.symbolsTableBuilder.visit(ast);
     this.visit(ast);
-    return GLOBAL_SCOPE;
-  }
 
-  interpretExpr() {
-    const ast = this.parser.parseExpr();
-    return this.visit(ast);
-  }
+    console.log('\nSymbolsTable', this.symbolsTableBuilder.symbolsTable.toString());
+    console.log('GLOBAL_MEMORY', GLOBAL_MEMORY);
 
-  printRPN(node) {
-    if (!node) {
-      const ast = this.parser.parseExpr();
-      return this.printRPN(ast);
-    }
-
-    let result = [];
-
-    if (node.left) {
-      result = result.concat(this.printRPN(node.left));
-    }
-
-    if (node.right) {
-      result = result.concat(this.printRPN(node.right));
-    }
-
-    result.push(node + '');
-
-    return result;
-  }
-
-  printLISP(node) {
-    if (!node) {
-      const ast = this.parser.parseExpr();
-      return this.printLISP(ast);
-    }
-
-    let result = [node + ''];
-
-    if (node.left) {
-      result = result.concat(this.printLISP(node.left));
-    }
-
-    if (node.right) {
-      result = result.concat(this.printLISP(node.right));
-    }
-
-    if (node instanceof BinOp) {
-      result = ['(', ...result, ')'];
-    }
-
-    return result;
+    return true;
   }
 }
 

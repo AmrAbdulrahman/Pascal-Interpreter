@@ -1,10 +1,10 @@
 const ASTNode = require('./ASTNode');
 
 module.exports = class VariableDeclaration extends ASTNode {
-  constructor(variables, type) {
+  constructor(variable, type) {
     super();
 
-    this.variables = variables;
+    this.variable = variable;
     this.type = type;
   }
 

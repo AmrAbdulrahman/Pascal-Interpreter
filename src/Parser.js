@@ -136,9 +136,9 @@ class Parser {
     }
 
     this.eat(COLON);
-    const type = this.type_spec();
+    const typeNode = this.type_spec();
 
-    return new VariableDeclaration(variables, type);
+    return variables.map(variable => new VariableDeclaration(variable, typeNode));
   }
 
   type_spec() {
@@ -280,18 +280,8 @@ class Parser {
     return operatorToken;
   }
 
-  parseProgram() {
+  parse() {
     const ast = this.program();
-
-    if (this.lexer.getNextToken().type !== EOF) {
-      this.fail();
-    }
-
-    return ast;
-  }
-
-  parseExpr() {
-    const ast = this.expr();
 
     if (this.lexer.getNextToken().type !== EOF) {
       this.fail();
