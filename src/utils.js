@@ -29,10 +29,26 @@ function matchIDCharset(char) {
   return isAlphaNumeric(char) || (char === '_');
 }
 
+function times(str, count) {
+  let res = str;
+
+  while (--count > 0) {
+    res += str;
+  }
+
+  return res;
+}
+
+function span(str, len) {
+  return times(' ', len - str.length) + str;
+}
+
 module.exports = {
   isDigit,
   isAlpha,
   isNumeric,
   isAlphaNumeric,
   matchIDCharset,
+  times,
+  span,
 };

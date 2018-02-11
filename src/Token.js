@@ -15,6 +15,10 @@ class Token {
     this.colNumber = col;
   }
 
+  getLocation() {
+    return `(${this.rowNumber}:${this.colNumber})`;
+  }
+
   repr() {
     return this.toString();
   }

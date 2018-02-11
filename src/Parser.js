@@ -1,33 +1,3 @@
-/*
-program : compound_statement DOT
-
-compound_statement : BEGIN statement_list END
-
-statement_list : statement
-               | statement SEMI statement_list
-
-statement : compound_statement
-          | assignment_statement
-          | empty
-
-assignment_statement : variable ASSIGN expr
-
-empty :
-
-expr: term ((PLUS | MINUS) term)*
-
-term: factor ((MUL | DIV) factor)*
-
-factor : PLUS factor
-       | MINUS factor
-       | INTEGER_CONST
-       | REAL_CONST
-       | LPAREN expr RPAREN
-       | variable
-
-variable: ID
-*/
-
 const {
   PROGRAM,
   INTEGER_CONST,
@@ -52,6 +22,7 @@ const {
   COLON,
   INTEGER,
   REAL,
+  PROCEDURE,
 } = require('./constants');
 
 const {
@@ -66,6 +37,7 @@ const {
   Assign,
   Type,
   VariableDeclaration,
+  ProcedureDecl,
 } = require('./ASTNodes');
 
 class Parser {
@@ -109,25 +81,68 @@ class Parser {
   }
 
   declarations() {
-    // declarations : VAR (variable_declaration SEMI)+ | empty
+    // declarations : VAR (variable_declaration SEMI)+
+    //              | (PROCEDURE id (LPAREN ParamList RPAREN)? SEMI block SEMI)*
+    //              | empty
 
-    if (this.currentToken.is(VAR)) {
-      const nodes = [];
-      this.eat(VAR);
 
-      do {
-        nodes.push(this.variable_declaration());
+    const varNodes = [];
+    const procedureNodes = [];
+
+    while (this.currentToken.is(VAR, PROCEDURE)) {
+      if (this.currentToken.is(VAR)) {
+        this.eat(VAR);
+
+        while (this.currentToken.is(ID)) {
+          varNodes.push(this.variable_declaration());
+          this.eat(SEMI);
+        }
+      }
+
+      if (this.currentToken.is(PROCEDURE)) {
+        this.eat(PROCEDURE);
+        const id = this.variable();
+        let params = [];
+
+        if (this.currentToken.is(SEMI)) {
+          this.eat(SEMI);
+        } else {
+          this.eat(OPENBRACE);
+          params = this.params_list();
+          this.eat(CLOSEBRACE);
+          this.eat(SEMI);
+        }
+
+        const block = this.block();
         this.eat(SEMI);
-      } while (!this.currentToken.is(BEGIN));
-
-      return nodes;
+        procedureNodes.push(new ProcedureDecl(id, params, block));
+      }
     }
 
-    return this.empty();
+    return [...varNodes, ...procedureNodes];
+  }
+
+  params_list() {
+    // params_list : params
+    //             | params SEMI params_list
+
+    const params = [...this.params()];
+
+    while (this.currentToken.is(SEMI)) {
+      this.eat(SEMI);
+      params = [...params, ...this.params()];
+    }
+
+    return params;
+  }
+
+  params() {
+    // params : ID (COMMA ID)* COLON type
+    return this.variable_declaration();
   }
 
   variable_declaration() {
-    // variable_declaration : ID (COMMA ID)* COLON type_spec
+    // variable_declaration : ID (COMMA ID)* COLON type
     const variables = [this.variable()];
 
     while (this.currentToken.is(COMMA)) {

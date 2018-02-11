@@ -1,5 +1,5 @@
 const NodeVisitor = require('./NodeVisitor');
-const SymbolTableBuilder = require('./SymbolTableBuilder');
+const SemanticAnalyzer = require('./SemanticAnalyzer');
 
 const {
   PLUS,
@@ -18,7 +18,7 @@ class Interpreter extends NodeVisitor {
     super();
 
     this.parser = parser;
-    this.symbolsTableBuilder = new SymbolTableBuilder();
+    this.semanticAnalyzer = new SemanticAnalyzer();
   }
 
   visitProgram(node) {
@@ -26,9 +26,12 @@ class Interpreter extends NodeVisitor {
   }
 
   visitBlock(node) {
-    //node.declarations.forEach(declaration => this.visit(declaration));
-    node.declarations.forEach(varDeclarations => {
-      varDeclarations.forEach(varDeclaration => this.visit(varDeclaration));
+    node.declarations.forEach(declaration => {
+      if (Array.isArray(declaration)) { // variables declarations
+        declaration.forEach(varDeclaration => this.visit(varDeclaration));
+      } else {
+        this.visit(declaration); // procedure
+      }
     });
 
     this.visit(node.compound);
@@ -85,13 +88,16 @@ class Interpreter extends NodeVisitor {
     return (node.op.type === PLUS ? 1 : -1) * this.visit(node.expr);
   }
 
+  visitProcedureDecl(node) {
+    //this.visit(node.block);
+  }
+
   interpret() {
     const ast = this.parser.parse();
 
-    this.symbolsTableBuilder.visit(ast);
+    this.semanticAnalyzer.visit(ast);
     this.visit(ast);
 
-    console.log('\nSymbolsTable', this.symbolsTableBuilder.symbolsTable.toString());
     console.log('GLOBAL_MEMORY', GLOBAL_MEMORY);
 
     return true;

@@ -27,6 +27,7 @@ const { isDigit, isAlpha, matchIDCharset } = require('./utils');
 const RESERVED_KEYWORDS = {
   // program
   PROGRAM: new Token('PROGRAM', 'PROGRAM'),
+  PROCEDURE: new Token('PROCEDURE', 'PROCEDURE'),
 
   // types
   INTEGER: new Token('INTEGER', 'INTEGER'),

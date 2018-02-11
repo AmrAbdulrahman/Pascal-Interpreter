@@ -1,8 +1,10 @@
 const BaseSymbol = require('./BaseSymbol');
 
-module.exports = class BuiltinTypeSymbol extends BaseSymbol {
-  constructor(name) {
+module.exports = class ProcedureSymbol extends BaseSymbol {
+  constructor(name, params = []) {
     super(name);
+
+    this.params = params;
   }
 
   toString() {

@@ -6,6 +6,6 @@ module.exports = class VarSymbol extends BaseSymbol {
   }
 
   toString() {
-    return `<${this.name}:${this.type}>`;
+    return `<${this.constructor.name} (name=${this.name}, type=${this.type})>`;
   }
 };

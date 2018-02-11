@@ -10,4 +10,5 @@ module.exports = {
   Program: require('./Program'),
   Type: require('./Type'),
   VariableDeclaration: require('./VariableDeclaration'),
+  ProcedureDecl: require('./ProcedureDecl'),
 };
