@@ -23,6 +23,7 @@ const {
   INTEGER,
   REAL,
   PROCEDURE,
+  RETURN,
 } = require('./constants');
 
 const {
@@ -38,6 +39,8 @@ const {
   Type,
   VariableDeclaration,
   ProcedureDecl,
+  ProcedureInvokation,
+  Return,
 } = require('./ASTNodes');
 
 class Parser {
@@ -97,6 +100,8 @@ class Parser {
           varNodes.push(this.variable_declaration());
           this.eat(SEMI);
         }
+
+        continue;
       }
 
       if (this.currentToken.is(PROCEDURE)) {
@@ -194,7 +199,7 @@ class Parser {
   }
 
   statement() {
-    // statement : compound_statement | assignment_statement | empty
+    // statement : compound_statement | assignment_statement | return_statement | empty
     if (this.currentToken.is(BEGIN)) {
       return this.compound_statement();
     }
@@ -203,7 +208,17 @@ class Parser {
       return this.assignment_statement();
     }
 
+    if (this.currentToken.is(RETURN)) {
+      return this.return_statement();
+    }
+
     return this.empty();
+  }
+
+  // return_statement : RETURN expr
+  return_statement() {
+    this.eat(RETURN);
+    return new Return(this.expr());
   }
 
   assignment_statement() {
@@ -244,7 +259,12 @@ class Parser {
   }
 
   factor() {
-    // FACTOR : (PLUS | MINUS) FACTOR | INTEGER_CONST | REAL_CONST | OPENBRACE EXPR CLOSEBRACE | Variable
+    // FACTOR : (PLUS | MINUS) FACTOR
+    //        | INTEGER_CONST
+    //        | REAL_CONST
+    //        | OPENBRACE EXPR CLOSEBRACE
+    //        | procedure_invocation
+    //        | Variable
     const token = this.currentToken;
 
     // +factor
@@ -273,7 +293,32 @@ class Parser {
       return new Num(token);
     }
 
-    return this.variable();
+    // id => variable or procedure
+    const idToken = this.currentToken;
+    this.eat(ID);
+
+    // procedure invokation
+    if (this.currentToken.is(OPENBRACE)) {
+      this.eat(OPENBRACE);
+
+      const args = [];
+
+      // (arg (comma arg)*)
+      if (!this.currentToken.is(CLOSEBRACE)) {
+        args.push(this.expr()); // first arg
+
+        while (this.currentToken.is(COMMA)) {
+          this.eat(COMMA);
+          args.push(this.expr());
+        }
+      }
+
+      this.eat(CLOSEBRACE);
+
+      return new ProcedureInvokation(idToken, args);
+    }
+
+    return new Var(idToken);
   }
 
 

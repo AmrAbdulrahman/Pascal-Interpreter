@@ -28,6 +28,7 @@ const RESERVED_KEYWORDS = {
   // program
   PROGRAM: new Token('PROGRAM', 'PROGRAM'),
   PROCEDURE: new Token('PROCEDURE', 'PROCEDURE'),
+  RETURN: new Token('RETURN', 'RETURN'),
 
   // types
   INTEGER: new Token('INTEGER', 'INTEGER'),

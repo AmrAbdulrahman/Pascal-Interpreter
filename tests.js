@@ -20,17 +20,31 @@ describe('Interpreter', () => {
     interpret(
       `
       program Main;
-         var x, y: real;
+         var x, c, s, cs: real;
 
-         procedure double(n : integer);
+         procedure square(n : integer);
             var res : integer;
          begin
-            res := n + n;
-            { return res; }
+            res := n * n;
+            return res;
          end;
 
+         procedure cube(n : integer);
+         begin
+            return n * n * n;
+         end;
+
+         procedure compose(n : integer);
+         begin
+            return square(n) + cube(n);
+         end;
 
       begin { Main }
+
+        x := 2;
+        c := cube(x);
+        s := square(x);
+        cs := compose(x);
 
       end.  { Main }
       `

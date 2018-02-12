@@ -11,4 +11,6 @@ module.exports = {
   Type: require('./Type'),
   VariableDeclaration: require('./VariableDeclaration'),
   ProcedureDecl: require('./ProcedureDecl'),
+  ProcedureInvokation: require('./ProcedureInvokation'),
+  Return: require('./Return'),
 };

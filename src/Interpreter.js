@@ -1,5 +1,11 @@
 const NodeVisitor = require('./NodeVisitor');
 const SemanticAnalyzer = require('./SemanticAnalyzer');
+const Scope = require('./Scope');
+const BuiltinsScope = require('./BuiltinsScope');
+const BaseSymbol = require('./Symbols/BaseSymbol');
+const VarSymbol = require('./Symbols/VarSymbol');
+const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
+const Return = require('./ASTNodes/Return');
 
 const {
   PLUS,
@@ -11,18 +17,27 @@ const {
 
 const { Num, BinOp } = require('./Parser');
 
-const GLOBAL_MEMORY = {};
-
 class Interpreter extends NodeVisitor {
   constructor(parser) {
     super();
 
     this.parser = parser;
-    this.semanticAnalyzer = new SemanticAnalyzer();
+    this.currentScope = new BuiltinsScope();
   }
 
   visitProgram(node) {
+    const appName = new BaseSymbol(node.id.value);
+    this.currentScope.insert(appName);
+
+    // open global scope
+    this.currentScope = new Scope('global', this.currentScope);
+
     this.visit(node.block);
+
+    // print global scope
+    console.log(this.currentScope);
+
+    this.currentScope = this.currentScope.parent;
   }
 
   visitBlock(node) {
@@ -34,21 +49,39 @@ class Interpreter extends NodeVisitor {
       }
     });
 
-    this.visit(node.compound);
-  }
-
-  visitVariableDeclaration(node) {
-    // do nothing
+    return this.visit(node.compound);
   }
 
   visitCompound(node) {
-    node.children.forEach(statement => this.visit(statement));
+    for (let index in node.children) {
+      const statement = node.children[index];
+
+      if (statement instanceof Return) {
+        return this.visit(statement);
+      }
+
+      this.visit(statement);
+    }
+
+    // a scope that has no Return statement returns `undefined`
+  }
+
+  visitVariableDeclaration(node) {
+    const typeName = node.type.value;
+    const typeSymbol = this.currentScope.lookup(typeName);
+    const varName = node.variable.value;
+    const varSymbol = new VarSymbol(varName, typeSymbol);
+
+    this.currentScope.insert(varSymbol);
   }
 
   visitAssign(node) {
     const varName = node.left.value;
+    const value = this.visit(node.right);
 
-    return (GLOBAL_MEMORY[varName] = this.visit(node.right));
+    this.currentScope
+      .lookup(varName)
+      .setValue(value);
   }
 
   visitNoOp(node) {
@@ -56,7 +89,9 @@ class Interpreter extends NodeVisitor {
   }
 
   visitVar(node) {
-    return GLOBAL_MEMORY[node.value];
+    return this.currentScope
+      .lookup(node.value)
+      .getValue();
   }
 
   visitBinOp(node) {
@@ -88,17 +123,60 @@ class Interpreter extends NodeVisitor {
     return (node.op.type === PLUS ? 1 : -1) * this.visit(node.expr);
   }
 
+  visitReturn(node) {
+    return this.visit(node.expr);
+  }
+
   visitProcedureDecl(node) {
-    //this.visit(node.block);
+    // add parameters to procedure symbol
+    const params = node.params.map(param => {
+      const paramType = this.currentScope.lookup(param.type.value);
+      const paramName = param.variable.value;
+      return new VarSymbol(paramName, paramType);
+    });
+
+    const procedureName = node.id.value;
+    const procedureBody = node.block;
+    const procedureSymbol = new ProcedureSymbol(procedureName, procedureBody, params);
+
+    this.currentScope.insert(procedureSymbol);
+  }
+
+  visitProcedureInvokation(node) {
+    const procedureName = node.id.value;
+    const procedureSymbol = this.currentScope.lookup(procedureName);
+
+    // open invokation scope
+    this.currentScope = new Scope(procedureName, this.currentScope);
+
+    procedureSymbol.params.forEach((param, index) => {
+      const paramType = this.currentScope.lookup(param.type.value);
+      const paramName = param.name;
+      const argSymbol = new VarSymbol(
+        paramName,
+        paramType,
+        this.visit(node.args[index]) // evaluate arg
+      );
+
+      this.currentScope.insert(argSymbol);
+    });
+
+    const invokationValue = this.visit(procedureSymbol.block);
+
+    // close invokation scope
+    this.currentScope = this.currentScope.parent;
+
+    return invokationValue;
   }
 
   interpret() {
     const ast = this.parser.parse();
 
-    this.semanticAnalyzer.visit(ast);
-    this.visit(ast);
+    // run semantic analysis
+    (new SemanticAnalyzer()).visit(ast);
 
-    console.log('GLOBAL_MEMORY', GLOBAL_MEMORY);
+    // start the program interpretation
+    this.visit(ast);
 
     return true;
   }

@@ -1,9 +1,10 @@
 const BaseSymbol = require('./BaseSymbol');
 
 module.exports = class ProcedureSymbol extends BaseSymbol {
-  constructor(name, params = []) {
+  constructor(name, block, params = []) {
     super(name);
 
+    this.block = block;
     this.params = params;
   }
 

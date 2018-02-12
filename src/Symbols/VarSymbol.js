@@ -1,8 +1,18 @@
 const BaseSymbol = require('./BaseSymbol');
 
 module.exports = class VarSymbol extends BaseSymbol {
-  constructor(name, type) {
+  constructor(name, type, value) {
     super(name, type);
+
+    this.value = value;
+  }
+
+  setValue(value) {
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
   }
 
   toString() {

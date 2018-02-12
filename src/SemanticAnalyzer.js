@@ -22,11 +22,8 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
 
     this.visit(node.block);
 
-    console.log(this.currentScope);
     // close global scope
     this.currentScope = this.currentScope.parent;
-
-    console.log(this.currentScope);
   }
 
   visitBlock(node) {
@@ -65,7 +62,7 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
   visitProcedureDecl(node) {
     const procedureName = node.id.value;
 
-    const procedureSymbol = new ProcedureSymbol(procedureName);
+    const procedureSymbol = new ProcedureSymbol(procedureName, node.block);
     this.currentScope.insert(procedureSymbol);
 
     const procedureScope = new Scope(procedureName, this.currentScope);
@@ -88,7 +85,7 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     // visit function body
     this.visit(node.block);
 
-    console.log(this.currentScope);
+    // console.log(this.currentScope);
     // close function scope
     this.currentScope = this.currentScope.parent;
   }
@@ -112,7 +109,7 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     const varName = node.left.value;
     const varSymbol = this.currentScope.lookup(varName);
 
-    if (varSymbol === undefined) {
+    if (varSymbol === null) {
       throw new Error(`Undeclared variable ${varName}`);
     }
 
@@ -123,8 +120,25 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     const varName = node.value;
     const varSymbol = this.currentScope.lookup(varName);
 
-    if (varSymbol === undefined) {
-      throw new Error(`Symbol(identifier) not found '${varName}'`);
+    if (varSymbol === null) {
+      throw new Error(`Undeclared variable '${varName}'`);
+    }
+  }
+
+  visitReturn(node) {
+    this.visit(node.expr);
+  }
+
+  visitProcedureInvokation(node) {
+    const procedureName = node.id.value;
+    const procedureSymbol = this.currentScope.lookup(procedureName);
+
+    if (procedureSymbol === null) {
+      throw new Error(`Undeclared procedure '${procedureName}'`);
+    }
+
+    if (procedureSymbol.params.length !== node.args.length) {
+      throw new Error(`Procedure '${procedureName}' accepts (${procedureSymbol.params.length}) argument(s) [${procedureSymbol.params.map(p => p.name + ':' + p.type.name).join(',')}]`);
     }
   }
 }
