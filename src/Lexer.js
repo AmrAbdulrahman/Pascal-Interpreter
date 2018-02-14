@@ -90,12 +90,20 @@ class Lexer {
     }
   }
 
-  skipComment() {
-    while (this.currentChar !== '}') {
+  skipLineComment() {
+    while (this.currentChar !== NEWLINE) {
       this.advance();
     }
 
     this.advance();
+  }
+
+  skipBlockComment() {
+    while (this.peek(this.pos, 2) !== '*/') {
+      this.advance();
+    }
+
+    this.advance(2);
   }
 
   readNumber() {
@@ -196,8 +204,13 @@ class Lexer {
         continue;
       }
 
-      if (this.currentChar === '{') {
-        this.skipComment();
+      if (this.peek(this.pos, 2) === '//') {
+        this.skipLineComment();
+        continue;
+      }
+
+      if (this.peek(this.pos, 2) === '/*') {
+        this.skipBlockComment();
         continue;
       }
 
