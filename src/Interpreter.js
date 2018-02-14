@@ -6,6 +6,7 @@ const BaseSymbol = require('./Symbols/BaseSymbol');
 const VarSymbol = require('./Symbols/VarSymbol');
 const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
 const Return = require('./ASTNodes/Return');
+const { CallStack, CallStackRecord } = require('./CallStack');
 
 const {
   PLUS,
@@ -13,6 +14,7 @@ const {
   MULTIPLY,
   INTEGER_DIVISION,
   FLOAT_DIVISION,
+  PRINT,
 } = require('./constants');
 
 const { Num, BinOp } = require('./Parser');
@@ -23,6 +25,7 @@ class Interpreter extends NodeVisitor {
 
     this.parser = parser;
     this.currentScope = new BuiltinsScope();
+    //this.callStack = new CallStack()
   }
 
   visitProgram(node) {
@@ -32,22 +35,15 @@ class Interpreter extends NodeVisitor {
     // open global scope
     this.currentScope = new Scope('global', this.currentScope);
 
-    this.visit(node.block);
-
-    // print global scope
-    console.log(this.currentScope);
+    const returnValue = this.visit(node.block);
 
     this.currentScope = this.currentScope.parent;
+
+    return returnValue;
   }
 
   visitBlock(node) {
-    node.declarations.forEach(declaration => {
-      if (Array.isArray(declaration)) { // variables declarations
-        declaration.forEach(varDeclaration => this.visit(varDeclaration));
-      } else {
-        this.visit(declaration); // procedure
-      }
-    });
+    node.declarations.forEach(declaration => this.visit(declaration));
 
     return this.visit(node.compound);
   }
@@ -119,6 +115,10 @@ class Interpreter extends NodeVisitor {
     return node.value;
   }
 
+  visitStr(node) {
+    return node.value;
+  }
+
   visitUnaryOp(node) {
     return (node.op.type === PLUS ? 1 : -1) * this.visit(node.expr);
   }
@@ -146,6 +146,10 @@ class Interpreter extends NodeVisitor {
     const procedureName = node.id.value;
     const procedureSymbol = this.currentScope.lookup(procedureName);
 
+    if (procedureName === PRINT) {
+      return this.print(node);
+    }
+
     // open invokation scope
     this.currentScope = new Scope(procedureName, this.currentScope);
 
@@ -161,12 +165,16 @@ class Interpreter extends NodeVisitor {
       this.currentScope.insert(argSymbol);
     });
 
-    const invokationValue = this.visit(procedureSymbol.block);
+    const returnValue = this.visit(procedureSymbol.block);
 
     // close invokation scope
     this.currentScope = this.currentScope.parent;
 
-    return invokationValue;
+    return returnValue;
+  }
+
+  print(node) {
+    console.log.apply(console, node.args.map(arg => this.visit(arg)));
   }
 
   interpret() {
@@ -176,7 +184,7 @@ class Interpreter extends NodeVisitor {
     (new SemanticAnalyzer()).visit(ast);
 
     // start the program interpretation
-    this.visit(ast);
+    return this.visit(ast);
 
     return true;
   }

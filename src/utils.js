@@ -29,14 +29,18 @@ function matchIDCharset(char) {
   return isAlphaNumeric(char) || (char === '_');
 }
 
-function times(str, count) {
-  let res = str;
+function repeat(str, count) {
+  let repeatedStr = '';
 
-  while (--count > 0) {
-    res += str;
+  while (count--) {
+    repeatedStr += str;
   }
 
-  return res;
+  return repeatedStr;
+}
+
+function concat(destination, source) {
+  source.forEach(elem => destination.push(elem));
 }
 
 function span(str, len) {
@@ -49,6 +53,7 @@ module.exports = {
   isNumeric,
   isAlphaNumeric,
   matchIDCharset,
-  times,
+  repeat,
   span,
+  concat,
 };

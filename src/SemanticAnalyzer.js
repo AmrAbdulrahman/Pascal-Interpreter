@@ -4,6 +4,7 @@ const BuiltinsScope = require('./BuiltinsScope');
 const BaseSymbol = require('./Symbols/BaseSymbol');
 const VarSymbol = require('./Symbols/VarSymbol');
 const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
+const { PRINT } = require('./constants');
 
 module.exports = class SemanticAnalyzer extends NodeVisitor {
   constructor() {
@@ -27,13 +28,7 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitBlock(node) {
-    node.declarations.forEach(declaration => {
-      if (Array.isArray(declaration)) { // variables declarations
-        declaration.forEach(varDeclaration => this.visit(varDeclaration));
-      } else {
-        this.visit(declaration); // procedure
-      }
-    });
+    node.declarations.forEach(declaration => this.visit(declaration));
 
     this.visit(node.compound);
   }
@@ -55,6 +50,10 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     // do nothing
   }
 
+  visitStr(node) {
+    // do nothing
+  }
+
   visitUnaryOp(node) {
     this.visit(node.expr);
   }
@@ -63,6 +62,11 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     const procedureName = node.id.value;
 
     const procedureSymbol = new ProcedureSymbol(procedureName, node.block);
+
+    if (this.currentScope.has(procedureName)) {
+      throw new Error(`${procedureName} already declared in the current scope`);
+    }
+
     this.currentScope.insert(procedureSymbol);
 
     const procedureScope = new Scope(procedureName, this.currentScope);
@@ -132,6 +136,10 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
   visitProcedureInvokation(node) {
     const procedureName = node.id.value;
     const procedureSymbol = this.currentScope.lookup(procedureName);
+
+    if (procedureName === PRINT) {
+      return;
+    }
 
     if (procedureSymbol === null) {
       throw new Error(`Undeclared procedure '${procedureName}'`);

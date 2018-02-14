@@ -4,6 +4,7 @@ module.exports = {
   RETURN: 'RETURN',
   INTEGER_CONST: 'INTEGER_CONST',
   REAL_CONST: 'REAL_CONST',
+  STRING_LITERAL: 'STRING_LITERAL',
   PLUS: 'PLUS',
   MINUS: 'MINUS',
   MULTIPLY: 'MULTIPLY',
@@ -23,6 +24,10 @@ module.exports = {
   COMMA: 'COMMA',
   INTEGER: 'INTEGER',
   REAL: 'REAL',
+  STRING: 'STRING',
   SPACE: ' ',
   NEWLINE: '\n',
+  SINGLE_QUOTE: `'`,
+  DOUBLE_QUOTE: `"`,
+  PRINT: 'print',
 };

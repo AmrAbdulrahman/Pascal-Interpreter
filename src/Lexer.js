@@ -3,6 +3,7 @@ const {
   NEWLINE,
   INTEGER_CONST,
   REAL_CONST,
+  STRING_LITERAL,
   PLUS,
   MINUS,
   MULTIPLY,
@@ -19,6 +20,8 @@ const {
   SEMI,
   COLON,
   COMMA,
+  SINGLE_QUOTE,
+  DOUBLE_QUOTE,
 } = require('./constants');
 
 const Token = require('./Token');
@@ -50,6 +53,7 @@ class Lexer {
     this.currentChar = this.text[this.pos];
     this.rowNumber = 1;
     this.colNumber = 0;
+    this.currentTokenColPos = null;
   }
 
   fail() {
@@ -79,7 +83,7 @@ class Lexer {
     while (this.currentChar === SPACE || this.currentChar === NEWLINE) {
       if (this.currentChar === NEWLINE) {
         this.rowNumber++;
-        this.colNumber = 0;
+        this.colNumber = -1;
       }
 
       this.advance();
@@ -124,15 +128,65 @@ class Lexer {
     const keyword = RESERVED_KEYWORDS[idUpperCase];
 
     if (keyword) {
-      const row = this.row;
-      const col = this.col - (keyword.value + '').length;
-
-      keyword.setLocation(row, col);
+      keyword.setLocation(this.row, this.col - keyword.value.length);
 
       return keyword;
     }
 
     return this.newToken(ID, idStr);
+  }
+
+  readString() {
+    const openingChar = this.currentChar;
+    let str = '';
+
+    this.advance(); // opening single/double quote
+
+    // @TODO: handle char escapes
+    while (this.currentChar !== openingChar) {
+      if (this.currentChar === '\\') {
+        str += this.advance();
+      }
+
+      str += this.advance();
+    }
+
+    this.advance(); // closing single/double quote
+
+    // escape characters
+    str = str
+      .replace(/\\n/g, `\n`)
+      .replace(/\\'/g, `'`)
+      .replace(/\\"/g, `"`);
+
+    return this.newToken(STRING_LITERAL, str);
+  }
+
+  readArithmeticOperator() {
+    let type = null;
+
+    switch (this.currentChar) {
+      case '+':
+        type = PLUS; break;
+      case '-':
+        type = MINUS; break;
+      case '*':
+        type = MULTIPLY; break;
+      case '/':
+        type = FLOAT_DIVISION; break;
+    }
+
+    if (this.peek(this.pos, 4).toLowerCase() === 'div ') {
+      type = INTEGER_DIVISION;
+    }
+
+    if (type === null) {
+      throw new Error(`Unable to map arithmetic operator`);
+    }
+
+    const operator = type === INTEGER_DIVISION ? this.advance(3) : this.advance();
+
+    return this.newToken(type, operator);
   }
 
   getNextToken() {
@@ -145,6 +199,10 @@ class Lexer {
       if (this.currentChar === '{') {
         this.skipComment();
         continue;
+      }
+
+      if (this.currentChar === SINGLE_QUOTE || this.currentChar === DOUBLE_QUOTE) {
+        return this.readString();
       }
 
       if (this.peek(this.pos, 2) === ':=') {
@@ -207,38 +265,8 @@ class Lexer {
     );
   }
 
-  readArithmeticOperator() {
-    let type = null;
-
-    switch (this.currentChar) {
-      case '+':
-        type = PLUS; break;
-      case '-':
-        type = MINUS; break;
-      case '*':
-        type = MULTIPLY; break;
-      case '/':
-        type = FLOAT_DIVISION; break;
-    }
-
-    if (this.peek(this.pos, 4).toLowerCase() === 'div ') {
-      type = INTEGER_DIVISION;
-    }
-
-    if (type === null) {
-      throw new Error(`Unable to map arithmetic operator`);
-    }
-
-    const operator = type === INTEGER_DIVISION ? this.advance(3) : this.advance();
-
-    return this.newToken(type, operator);
-  }
-
   newToken(type, value) {
-    const row = this.row;
-    const col = this.col - (value + '').length;
-
-    return new Token(type, value, row, col);
+    return new Token(type, value, this.row, this.col - (value + '').length);
   }
 
   get row() {

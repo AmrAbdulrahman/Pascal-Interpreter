@@ -13,4 +13,5 @@ module.exports = {
   ProcedureDecl: require('./ProcedureDecl'),
   ProcedureInvokation: require('./ProcedureInvokation'),
   Return: require('./Return'),
+  Str: require('./Str'),
 };

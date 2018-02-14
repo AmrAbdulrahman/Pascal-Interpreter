@@ -2,6 +2,7 @@ const {
   PROGRAM,
   INTEGER_CONST,
   REAL_CONST,
+  STRING_LITERAL,
   PLUS,
   MINUS,
   MULTIPLY,
@@ -41,27 +42,65 @@ const {
   ProcedureDecl,
   ProcedureInvokation,
   Return,
+  Str,
 } = require('./ASTNodes');
+
+const { concat, repeat } = require('./utils');
+
+const TOKENS_IN_ADVANCE = 3;
 
 class Parser {
   constructor(lexer) {
     this.lexer = lexer;
+    this.tokens = [];
+    this.codeLines = lexer.text.split('\n');
+
     this.currentToken = lexer.getNextToken();
+
+    for (let i = 0; i < TOKENS_IN_ADVANCE; i++) {
+      this.tokens.push(lexer.getNextToken());
+    }
   }
 
   fail(err) {
     const row = this.currentToken.rowNumber;
     const col = this.currentToken.colNumber;
 
-    throw new Error(`${row}:${col} Invalid syntax: ` + (err || 'unexpected token'));
+    throw new Error(`${this.failPositionPreview(row, col)}Invalid syntax: ` + (err || 'unexpected token'));
+  }
+
+  failPositionPreview(row, col) {
+    const previousLineNumber = `${row - 1}: `;
+    const lineNumber = `${row}: `;
+    const pointerLine = repeat(' ', lineNumber.length + col) + '^';
+
+    return [
+      '\n...\n' + (row > 1 ? previousLineNumber + this.codeLines[row - 2] : ''),
+      lineNumber + this.codeLines[row - 1],
+      pointerLine,
+      '...\n'
+    ].join('\n');
+  }
+
+  validateCurrentToken(types, message) {
+    if (types.indexOf(this.currentToken.type) !== -1) {
+      this.currentToken = this.tokens.shift();
+      this.tokens.push(this.lexer.getNextToken());
+    } else {
+      this.fail(`Expected ${types.join('|')} but found ${this.currentToken.type}`);
+    }
   }
 
   eat(...types) {
-    if (types.indexOf(this.currentToken.type) !== -1) {
-      this.currentToken = this.lexer.getNextToken();
-    } else {
-      this.fail(`Expected ${types.join('|')}`);
+    this.validateCurrentToken(types);
+  }
+
+  nextToken(n = 1) {
+    if (n < 1 || n > TOKENS_IN_ADVANCE) {
+      throw new Error(`Parser: next token number range [1, ${TOKENS_IN_ADVANCE}]`);
     }
+
+    return this.tokens[n - 1];
   }
 
   program() {
@@ -93,17 +132,19 @@ class Parser {
     const procedureNodes = [];
 
     while (this.currentToken.is(VAR, PROCEDURE)) {
+      // VAR declarations statement
       if (this.currentToken.is(VAR)) {
         this.eat(VAR);
 
-        while (this.currentToken.is(ID)) {
-          varNodes.push(this.variable_declaration());
+        do {
+          concat(varNodes, this.variable_declaration());
           this.eat(SEMI);
-        }
+        } while (this.currentToken.is(ID));
 
         continue;
       }
 
+      // PROCEDURE declaration
       if (this.currentToken.is(PROCEDURE)) {
         this.eat(PROCEDURE);
         const id = this.variable();
@@ -199,9 +240,13 @@ class Parser {
   }
 
   statement() {
-    // statement : compound_statement | assignment_statement | return_statement | empty
+    // statement : compound_statement | assignment_statement | procedure_invocation | return_statement | empty
     if (this.currentToken.is(BEGIN)) {
       return this.compound_statement();
+    }
+
+    if (this.currentToken.is(ID) && this.nextToken().is(OPENBRACE)) {
+      return this.procedure_invocation();
     }
 
     if (this.currentToken.is(ID)) {
@@ -215,8 +260,8 @@ class Parser {
     return this.empty();
   }
 
-  // return_statement : RETURN expr
   return_statement() {
+    // return_statement : RETURN expr
     this.eat(RETURN);
     return new Return(this.expr());
   }
@@ -265,6 +310,7 @@ class Parser {
     //        | OPENBRACE EXPR CLOSEBRACE
     //        | procedure_invocation
     //        | Variable
+    //        | String
     const token = this.currentToken;
 
     // +factor
@@ -287,40 +333,52 @@ class Parser {
        return exprNode;
     }
 
+    // str
+    if (this.currentToken.is(STRING_LITERAL)) {
+      this.eat(STRING_LITERAL);
+      return new Str(token);
+    }
+
     // INTEGER
     if (this.currentToken.is(INTEGER_CONST, REAL_CONST)) {
       this.eat(INTEGER_CONST, REAL_CONST);
       return new Num(token);
     }
 
-    // id => variable or procedure
-    const idToken = this.currentToken;
-    this.eat(ID);
-
-    // procedure invokation
-    if (this.currentToken.is(OPENBRACE)) {
-      this.eat(OPENBRACE);
-
-      const args = [];
-
-      // (arg (comma arg)*)
-      if (!this.currentToken.is(CLOSEBRACE)) {
-        args.push(this.expr()); // first arg
-
-        while (this.currentToken.is(COMMA)) {
-          this.eat(COMMA);
-          args.push(this.expr());
-        }
-      }
-
-      this.eat(CLOSEBRACE);
-
-      return new ProcedureInvokation(idToken, args);
+    // id()
+    if (this.currentToken.is(ID) && this.nextToken().is(OPENBRACE)) {
+      return this.procedure_invocation();
     }
 
-    return new Var(idToken);
+    // var
+    if (this.currentToken.is(ID)) {
+      return this.variable();
+    }
+
+    return null;
   }
 
+  procedure_invocation() {
+    const procedureName = this.currentToken;
+    const args = [];
+
+    this.eat(ID);
+    this.eat(OPENBRACE);
+
+    // (arg (comma arg)*)
+    if (!this.currentToken.is(CLOSEBRACE)) { // there's at least one param
+      args.push(this.expr()); // first arg
+
+      while (this.currentToken.is(COMMA)) { // then read pairs (COMMA ARG)
+        this.eat(COMMA);
+        args.push(this.expr());
+      }
+    }
+
+    this.eat(CLOSEBRACE);
+
+    return new ProcedureInvokation(procedureName, args);
+  }
 
   variable() {
     // variable: ID
