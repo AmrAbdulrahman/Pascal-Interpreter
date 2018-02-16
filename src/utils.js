@@ -47,6 +47,30 @@ function span(str, len) {
   return times(' ', len - str.length) + str;
 }
 
+function last(arr) {
+  return arr[arr.length - 1];
+}
+
+function failPositionCodePreview(row, col, code) {
+  const codeLines = code.split('\n');
+  const previousLineNumber = `${row}: `;
+  const lineNumber = `${row + 1}: `;
+  const pointerLine = repeat(' ', lineNumber.length + col) + '^';
+
+  return [
+    '\n...\n' + (row > 0 ? previousLineNumber + codeLines[row - 1] : ''),
+    lineNumber + codeLines[row],
+    pointerLine,
+    '...\n'
+  ].join('\n');
+}
+
+function log(...args) {
+  if (process.argv.indexOf('--enable-logs') !== -1) {
+    console.log.apply(console, args);
+  }
+}
+
 module.exports = {
   isDigit,
   isAlpha,
@@ -56,4 +80,7 @@ module.exports = {
   repeat,
   span,
   concat,
+  failPositionCodePreview,
+  last,
+  log,
 };

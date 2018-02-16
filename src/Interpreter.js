@@ -6,7 +6,6 @@ const BaseSymbol = require('./Symbols/BaseSymbol');
 const VarSymbol = require('./Symbols/VarSymbol');
 const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
 const Return = require('./ASTNodes/Return');
-const { CallStack, CallStackRecord } = require('./CallStack');
 
 const {
   PLUS,
@@ -15,6 +14,7 @@ const {
   INTEGER_DIVISION,
   FLOAT_DIVISION,
   PRINT,
+  TRUE,
 } = require('./constants');
 
 const { Num, BinOp } = require('./Parser');
@@ -25,7 +25,6 @@ class Interpreter extends NodeVisitor {
 
     this.parser = parser;
     this.currentScope = new BuiltinsScope();
-    //this.callStack = new CallStack()
   }
 
   visitProgram(node) {
@@ -43,12 +42,6 @@ class Interpreter extends NodeVisitor {
   }
 
   visitBlock(node) {
-    node.declarations.forEach(declaration => this.visit(declaration));
-
-    return this.visit(node.compound);
-  }
-
-  visitCompound(node) {
     for (let index in node.children) {
       const statement = node.children[index];
 
@@ -58,8 +51,6 @@ class Interpreter extends NodeVisitor {
 
       this.visit(statement);
     }
-
-    // a scope that has no Return statement returns `undefined`
   }
 
   visitVariableDeclaration(node) {
@@ -173,6 +164,25 @@ class Interpreter extends NodeVisitor {
     return returnValue;
   }
 
+  visitIf(node) {
+    for (var i = 0; i < node.ifs.length; i++) {
+      const { condition, body } = node.ifs[i];
+      const conditionValue = this.visit(condition);
+
+      if (conditionValue === true) {
+        return this.visit(body);
+      }
+    }
+
+    if (node.otherwise) {
+      return this.visit(node.otherwise);
+    }
+  }
+
+  visitCondition(node) {
+    return node.value === TRUE;
+  }
+
   print(node) {
     console.log.apply(console, node.args.map(arg => this.visit(arg)));
   }
@@ -185,8 +195,6 @@ class Interpreter extends NodeVisitor {
 
     // start the program interpretation
     return this.visit(ast);
-
-    return true;
   }
 }
 

@@ -1,3 +1,6 @@
+const { concat, failPositionCodePreview, last, log } = require('./utils');
+const Token = require('./Token');
+
 const {
   PROGRAM,
   INTEGER_CONST,
@@ -12,9 +15,8 @@ const {
   SPACE,
   OPENBRACE,
   CLOSEBRACE,
-  BEGIN,
-  END,
-  DOT,
+  OPEN_CURLY_BRACE,
+  CLOSE_CURLY_BRACE,
   ID,
   ASSIGN,
   SEMI,
@@ -25,6 +27,11 @@ const {
   REAL,
   PROCEDURE,
   RETURN,
+  IF,
+  ELSE,
+  OTHERWISE,
+  TRUE,
+  FALSE,
 } = require('./constants');
 
 const {
@@ -33,7 +40,6 @@ const {
   BinOp,
   UnaryOp,
   Num,
-  Compound,
   NoOp,
   Var,
   Assign,
@@ -43,9 +49,9 @@ const {
   ProcedureInvokation,
   Return,
   Str,
+  If,
+  Condition,
 } = require('./ASTNodes');
-
-const { concat, repeat } = require('./utils');
 
 const TOKENS_IN_ADVANCE = 3;
 
@@ -53,7 +59,6 @@ class Parser {
   constructor(lexer) {
     this.lexer = lexer;
     this.tokens = [];
-    this.codeLines = lexer.text.split('\n');
 
     this.currentToken = lexer.getNextToken();
 
@@ -65,21 +70,19 @@ class Parser {
   fail(err) {
     const row = this.currentToken.rowNumber;
     const col = this.currentToken.colNumber;
+    const codePreview = failPositionCodePreview(row, col, this.lexer.text);
 
-    throw new Error(`${this.failPositionPreview(row, col)}Invalid syntax: ` + (err || 'unexpected token'));
+    throw new Error(`${codePreview}Invalid syntax: ` + (err || 'unexpected token'));
   }
 
-  failPositionPreview(row, col) {
-    const previousLineNumber = `${row - 1}: `;
-    const lineNumber = `${row}: `;
-    const pointerLine = repeat(' ', lineNumber.length + col) + '^';
+  eat(...types) {
+    this.validateCurrentToken(types);
+  }
 
-    return [
-      '\n...\n' + (row > 1 ? previousLineNumber + this.codeLines[row - 2] : ''),
-      lineNumber + this.codeLines[row - 1],
-      pointerLine,
-      '...\n'
-    ].join('\n');
+  eatOptional(...types) {
+    if (this.currentToken.is(...types)) {
+      this.eat(...types);
+    }
   }
 
   validateCurrentToken(types, message) {
@@ -91,104 +94,81 @@ class Parser {
     }
   }
 
-  eat(...types) {
-    this.validateCurrentToken(types);
+  insert(type) {
+    this.tokens.unshift(this.currentToken); // bring current token back
+    this.currentToken = new Token(type);
   }
 
   nextToken(n = 1) {
-    if (n < 1 || n > TOKENS_IN_ADVANCE) {
-      throw new Error(`Parser: next token number range [1, ${TOKENS_IN_ADVANCE}]`);
+    if (n < 1 || n > this.tokens.length) {
+      throw new Error(`Parser: next token number range [1, ${this.tokens.length}]`);
     }
 
     return this.tokens[n - 1];
   }
 
   program() {
-    // program : PROGRAM variable SEMI block DOT
+    log('program');
+    // program : PROGRAM variable block
+
     this.eat(PROGRAM);
     const programName = this.variable();
-    this.eat(SEMI);
     const blockNode = this.block();
-    this.eat(DOT);
 
     return new Program(programName, blockNode);
   }
 
   block() {
-    // block : declarations compound_statement
-    const declarations = this.declarations();
-    const compound = this.compound_statement();
+    log('block');
+    // block : OPEN_CURLY_BRACE compound_statement CLOSE_CURLY_BRACE
 
-    return new Block(declarations, compound);
-  }
-
-  declarations() {
-    // declarations : VAR (variable_declaration SEMI)+
-    //              | (PROCEDURE id (LPAREN ParamList RPAREN)? SEMI block SEMI)*
-    //              | empty
-
-
-    const varNodes = [];
-    const procedureNodes = [];
-
-    while (this.currentToken.is(VAR, PROCEDURE)) {
-      // VAR declarations statement
-      if (this.currentToken.is(VAR)) {
-        this.eat(VAR);
-
-        do {
-          concat(varNodes, this.variable_declaration());
-          this.eat(SEMI);
-        } while (this.currentToken.is(ID));
-
-        continue;
-      }
-
-      // PROCEDURE declaration
-      if (this.currentToken.is(PROCEDURE)) {
-        this.eat(PROCEDURE);
-        const id = this.variable();
-        let params = [];
-
-        if (this.currentToken.is(SEMI)) {
-          this.eat(SEMI);
-        } else {
-          this.eat(OPENBRACE);
-          params = this.params_list();
-          this.eat(CLOSEBRACE);
-          this.eat(SEMI);
-        }
-
-        const block = this.block();
-        this.eat(SEMI);
-        procedureNodes.push(new ProcedureDecl(id, params, block));
-      }
-    }
-
-    return [...varNodes, ...procedureNodes];
+    this.eat(OPEN_CURLY_BRACE);
+    const blockNode = new Block(this.statement_list());
+    this.eat(CLOSE_CURLY_BRACE);
+    return blockNode;
   }
 
   params_list() {
-    // params_list : params
-    //             | params SEMI params_list
+    log('params_list');
+    // params_list : params (SEMI params)*
 
-    const params = [...this.params()];
+    let params = [...this.params()];
 
     while (this.currentToken.is(SEMI)) {
       this.eat(SEMI);
-      params = [...params, ...this.params()];
+      concat(params, this.params());
     }
 
     return params;
   }
 
   params() {
-    // params : ID (COMMA ID)* COLON type
-    return this.variable_declaration();
+    log('params');
+    // params : variables_list COLON type
+
+    const variables = this.variables_list();
+    this.eat(COLON);
+    const typeNode = this.type_spec();
+
+    return variables.map(variable => new VariableDeclaration(variable, typeNode));
   }
 
-  variable_declaration() {
-    // variable_declaration : ID (COMMA ID)* COLON type
+  variables_declaration() {
+    log('variables_declaration');
+    // variable_declaration : VAR variables_list COLON type
+
+    this.eat(VAR);
+    const variables = this.variables_list();
+    this.eat(COLON);
+    const typeNode = this.type_spec();
+
+    return variables.map(variable => new VariableDeclaration(variable, typeNode));
+  }
+
+  variables_list() {
+    log('variables_list');
+    // variables_list: ID (COMMA ID)*
+
     const variables = [this.variable()];
 
     while (this.currentToken.is(COMMA)) {
@@ -196,13 +176,34 @@ class Parser {
       variables.push(this.variable());
     }
 
-    this.eat(COLON);
-    const typeNode = this.type_spec();
+    return variables;
+  }
 
-    return variables.map(variable => new VariableDeclaration(variable, typeNode));
+  procedure_declaration() {
+    log('procedure_declaration');
+    // procedure_declaration : PROCEDURE ID OPENBRACE params_list CLOSEBRACE block
+
+    this.eat(PROCEDURE);
+    const id = this.variable();
+    let params = [];
+
+    this.eat(OPENBRACE);
+
+    if (!this.currentToken.is(CLOSEBRACE)) {
+      params = this.params_list();
+    }
+
+    this.eat(CLOSEBRACE);
+
+    const block = this.block();
+
+    this.insert(SEMI); // auto insert SEMI after procedure declaration
+
+    return new ProcedureDecl(id, params, block);
   }
 
   type_spec() {
+    log('type_spec');
     const token = this.currentToken;
 
     if (this.currentToken.is(INTEGER)) {
@@ -214,21 +215,10 @@ class Parser {
     return new Type(token);
   }
 
-  compound_statement() {
-    // compound_statement : BEGIN statement_list END
-
-    this.eat(BEGIN);
-    const nodes = this.statement_list();
-    this.eat(END);
-
-    const compoundNode = new Compound();
-    nodes.forEach(node => compoundNode.children.push(node))
-
-    return compoundNode;
-  }
-
   statement_list() {
-    // statement_list : statement | statement SEMI statement_list
+    log('statement_list');
+    // statement_list : statement (SEMI statement)*
+
     const nodes = [this.statement()];
 
     while (this.currentToken.is(SEMI)) {
@@ -240,9 +230,22 @@ class Parser {
   }
 
   statement() {
-    // statement : compound_statement | assignment_statement | procedure_invocation | return_statement | empty
-    if (this.currentToken.is(BEGIN)) {
+    log('statement');
+    // statement : compound_statement
+    //           | assignment_statement
+    //           | procedure_invocation
+    //           | return_statement
+    //           | if_block
+    //           | var_declaration
+    //           | procedure_declaration
+    //           | empty
+
+    if (this.currentToken.is(OPEN_CURLY_BRACE)) {
       return this.compound_statement();
+    }
+
+    if (this.currentToken.is(IF)) {
+      return this.if_block();
     }
 
     if (this.currentToken.is(ID) && this.nextToken().is(OPENBRACE)) {
@@ -257,17 +260,110 @@ class Parser {
       return this.return_statement();
     }
 
+    if (this.currentToken.is(VAR)) {
+      return this.variables_declaration();
+    }
+
+    if (this.currentToken.is(PROCEDURE)) {
+      return this.procedure_declaration();
+    }
+
     return this.empty();
   }
 
+  if_block() {
+    log('if_block');
+    // if_block: if OPENBRACE condition CLOSEBRACE statement_or_block (ELSE IF condition statement_or_block)* (OTHERWISE statement_or_block)?
+
+    const ifs = [];
+    let condition = null;
+    let body = null;
+    let otherwise = null;
+
+    this.eat(IF);
+    this.eat(OPENBRACE);
+    condition = this.condition();
+    this.eat(CLOSEBRACE);
+    body = this.statement_or_block();
+
+    ifs.push({
+      condition,
+      body,
+    });
+
+    // else if*
+    while (this.currentToken.is(ELSE) && this.nextToken().is(IF)) {
+      this.eat(ELSE);
+      this.eat(IF);
+      this.eat(OPENBRACE);
+      condition = this.condition();
+      this.eat(CLOSEBRACE);
+      body = this.statement_or_block();
+
+      ifs.push({
+        condition,
+        body,
+      });
+    }
+
+    if (this.currentToken.is(OTHERWISE)) {
+      this.eat(OTHERWISE);
+
+      if (this.currentToken.is(OPEN_CURLY_BRACE)) {
+        otherwise = this.block();
+      } else {
+        otherwise = this.statement();
+        this.eatOptional(SEMI);
+      }
+    }
+
+    this.insert(SEMI); // auto insert SEMI after if statement
+
+    return new If(ifs, otherwise);
+  }
+
+  statement_or_block() {
+    log('statement_or_block');
+    // statement_or_block : (statement SEMI?) | block
+
+    if (this.currentToken.is(OPEN_CURLY_BRACE)) {
+      return this.block();
+    } else {
+      const res = this.statement();
+      this.eatOptional(SEMI);
+      return res;
+    }
+  }
+
+  condition() {
+    log('condition');
+    // condition: TRUE | FALSE
+
+    const currentToken = this.currentToken;
+
+    if (this.currentToken.is(TRUE)) {
+      this.eat(TRUE);
+      return new Condition(currentToken);
+    } else if (this.currentToken.is(FALSE)) {
+      this.eat(FALSE);
+      return new Condition(currentToken);
+    }
+
+    throw new Error(`Invalid condition`);
+  }
+
   return_statement() {
+    log('return_statement');
     // return_statement : RETURN expr
+
     this.eat(RETURN);
     return new Return(this.expr());
   }
 
   assignment_statement() {
+    log('assignment_statement');
     // assignment_statement : variable ASSIGN expr
+
     const leftNode = this.variable();
     const operatorNode = this.operator(ASSIGN);
     const rightNode = this.expr();
@@ -276,7 +372,9 @@ class Parser {
   }
 
   expr() {
-    // EXPR : TERM ((PLUS | MINUS) TERM)*
+    log('expr');
+    // expr : term ((PLUS | MINUS) term)*
+
     let node = this.term();
 
     while (this.currentToken.is(PLUS, MINUS)) {
@@ -290,7 +388,8 @@ class Parser {
   }
 
   term() {
-    // TERM : FACTOR ((MUL | DIV) FACTOR)*
+    log('term');
+    // term : factor ((MUL | DIV) factor)*
     let node = this.factor();
 
     while (this.currentToken.is(MULTIPLY, INTEGER_DIVISION, FLOAT_DIVISION)) {
@@ -304,13 +403,15 @@ class Parser {
   }
 
   factor() {
-    // FACTOR : (PLUS | MINUS) FACTOR
+    log('factor');
+    // factor : (PLUS | MINUS) FACTOR
     //        | INTEGER_CONST
     //        | REAL_CONST
     //        | OPENBRACE EXPR CLOSEBRACE
     //        | procedure_invocation
     //        | Variable
     //        | String
+
     const token = this.currentToken;
 
     // +factor
@@ -359,6 +460,9 @@ class Parser {
   }
 
   procedure_invocation() {
+    // procedure_invocation: ID OPENBRACE args_list CLOSEBRACE
+    log('procedure_invocation');
+
     const procedureName = this.currentToken;
     const args = [];
 
@@ -381,7 +485,9 @@ class Parser {
   }
 
   variable() {
+    log('variable');
     // variable: ID
+
     const variableNode = new Var(this.currentToken);
     this.eat(ID);
     return variableNode;
@@ -401,7 +507,7 @@ class Parser {
   parse() {
     const ast = this.program();
 
-    if (this.lexer.getNextToken().type !== EOF) {
+    if (this.lexer.getNextToken().is(EOF) === false) {
       this.fail();
     }
 

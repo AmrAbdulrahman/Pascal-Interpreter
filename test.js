@@ -22,6 +22,6 @@ describe('Interpreter', () => {
       .readFileSync('./test.program.pc')
       .toString();
 
-    interpret(sourceCode).should.equal(7);
+    interpret(sourceCode).should.equal(4);
   });
 });

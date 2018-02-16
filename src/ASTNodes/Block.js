@@ -1,11 +1,10 @@
 const ASTNode = require('./ASTNode');
 
 module.exports = class Block extends ASTNode {
-  constructor(declarations, compound) {
+  constructor(children) {
     super();
 
-    this.declarations = declarations;
-    this.compound = compound;
+    this.children = children;
   }
 
   valueOf() {

@@ -3,7 +3,6 @@ module.exports = {
   UnaryOp: require('./UnaryOp'),
   Num: require('./Num'),
   Assign: require('./Assign'),
-  Compound: require('./Compound'),
   NoOp: require('./NoOp'),
   Var: require('./Var'),
   Block: require('./Block'),
@@ -14,4 +13,6 @@ module.exports = {
   ProcedureInvokation: require('./ProcedureInvokation'),
   Return: require('./Return'),
   Str: require('./Str'),
+  If: require('./If'),
+  Condition: require('./Condition'),
 };

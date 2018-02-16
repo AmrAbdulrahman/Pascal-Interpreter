@@ -12,9 +12,8 @@ const {
   EOF,
   OPENBRACE,
   CLOSEBRACE,
-  BEGIN,
-  END,
-  DOT,
+  OPEN_CURLY_BRACE,
+  CLOSE_CURLY_BRACE,
   ID,
   ASSIGN,
   SEMI,
@@ -25,13 +24,19 @@ const {
 } = require('./constants');
 
 const Token = require('./Token');
-const { isDigit, isAlpha, matchIDCharset } = require('./utils');
+const { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } = require('./utils');
 
 const RESERVED_KEYWORDS = {
   // program
   PROGRAM: new Token('PROGRAM', 'PROGRAM'),
   PROCEDURE: new Token('PROCEDURE', 'PROCEDURE'),
   RETURN: new Token('RETURN', 'RETURN'),
+
+  IF: new Token('IF', 'IF'),
+  ELSE: new Token('ELSE', 'ELSE'),
+  OTHERWISE: new Token('OTHERWISE', 'OTHERWISE'),
+  TRUE: new Token('TRUE', 'TRUE'),
+  FALSE: new Token('FALSE', 'FALSE'),
 
   // types
   INTEGER: new Token('INTEGER', 'INTEGER'),
@@ -51,24 +56,29 @@ class Lexer {
     this.text = text;
     this.pos = 0;
     this.currentChar = this.text[this.pos];
-    this.rowNumber = 1;
+    this.rowNumber = 0;
     this.colNumber = 0;
-    this.currentTokenColPos = null;
   }
 
   fail() {
-    throw new Error(`Invalid character`);
+    const codePreview = failPositionCodePreview(this.rowNumber, this.colNumber, this.text);
+
+    throw new Error(`${codePreview}Unexpected character '${this.currentChar}'`);
   }
 
   peek(from = this.pos + 1, len = 1) {
     return this.text.substr(from, len);
   }
 
-  advance(count = 1) {
-    const res = this.text.substr(this.pos, count);
+  advanceOneChar() {
+    if (this.currentChar === NEWLINE) {
+      this.rowNumber++;
+      this.colNumber = -1;
+    }
 
-    this.pos += count;
-    this.colNumber += count;
+    const currentCharBeforeAdvance = this.currentChar;
+    this.pos ++;
+
 
     if (this.pos < this.text.length) {
       this.currentChar = this.text[this.pos];
@@ -76,26 +86,31 @@ class Lexer {
       this.currentChar = null;
     }
 
+    return currentCharBeforeAdvance;
+  }
+
+  advance(count = 1) {
+    let res = '';
+
+    while (count--) {
+      res += this.advanceOneChar();
+    }
+
     return res;
   }
 
   skipWhiteSpace() {
-    while (this.currentChar === SPACE || this.currentChar === NEWLINE) {
-      if (this.currentChar === NEWLINE) {
-        this.rowNumber++;
-        this.colNumber = -1;
-      }
-
+    while (this.currentCharIs(SPACE) || this.currentCharIs(NEWLINE)) {
       this.advance();
     }
   }
 
   skipLineComment() {
-    while (this.currentChar !== NEWLINE) {
+    while (this.currentCharIs(NEWLINE) === false) {
       this.advance();
     }
 
-    this.advance();
+    this.advance(); // skip \n
   }
 
   skipBlockComment() {
@@ -103,7 +118,7 @@ class Lexer {
       this.advance();
     }
 
-    this.advance(2);
+    this.advance(2); // skip */
   }
 
   readNumber() {
@@ -137,7 +152,6 @@ class Lexer {
 
     if (keyword) {
       keyword.setLocation(this.row, this.col - keyword.value.length);
-
       return keyword;
     }
 
@@ -150,7 +164,6 @@ class Lexer {
 
     this.advance(); // opening single/double quote
 
-    // @TODO: handle char escapes
     while (this.currentChar !== openingChar) {
       if (this.currentChar === '\\') {
         str += this.advance();
@@ -244,6 +257,14 @@ class Lexer {
 
       if (this.currentCharIs(')')) {
         return this.newToken(CLOSEBRACE, this.advance());
+      }
+
+      if (this.currentCharIs('{')) {
+        return this.newToken(OPEN_CURLY_BRACE, this.advance());
+      }
+
+      if (this.currentCharIs('}')) {
+        return this.newToken(CLOSE_CURLY_BRACE, this.advance());
       }
 
       if (this.currentCharIsArithmeticOperator()) {

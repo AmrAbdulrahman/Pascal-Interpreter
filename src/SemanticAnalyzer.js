@@ -28,12 +28,6 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitBlock(node) {
-    node.declarations.forEach(declaration => this.visit(declaration));
-
-    this.visit(node.compound);
-  }
-
-  visitCompound(node) {
     node.children.forEach(statement => this.visit(statement));
   }
 
@@ -51,6 +45,10 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitStr(node) {
+    // do nothing
+  }
+
+  visitCondition(node) {
     // do nothing
   }
 
@@ -76,14 +74,14 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     node.params.forEach(param => {
       const paramType = this.currentScope.lookup(param.type.value);
       const paramName = param.variable.value;
-      const varSymbol = new VarSymbol(paramName, paramType);
+      const paramSymbol = new VarSymbol(paramName, paramType);
 
       if (this.currentScope.has(paramName)) {
-        throw new Error(`Duplicate parameter '${varName}'`);
+        throw new Error(`Duplicate parameter '${paramName}'`);
       }
 
-      this.currentScope.insert(varSymbol);
-      procedureSymbol.params.push(varSymbol);
+      this.currentScope.insert(paramSymbol);
+      procedureSymbol.params.push(paramSymbol);
     });
 
     // visit function body
@@ -131,6 +129,18 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
 
   visitReturn(node) {
     this.visit(node.expr);
+  }
+
+  visitIf(node) {
+    for (var i = 0; i < node.ifs.length; i++) {
+      const { condition, body } = node.ifs[i];
+      this.visit(condition);
+      this.visit(body);
+    }
+
+    if (node.otherwise) {
+      this.visit(node.otherwise);
+    }
   }
 
   visitProcedureInvokation(node) {
