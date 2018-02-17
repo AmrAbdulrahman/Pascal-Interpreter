@@ -31,14 +31,7 @@ class Interpreter extends NodeVisitor {
     const appName = new BaseSymbol(node.id.value);
     this.currentScope.insert(appName);
 
-    // open global scope
-    this.currentScope = new Scope('global', this.currentScope);
-
-    const returnValue = this.visit(node.block);
-
-    this.currentScope = this.currentScope.parent;
-
-    return returnValue;
+    return this.visit(node.block);
   }
 
   visitBlock(node) {
@@ -51,6 +44,16 @@ class Interpreter extends NodeVisitor {
 
       this.visit(statement);
     }
+  }
+
+  visitScopedBlock(node) {
+    this.currentScope = new Scope('block', this.currentScope);
+
+    const blockReturnValue = this.visitBlock(node);
+
+    this.currentScope = this.currentScope.parent;
+
+    return blockReturnValue;
   }
 
   visitVariableDeclaration(node) {

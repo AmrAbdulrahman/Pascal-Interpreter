@@ -37,6 +37,7 @@ const {
 const {
   Program,
   Block,
+  ScopedBlock,
   BinOp,
   UnaryOp,
   Num,
@@ -113,19 +114,31 @@ class Parser {
 
     this.eat(PROGRAM);
     const programName = this.variable();
-    const blockNode = this.block();
+    const blockNode = this.scoped_block();
 
     return new Program(programName, blockNode);
   }
 
+  // this is just a block, it does't open a new scope
+  // it's useful as `function`, `while`, or `for` body
   block() {
     log('block');
-    // block : OPEN_CURLY_BRACE compound_statement CLOSE_CURLY_BRACE
+    // block : OPEN_CURLY_BRACE block CLOSE_CURLY_BRACE
 
     this.eat(OPEN_CURLY_BRACE);
     const blockNode = new Block(this.statement_list());
     this.eat(CLOSE_CURLY_BRACE);
     return blockNode;
+  }
+
+  scoped_block() {
+    // scoped_block : OPEN_CURLY_BRACE block CLOSE_CURLY_BRACE
+    log('scoped_block');
+
+    this.eat(OPEN_CURLY_BRACE);
+    const scopedBlockNode = new ScopedBlock(this.statement_list());
+    this.eat(CLOSE_CURLY_BRACE);
+    return scopedBlockNode;
   }
 
   params_list() {
@@ -231,18 +244,13 @@ class Parser {
 
   statement() {
     log('statement');
-    // statement : compound_statement
-    //           | assignment_statement
+    // statement : assignment_statement
     //           | procedure_invocation
     //           | return_statement
     //           | if_block
     //           | var_declaration
     //           | procedure_declaration
     //           | empty
-
-    if (this.currentToken.is(OPEN_CURLY_BRACE)) {
-      return this.compound_statement();
-    }
 
     if (this.currentToken.is(IF)) {
       return this.if_block();
@@ -284,7 +292,7 @@ class Parser {
     this.eat(OPENBRACE);
     condition = this.condition();
     this.eat(CLOSEBRACE);
-    body = this.statement_or_block();
+    body = this.statement_or_scoped_block();
 
     ifs.push({
       condition,
@@ -298,7 +306,7 @@ class Parser {
       this.eat(OPENBRACE);
       condition = this.condition();
       this.eat(CLOSEBRACE);
-      body = this.statement_or_block();
+      body = this.statement_or_scoped_block();
 
       ifs.push({
         condition,
@@ -308,13 +316,7 @@ class Parser {
 
     if (this.currentToken.is(OTHERWISE)) {
       this.eat(OTHERWISE);
-
-      if (this.currentToken.is(OPEN_CURLY_BRACE)) {
-        otherwise = this.block();
-      } else {
-        otherwise = this.statement();
-        this.eatOptional(SEMI);
-      }
+      otherwise = this.statement_or_scoped_block();
     }
 
     this.insert(SEMI); // auto insert SEMI after if statement
@@ -322,16 +324,16 @@ class Parser {
     return new If(ifs, otherwise);
   }
 
-  statement_or_block() {
+  statement_or_scoped_block() {
     log('statement_or_block');
-    // statement_or_block : (statement SEMI?) | block
+    // statement_or_block : (statement SEMI?) | scoped_block
 
     if (this.currentToken.is(OPEN_CURLY_BRACE)) {
-      return this.block();
+      return this.scoped_block();
     } else {
-      const res = this.statement();
+      const statement = this.statement();
       this.eatOptional(SEMI);
-      return res;
+      return statement;
     }
   }
 

@@ -13,7 +13,7 @@ program Main {
      var x : integer;
      return 1;
    } otherwise {
-     var1 x : integer;
+     var x : integer;
      return 2;
    }
   }

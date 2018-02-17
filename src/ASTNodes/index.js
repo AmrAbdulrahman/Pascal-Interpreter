@@ -6,6 +6,7 @@ module.exports = {
   NoOp: require('./NoOp'),
   Var: require('./Var'),
   Block: require('./Block'),
+  ScopedBlock: require('./ScopedBlock'),
   Program: require('./Program'),
   Type: require('./Type'),
   VariableDeclaration: require('./VariableDeclaration'),

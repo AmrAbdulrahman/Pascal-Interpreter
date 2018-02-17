@@ -18,17 +18,19 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     const appName = new BaseSymbol(node.id.value);
     this.currentScope.insert(appName);
 
-    // open global scope
-    this.currentScope = new Scope('global', this.currentScope);
-
     this.visit(node.block);
-
-    // close global scope
-    this.currentScope = this.currentScope.parent;
   }
 
   visitBlock(node) {
     node.children.forEach(statement => this.visit(statement));
+  }
+
+  visitScopedBlock(node) {
+    this.currentScope = new Scope('block', this.currentScope);
+
+    this.visitBlock(node);
+
+    this.currentScope = this.currentScope.parent;
   }
 
   visitBinOp(node) {
