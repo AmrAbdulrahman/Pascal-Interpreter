@@ -13,7 +13,7 @@ const {
   INTEGER_DIVISION,
   FLOAT_DIVISION,
   PRINT,
-  TRUE,
+  EQUALS,
 } = require('./constants');
 
 const { Num, BinOp } = require('./Parser');
@@ -112,6 +112,8 @@ class Interpreter extends NodeVisitor {
         return left / right;
       case INTEGER_DIVISION:
         return Math.floor(left / right);
+      case EQUALS:
+        return left === right;
 
       default:
         throw new Error(`Unhandled operator type ${node.op.type}`);

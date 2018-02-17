@@ -42,6 +42,7 @@ const RESERVED_KEYWORDS = {
 
   // operators
   DIV: new Token('DIV', 'DIV'),
+  EQUALS: new Token('EQUALS', 'EQUALS'),
 
   // block
   VAR: new Token('VAR', 'VAR'),

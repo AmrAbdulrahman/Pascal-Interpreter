@@ -30,8 +30,7 @@ const {
   IF,
   ELSE,
   OTHERWISE,
-  TRUE,
-  FALSE,
+  EQUALS,
 } = require('./constants');
 
 const {
@@ -365,7 +364,23 @@ class Parser {
 
   expr() {
     log('expr');
-    // expr : term ((PLUS | MINUS) term)*
+    // expr : sub_expr (EQUALS sub_expr)*
+
+    let leftSideNode = this.sub_expr();
+
+    while (this.currentToken.is(EQUALS)) {
+      let operator = this.operator(EQUALS);
+      let rightSideNode = this.sub_expr();
+
+      leftSideNode = new BinOp(leftSideNode, operator, rightSideNode);
+    }
+
+    return leftSideNode;
+  }
+
+  sub_expr() {
+    log('sub_expr');
+    // sub_expr : term ((PLUS | MINUS) term)*
 
     let node = this.term();
 

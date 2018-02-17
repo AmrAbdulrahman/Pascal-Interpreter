@@ -8,8 +8,8 @@ program Main {
      return res;
   }
 
-  if (null) {
-    print('boolean!');
+  if (1 equals 1) {
+    print('ooooh god!!');
   } otherwise {
     print('null works!')
   }
