@@ -3,6 +3,7 @@ const Scope = require('./Scope');
 const BuiltinsScope = require('./BuiltinsScope');
 const BaseSymbol = require('./Symbols/BaseSymbol');
 const VarSymbol = require('./Symbols/VarSymbol');
+const BuiltinVarSymbol = require('./Symbols/BuiltinVarSymbol');
 const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
 const { PRINT } = require('./constants');
 
@@ -51,7 +52,7 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitCondition(node) {
-    // do nothing
+    this.visit(node.expr);
   }
 
   visitUnaryOp(node) {
@@ -99,6 +100,11 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
     const typeSymbol = this.currentScope.lookup(typeName);
     const varName = node.variable.value;
     const alreadyExists = this.currentScope.has(varName);
+    const existingVarSymbol = this.currentScope.lookup(varName)
+
+    if (existingVarSymbol instanceof BuiltinVarSymbol) {
+      throw new Error(`Can't declare a variable with reserved keyword '${varName}'`);
+    }
 
     if (alreadyExists === true) {
       throw new Error(`${node.variable.token.getLocation()} Duplicate identifier '${varName}' found`);
@@ -112,6 +118,10 @@ module.exports = class SemanticAnalyzer extends NodeVisitor {
   visitAssign(node) {
     const varName = node.left.value;
     const varSymbol = this.currentScope.lookup(varName);
+
+    if (varSymbol instanceof BuiltinVarSymbol) {
+      throw new Error(`Can't assign value to builtin symbol '${varSymbol.name}'`);
+    }
 
     if (varSymbol === null) {
       throw new Error(`Undeclared variable ${varName}`);

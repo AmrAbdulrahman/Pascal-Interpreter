@@ -8,21 +8,18 @@ program Main {
      return res;
   }
 
-  procedure conditionalProcedure(n : integer) {
-   if (true) {
-     print('inside first if');
-     if (false) {
-        print('inside inner if');
-        return 15;
-     }
-     print('after inner if');
+  if (null) {
+    print('boolean!');
+  } otherwise {
+    print('null works!')
+  }
 
-     return n;
-     print('definitely unreachable');
-   } otherwise {
-     var x : integer;
-     return n + 2;
-   }
+  procedure factorial(n : integer) {
+    if (n) {
+      return n * factorial(n - 1);
+    }
+
+    return 1;
   }
 
 
@@ -38,9 +35,9 @@ program Main {
   //  return square(n) + cube(n);
   // end;
 
-  if (false)
+  if (0)
     print('true amr hehe :D');
-  else if (true)
+  else if (1)
     print('else if works!');
   otherwise
     print('false value found!');
@@ -58,7 +55,7 @@ program Main {
   // print("string with special \n\'\" characters");
   // print(conditionalProcedure(1));
 
-  print('ss', s);
+  // print('ss', s);
 
-  return conditionalProcedure(8);
+  return factorial(4);
 }

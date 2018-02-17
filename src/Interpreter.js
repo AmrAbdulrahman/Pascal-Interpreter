@@ -196,7 +196,7 @@ class Interpreter extends NodeVisitor {
   }
 
   visitCondition(node) {
-    return node.value === TRUE;
+    return !!this.visit(node.expr);
   }
 
   print(node) {

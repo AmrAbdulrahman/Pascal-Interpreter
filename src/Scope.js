@@ -15,13 +15,10 @@ module.exports = class Scope {
   }
 
   insert(symbol) {
-    //console.log('Define', symbol.toString());
-    this.symbols[symbol.name] = symbol;
+    return this.symbols[symbol.name] = symbol;
   }
 
   lookup(name) {
-    //console.log('Lookup', name, `(${this.scopeName})`);
-
     if (this.symbols[name]) {
       return this.symbols[name];
     }

@@ -24,6 +24,7 @@ module.exports = {
   INTEGER: 'INTEGER',
   REAL: 'REAL',
   STRING: 'STRING',
+  BOOLEAN: 'BOOLEAN',
   IF: 'IF',
   ELSE: 'ELSE',
   OTHERWISE: 'OTHERWISE',

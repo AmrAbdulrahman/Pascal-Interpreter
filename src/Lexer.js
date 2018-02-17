@@ -35,8 +35,6 @@ const RESERVED_KEYWORDS = {
   IF: new Token('IF', 'IF'),
   ELSE: new Token('ELSE', 'ELSE'),
   OTHERWISE: new Token('OTHERWISE', 'OTHERWISE'),
-  TRUE: new Token('TRUE', 'TRUE'),
-  FALSE: new Token('FALSE', 'FALSE'),
 
   // types
   INTEGER: new Token('INTEGER', 'INTEGER'),

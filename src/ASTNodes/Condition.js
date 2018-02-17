@@ -1,14 +1,13 @@
 const ASTNode = require('./ASTNode');
 
 module.exports = class Condition extends ASTNode {
-  constructor(token) {
+  constructor(expr) {
     super();
 
-    this.token = token;
-    this.value = token.value;
+    this.expr = expr;
   }
 
   valueOf() {
-    return this.value;
+    return this.name;
   }
 }

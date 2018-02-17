@@ -339,19 +339,9 @@ class Parser {
 
   condition() {
     log('condition');
-    // condition: TRUE | FALSE
+    // condition: expr
 
-    const currentToken = this.currentToken;
-
-    if (this.currentToken.is(TRUE)) {
-      this.eat(TRUE);
-      return new Condition(currentToken);
-    } else if (this.currentToken.is(FALSE)) {
-      this.eat(FALSE);
-      return new Condition(currentToken);
-    }
-
-    throw new Error(`Invalid condition`);
+    return new Condition(this.expr());
   }
 
   return_statement() {
@@ -458,7 +448,7 @@ class Parser {
       return this.variable();
     }
 
-    return null;
+    this.fail('Expected expression');
   }
 
   procedure_invocation() {
