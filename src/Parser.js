@@ -68,8 +68,8 @@ class Parser {
   }
 
   fail(err) {
-    const row = this.currentToken.rowNumber;
-    const col = this.currentToken.colNumber;
+    const row = this.currentToken.rowIndex;
+    const col = this.currentToken.colIndex;
     const codePreview = failPositionCodePreview(row, col, this.lexer.text);
 
     throw new Error(`${codePreview}Invalid syntax: ` + (err || 'unexpected token'));

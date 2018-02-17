@@ -78,6 +78,7 @@ class Lexer {
 
     const currentCharBeforeAdvance = this.currentChar;
     this.pos ++;
+    this.colNumber++;
 
 
     if (this.pos < this.text.length) {

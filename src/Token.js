@@ -1,22 +1,22 @@
 class Token {
-  constructor(type, value, rowNumber, colNumber) {
+  constructor(type, value, rowIndex, colIndex) {
     this.type = type;
     this.value = value;
-    this.rowNumber = rowNumber;
-    this.colNumber = colNumber;
+    this.rowIndex = rowIndex;
+    this.colIndex = colIndex;
   }
 
   toString() {
     return `Token(${this.type}, ${this.value})`;
   }
 
-  setLocation(row, col) {
-    this.rowNumber = row;
-    this.colNumber = col;
+  setLocation(rowIndex, colIndex) {
+    this.rowIndex = rowIndex;
+    this.colIndex = colIndex;
   }
 
   getLocation() {
-    return `(${this.rowNumber}:${this.colNumber})`;
+    return `(${this.rowIndex + 1}:${this.colIndex + 1})`;
   }
 
   repr() {

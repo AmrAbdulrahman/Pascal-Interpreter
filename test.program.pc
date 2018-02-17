@@ -8,13 +8,15 @@ program Main {
      return res;
   }
 
-  // procedure conditionalProcedure(n : integer) {
-  //  if (true) {
-  //    return 1;
-  //  } otherwise {
-  //    return 2;
-  //  }
-  // }
+  procedure conditionalProcedure(n : integer) {
+   if (true) {
+     var x : integer;
+     return 1;
+   } otherwise {
+     var1 x : integer;
+     return 2;
+   }
+  }
 
 
   // return expression on the fly
@@ -47,7 +49,7 @@ program Main {
   print('single quoted string');
   print("double quoted string");
   print("string with special \n\'\" characters");
-  // print(conditionalProcedure(1));
+  print(conditionalProcedure(1));
 
   return s;
 }
