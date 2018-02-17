@@ -26,29 +26,26 @@ const {
 const Token = require('./Token');
 const { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } = require('./utils');
 
-const RESERVED_KEYWORDS = {
-  // program
-  PROGRAM: new Token('PROGRAM', 'PROGRAM'),
-  PROCEDURE: new Token('PROCEDURE', 'PROCEDURE'),
-  RETURN: new Token('RETURN', 'RETURN'),
+const RESERVED_KEYWORDS = [
+  'PROGRAM',
+  'PROCEDURE',
+  'RETURN',
 
-  IF: new Token('IF', 'IF'),
-  ELSE: new Token('ELSE', 'ELSE'),
-  OTHERWISE: new Token('OTHERWISE', 'OTHERWISE'),
+  'IF',
+  'ELSE',
+  'OTHERWISE',
 
-  // types
-  INTEGER: new Token('INTEGER', 'INTEGER'),
-  REAL: new Token('REAL', 'REAL'),
+  'INTEGER',
+  'REAL',
+  'STRING',
+  'BOOLEAN',
 
-  // operators
-  DIV: new Token('DIV', 'DIV'),
-  EQUALS: new Token('EQUALS', 'EQUALS'),
+  'DIV',
+  'EQUALS',
+  'NOT',
 
-  // block
-  VAR: new Token('VAR', 'VAR'),
-  BEGIN: new Token('BEGIN', 'BEGIN'),
-  END: new Token('END', 'END'),
-};
+  'VAR',
+];
 
 class Lexer {
   constructor(text) {
@@ -148,11 +145,10 @@ class Lexer {
     }
 
     const idUpperCase = idStr.toUpperCase();
-    const keyword = RESERVED_KEYWORDS[idUpperCase];
+    const keywordIndex = RESERVED_KEYWORDS.indexOf(idUpperCase);
 
-    if (keyword) {
-      keyword.setLocation(this.row, this.col - keyword.value.length);
-      return keyword;
+    if (keywordIndex !== -1) {
+      return this.newToken(idUpperCase, idUpperCase);
     }
 
     return this.newToken(ID, idStr);

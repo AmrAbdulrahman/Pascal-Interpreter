@@ -10,11 +10,6 @@ class Token {
     return `Token(${this.type}, ${this.value})`;
   }
 
-  setLocation(rowIndex, colIndex) {
-    this.rowIndex = rowIndex;
-    this.colIndex = colIndex;
-  }
-
   getLocation() {
     return `(${this.rowIndex + 1}:${this.colIndex + 1})`;
   }

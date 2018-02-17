@@ -31,6 +31,8 @@ const {
   ELSE,
   OTHERWISE,
   EQUALS,
+  NOT,
+  NOT_EQUALS,
 } = require('./constants');
 
 const {
@@ -364,18 +366,27 @@ class Parser {
 
   expr() {
     log('expr');
-    // expr : sub_expr (EQUALS sub_expr)*
+    // expr : sub_expr (NOT? EQUALS sub_expr)*
 
-    let leftSideNode = this.sub_expr();
+    let left = this.sub_expr();
 
-    while (this.currentToken.is(EQUALS)) {
-      let operator = this.operator(EQUALS);
-      let rightSideNode = this.sub_expr();
+    while (this.currentToken.is(EQUALS) || this.currentToken.is(NOT)) {
+      let operator;
 
-      leftSideNode = new BinOp(leftSideNode, operator, rightSideNode);
+      if (this.currentToken.is(EQUALS)) {
+        operator = this.operator(EQUALS);
+      } else {
+        this.eat(NOT);
+        this.eat(EQUALS);
+        operator = new Token(NOT_EQUALS);
+      }
+
+      let right = this.sub_expr();
+
+      left = new BinOp(left, operator, right);
     }
 
-    return leftSideNode;
+    return left;
   }
 
   sub_expr() {
