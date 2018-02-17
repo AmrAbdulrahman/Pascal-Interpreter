@@ -5,7 +5,6 @@ const BuiltinsScope = require('./BuiltinsScope');
 const BaseSymbol = require('./Symbols/BaseSymbol');
 const VarSymbol = require('./Symbols/VarSymbol');
 const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
-const Return = require('./ASTNodes/Return');
 
 const {
   PLUS,
@@ -19,6 +18,12 @@ const {
 
 const { Num, BinOp } = require('./Parser');
 
+class Return {
+  constructor(value) {
+    this.value = value;
+  }
+}
+
 class Interpreter extends NodeVisitor {
   constructor(parser) {
     super();
@@ -27,33 +32,41 @@ class Interpreter extends NodeVisitor {
     this.currentScope = new BuiltinsScope();
   }
 
+  openNewScope(name) {
+    this.currentScope = new Scope(name, this.currentScope);
+  }
+
+  closeCurrentScope() {
+    this.currentScope = this.currentScope.parent;
+  }
+
   visitProgram(node) {
     const appName = new BaseSymbol(node.id.value);
     this.currentScope.insert(appName);
 
-    return this.visit(node.block);
+    const returnValue = this.visit(node.block);
+    return returnValue instanceof Return ? returnValue.value : returnValue;
+  }
+
+  visitScopedBlock(node) {
+    this.openNewScope('block');
+
+    const blockReturnValue = this.visitBlock(node);
+
+    this.closeCurrentScope();
+
+    return blockReturnValue;
   }
 
   visitBlock(node) {
     for (let index in node.children) {
       const statement = node.children[index];
+      const statementValue = this.visit(statement);
 
-      if (statement instanceof Return) {
-        return this.visit(statement);
+      if (statementValue instanceof Return) {
+        return statementValue;
       }
-
-      this.visit(statement);
     }
-  }
-
-  visitScopedBlock(node) {
-    this.currentScope = new Scope('block', this.currentScope);
-
-    const blockReturnValue = this.visitBlock(node);
-
-    this.currentScope = this.currentScope.parent;
-
-    return blockReturnValue;
   }
 
   visitVariableDeclaration(node) {
@@ -118,7 +131,7 @@ class Interpreter extends NodeVisitor {
   }
 
   visitReturn(node) {
-    return this.visit(node.expr);
+    return new Return(this.visit(node.expr));
   }
 
   visitProcedureDecl(node) {
@@ -145,7 +158,7 @@ class Interpreter extends NodeVisitor {
     }
 
     // open invokation scope
-    this.currentScope = new Scope(procedureName, this.currentScope);
+    this.openNewScope(procedureName);
 
     procedureSymbol.params.forEach((param, index) => {
       const paramType = this.currentScope.lookup(param.type.value);
@@ -162,9 +175,9 @@ class Interpreter extends NodeVisitor {
     const returnValue = this.visit(procedureSymbol.block);
 
     // close invokation scope
-    this.currentScope = this.currentScope.parent;
+    this.closeCurrentScope();
 
-    return returnValue;
+    return returnValue instanceof Return ? returnValue.value : returnValue;
   }
 
   visitIf(node) {

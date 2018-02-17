@@ -10,11 +10,18 @@ program Main {
 
   procedure conditionalProcedure(n : integer) {
    if (true) {
-     var x : integer;
-     return 1;
+     print('inside first if');
+     if (false) {
+        print('inside inner if');
+        return 15;
+     }
+     print('after inner if');
+
+     return n;
+     print('definitely unreachable');
    } otherwise {
      var x : integer;
-     return 2;
+     return n + 2;
    }
   }
 
@@ -46,10 +53,12 @@ program Main {
 
   // argument as expression => function invokation
   // print('x =>', x, ' | sqr =>', s, ' | cube =>', c, ' | compose() =>', compose(x));
-  print('single quoted string');
-  print("double quoted string");
-  print("string with special \n\'\" characters");
-  print(conditionalProcedure(1));
+  // print('single quoted string');
+  // print("double quoted string");
+  // print("string with special \n\'\" characters");
+  // print(conditionalProcedure(1));
 
-  return s;
+  print('ss', s);
+
+  return conditionalProcedure(8);
 }
