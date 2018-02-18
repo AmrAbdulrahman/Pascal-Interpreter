@@ -19,6 +19,8 @@ const {
   OR,
   LESS_THAN,
   GREATER_THAN,
+  LESS_THAN_OR_EQUAL,
+  GREATER_THAN_OR_EQUAL,
 } = require('./constants');
 
 const { Num, BinOp } = require('./Parser');
@@ -129,6 +131,10 @@ class Interpreter extends NodeVisitor {
         return left < right;
       case GREATER_THAN:
         return left > right;
+      case LESS_THAN_OR_EQUAL:
+        return left <= right;
+      case GREATER_THAN_OR_EQUAL:
+        return left >= right;
 
       default:
         throw new Error(`Unhandled operator type ${node.op.type}`);

@@ -40,6 +40,9 @@ const {
   GREATER,
   GREATER_THAN,
   THAN,
+  EQUAL,
+  LESS_THAN_OR_EQUAL,
+  GREATER_THAN_OR_EQUAL,
 } = require('./constants');
 
 const {
@@ -437,25 +440,29 @@ class Parser {
   }
 
   expr_logical_less_or_geater_than() {
-    // expr_logical_less_or_geater_than: something ((LESSTHAN | GREETERTHAN) something)*
+    // expr_logical_less_or_geater_than: something ((LESS_THAN | GREETER_THAN | LESS_THAN_OR_EQUAL | GREATER_THAN_OR_EQUAL) something)*
     log('expr_logical_less_or_geater_than');
 
     const MYSELF = 'expr_logical_less_or_geater_than';
     let left = this.nextExprMethodOf(MYSELF);
 
-    while (this.currentToken.is(LESS, GREATER) && this.nextToken().is(THAN)) {
-      let operator;
+    while (this.currentToken.is(LESS, GREATER)) {
+      const isLess = this.currentToken.is(LESS);
+      let operatorKey;
 
-      if (this.currentToken.is(LESS)) {
-        this.eat(LESS);
-        operator = new Token(LESS_THAN);
-      } else {
-        this.eat(GREATER);
-        operator = new Token(GREATER_THAN);
-      }
-
+      this.eat(LESS, GREATER);
       this.eat(THAN);
 
+      if (this.currentToken.is(OR)) {
+        this.eat(OR);
+        this.eat(EQUAL);
+
+        operatorKey = isLess ? LESS_THAN_OR_EQUAL : GREATER_THAN_OR_EQUAL;
+      } else {
+        operatorKey = isLess ? LESS_THAN : GREATER_THAN;
+      }
+
+      let operator = new Token(operatorKey);
       let right = this.nextExprMethodOf(MYSELF);
 
       left = new BinOp(left, operator, right);

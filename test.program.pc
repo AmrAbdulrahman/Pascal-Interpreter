@@ -8,10 +8,10 @@ program Main {
      return res;
   }
 
-  if (1 less than 2 AND 10 equals 10 OR false) {
-    print('ooooh god!!');
+  if (2 less than or equal 1 OR 10 greater than or equal 10) {
+    print('fulfills');
   } otherwise {
-    print('null works!')
+    print('fails')
   }
 
   procedure factorial(n : integer) {
