@@ -8,7 +8,7 @@ program Main {
      return res;
   }
 
-  if (1 not equals 2 AND 10 equals 9 OR true) {
+  if (1 less than 2 AND 10 equals 10 OR false) {
     print('ooooh god!!');
   } otherwise {
     print('null works!')

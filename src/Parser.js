@@ -35,6 +35,11 @@ const {
   NOT_EQUALS,
   AND,
   OR,
+  LESS,
+  LESS_THAN,
+  GREATER,
+  GREATER_THAN,
+  THAN,
 } = require('./constants');
 
 const {
@@ -371,6 +376,7 @@ class Parser {
       'expr',
       'expr_logical_and_or',
       'expr_logical_equals',
+      'expr_logical_less_or_geater_than',
       'expr_arithmetic_plus',
       'expr_arithmetic_multiply',
       'expr_factor',
@@ -421,6 +427,34 @@ class Parser {
         this.eat(EQUALS);
         operator = new Token(NOT_EQUALS);
       }
+
+      let right = this.nextExprMethodOf(MYSELF);
+
+      left = new BinOp(left, operator, right);
+    }
+
+    return left;
+  }
+
+  expr_logical_less_or_geater_than() {
+    // expr_logical_less_or_geater_than: something ((LESSTHAN | GREETERTHAN) something)*
+    log('expr_logical_less_or_geater_than');
+
+    const MYSELF = 'expr_logical_less_or_geater_than';
+    let left = this.nextExprMethodOf(MYSELF);
+
+    while (this.currentToken.is(LESS, GREATER) && this.nextToken().is(THAN)) {
+      let operator;
+
+      if (this.currentToken.is(LESS)) {
+        this.eat(LESS);
+        operator = new Token(LESS_THAN);
+      } else {
+        this.eat(GREATER);
+        operator = new Token(GREATER_THAN);
+      }
+
+      this.eat(THAN);
 
       let right = this.nextExprMethodOf(MYSELF);
 
