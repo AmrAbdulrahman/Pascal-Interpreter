@@ -364,11 +364,32 @@ class Parser {
     return new Assign(leftNode, operatorNode, rightNode);
   }
 
-  expr() {
-    log('expr');
-    // expr : sub_expr (NOT? EQUALS sub_expr)*
+  get expr_precedence() {
+    return [
+      'expr',
+      'expr_logical_equals',
+      'expr_arithmetic_plus',
+      'expr_arithmetic_multiply',
+      'expr_factor',
+    ];
+  }
 
-    let left = this.sub_expr();
+  nextExprMethodOf(name) {
+    const currentMethodIndex = this.expr_precedence.indexOf(name);
+    const nextExprMethodName = this.expr_precedence[currentMethodIndex + 1];
+    return this[nextExprMethodName]();
+  }
+
+  expr() {
+    return this.nextExprMethodOf('expr');
+  }
+
+  expr_logical_equals() {
+    log('expr_logical_equals');
+    // expr_logical_equals : ex (NOT? EQUALS expr1)*
+
+    const MYSELF = 'expr_logical_equals';
+    let left = this.nextExprMethodOf(MYSELF);
 
     while (this.currentToken.is(EQUALS) || this.currentToken.is(NOT)) {
       let operator;
@@ -381,7 +402,7 @@ class Parser {
         operator = new Token(NOT_EQUALS);
       }
 
-      let right = this.sub_expr();
+      let right = this.nextExprMethodOf(MYSELF);
 
       left = new BinOp(left, operator, right);
     }
@@ -389,39 +410,42 @@ class Parser {
     return left;
   }
 
-  sub_expr() {
-    log('sub_expr');
-    // sub_expr : term ((PLUS | MINUS) term)*
+  expr_arithmetic_plus() {
+    log('expr_arithmetic_plus');
+    // expr1 : expr2 ((PLUS | MINUS) expr2)*
 
-    let node = this.term();
+    const MYSELF = 'expr_arithmetic_plus';
+    let left = this.nextExprMethodOf(MYSELF);
 
     while (this.currentToken.is(PLUS, MINUS)) {
       let operator = this.operator(PLUS, MINUS);
-      let rightNode = this.term();
+      let right = this.nextExprMethodOf(MYSELF);
 
-      node = new BinOp(node, operator, rightNode);
+      left = new BinOp(left, operator, right);
     }
 
-    return node;
+    return left;
   }
 
-  term() {
-    log('term');
-    // term : factor ((MUL | DIV) factor)*
-    let node = this.factor();
+  expr_arithmetic_multiply() {
+    log('expr_arithmetic_multiply');
+    // expr_arithmetic_multiply : expr3 ((MUL | DIV) expr3)*
+
+    const MYSELF = 'expr_arithmetic_multiply';
+    let left = this.nextExprMethodOf(MYSELF);
 
     while (this.currentToken.is(MULTIPLY, INTEGER_DIVISION, FLOAT_DIVISION)) {
       let operator = this.operator(MULTIPLY, INTEGER_DIVISION, FLOAT_DIVISION);
-      let rightNode = this.factor();
+      let right = this.nextExprMethodOf(MYSELF);
 
-      node = new BinOp(node, operator, rightNode);
+      left = new BinOp(left, operator, right);
     }
 
-    return node;
+    return left;
   }
 
-  factor() {
-    log('factor');
+  expr_factor() {
+    log('expr_factor');
     // factor : (PLUS | MINUS) FACTOR
     //        | INTEGER_CONST
     //        | REAL_CONST
