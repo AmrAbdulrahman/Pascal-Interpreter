@@ -33,6 +33,8 @@ const {
   EQUALS,
   NOT,
   NOT_EQUALS,
+  AND,
+  OR,
 } = require('./constants');
 
 const {
@@ -367,6 +369,7 @@ class Parser {
   get expr_precedence() {
     return [
       'expr',
+      'expr_logical_and_or',
       'expr_logical_equals',
       'expr_arithmetic_plus',
       'expr_arithmetic_multiply',
@@ -384,9 +387,26 @@ class Parser {
     return this.nextExprMethodOf('expr');
   }
 
+  expr_logical_and_or() {
+    // expr_logical_and_or: something ((AND | OR) something)*
+    log('expr_logical_and_or');
+
+    const MYSELF = 'expr_logical_and_or';
+    let left = this.nextExprMethodOf(MYSELF);
+
+    while (this.currentToken.is(AND, OR)) {
+      let operator = this.operator(AND, OR);
+      let right = this.nextExprMethodOf(MYSELF);
+
+      left = new BinOp(left, operator, right);
+    }
+
+    return left;
+  }
+
   expr_logical_equals() {
-    log('expr_logical_equals');
     // expr_logical_equals : ex (NOT? EQUALS expr1)*
+    log('expr_logical_equals');
 
     const MYSELF = 'expr_logical_equals';
     let left = this.nextExprMethodOf(MYSELF);
@@ -411,8 +431,8 @@ class Parser {
   }
 
   expr_arithmetic_plus() {
-    log('expr_arithmetic_plus');
     // expr1 : expr2 ((PLUS | MINUS) expr2)*
+    log('expr_arithmetic_plus');
 
     const MYSELF = 'expr_arithmetic_plus';
     let left = this.nextExprMethodOf(MYSELF);
@@ -428,8 +448,8 @@ class Parser {
   }
 
   expr_arithmetic_multiply() {
-    log('expr_arithmetic_multiply');
     // expr_arithmetic_multiply : expr3 ((MUL | DIV) expr3)*
+    log('expr_arithmetic_multiply');
 
     const MYSELF = 'expr_arithmetic_multiply';
     let left = this.nextExprMethodOf(MYSELF);
@@ -445,7 +465,6 @@ class Parser {
   }
 
   expr_factor() {
-    log('expr_factor');
     // factor : (PLUS | MINUS) FACTOR
     //        | INTEGER_CONST
     //        | REAL_CONST
@@ -453,6 +472,7 @@ class Parser {
     //        | procedure_invocation
     //        | Variable
     //        | String
+    log('expr_factor');
 
     const token = this.currentToken;
 
@@ -527,8 +547,8 @@ class Parser {
   }
 
   variable() {
-    log('variable');
     // variable: ID
+    log('variable');
 
     const variableNode = new Var(this.currentToken);
     this.eat(ID);

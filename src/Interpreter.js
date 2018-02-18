@@ -15,6 +15,8 @@ const {
   PRINT,
   EQUALS,
   NOT_EQUALS,
+  AND,
+  OR,
 } = require('./constants');
 
 const { Num, BinOp } = require('./Parser');
@@ -117,6 +119,10 @@ class Interpreter extends NodeVisitor {
         return left === right;
       case NOT_EQUALS:
         return left !== right;
+      case AND:
+        return !!(left && right);
+      case OR:
+        return !!(left || right);
 
       default:
         throw new Error(`Unhandled operator type ${node.op.type}`);

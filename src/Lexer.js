@@ -1,4 +1,13 @@
+const Token = require('./Token');
+const { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } = require('./utils');
+
 const {
+  // keywords
+  PROGRAM, VAR, PROCEDURE, RETURN,
+  IF, ELSE, OTHERWISE,
+  INTEGER, REAL, STRING, BOOLEAN,
+  DIV, EQUALS, NOT, AND, OR,
+
   SPACE,
   NEWLINE,
   INTEGER_CONST,
@@ -23,28 +32,11 @@ const {
   DOUBLE_QUOTE,
 } = require('./constants');
 
-const Token = require('./Token');
-const { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } = require('./utils');
-
 const RESERVED_KEYWORDS = [
-  'PROGRAM',
-  'PROCEDURE',
-  'RETURN',
-
-  'IF',
-  'ELSE',
-  'OTHERWISE',
-
-  'INTEGER',
-  'REAL',
-  'STRING',
-  'BOOLEAN',
-
-  'DIV',
-  'EQUALS',
-  'NOT',
-
-  'VAR',
+  PROGRAM, VAR, PROCEDURE, RETURN,
+  IF, ELSE, OTHERWISE,
+  INTEGER, REAL, STRING, BOOLEAN,
+  DIV, EQUALS, NOT, AND, OR,
 ];
 
 class Lexer {
