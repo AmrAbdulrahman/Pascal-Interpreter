@@ -1,6 +1,6 @@
-const BaseSymbol = require('./BaseSymbol');
+import { BaseSymbol } from './BaseSymbol';
 
-module.exports = class ProcedureSymbol extends BaseSymbol {
+export class ProcedureSymbol extends BaseSymbol {
   constructor(name, block, params = []) {
     super(name);
 

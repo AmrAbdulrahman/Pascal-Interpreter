@@ -1,4 +1,4 @@
-class Token {
+export class Token {
   constructor(type, value, rowIndex, colIndex) {
     this.type = type;
     this.value = value;
@@ -22,5 +22,3 @@ class Token {
     return types.indexOf(this.type) !== -1;
   }
 }
-
-module.exports = Token;

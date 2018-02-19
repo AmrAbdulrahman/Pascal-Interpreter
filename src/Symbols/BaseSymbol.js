@@ -1,4 +1,4 @@
-module.exports = class BaseSymbol {
+export class BaseSymbol {
   constructor(name, type = null) {
     this.name = name;
     this.type = type;

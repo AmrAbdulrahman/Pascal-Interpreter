@@ -1,13 +1,13 @@
-const NodeVisitor = require('./NodeVisitor');
-const Scope = require('./Scope');
-const BuiltinsScope = require('./BuiltinsScope');
-const BaseSymbol = require('./Symbols/BaseSymbol');
-const VarSymbol = require('./Symbols/VarSymbol');
-const BuiltinVarSymbol = require('./Symbols/BuiltinVarSymbol');
-const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
-const { PRINT } = require('./constants');
+import { NodeVisitor } from './NodeVisitor';
+import { Scope } from './Scope';
+import { BuiltinsScope } from './BuiltinsScope';
+import { BaseSymbol } from './Symbols/BaseSymbol';
+import { VarSymbol } from './Symbols/VarSymbol';
+import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
+import { ProcedureSymbol } from './Symbols/ProcedureSymbol';
+import { PRINT } from './constants';
 
-module.exports = class SemanticAnalyzer extends NodeVisitor {
+export class SemanticAnalyzer extends NodeVisitor {
   constructor() {
     super();
 

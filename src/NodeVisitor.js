@@ -1,4 +1,4 @@
-module.exports = class NodeVisitor {
+export class NodeVisitor {
   visit(node) {
     const methodName = node.name;
 

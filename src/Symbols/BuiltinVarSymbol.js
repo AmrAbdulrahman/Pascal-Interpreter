@@ -1,6 +1,6 @@
-const VarSymbol = require('./VarSymbol');
+import { VarSymbol } from './VarSymbol';
 
-module.exports = class BuiltinVarSymbol extends VarSymbol {
+export class BuiltinVarSymbol extends VarSymbol {
   constructor(name, type, value) {
     super(name, type, value);
   }

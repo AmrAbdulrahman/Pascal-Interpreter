@@ -1,4 +1,4 @@
-module.exports = class ASTNode {
+export class ASTNode {
   get name() {
     return this.constructor.name;
   }

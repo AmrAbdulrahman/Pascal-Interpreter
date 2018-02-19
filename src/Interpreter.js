@@ -1,12 +1,12 @@
-const NodeVisitor = require('./NodeVisitor');
-const SemanticAnalyzer = require('./SemanticAnalyzer');
-const Scope = require('./Scope');
-const BuiltinsScope = require('./BuiltinsScope');
-const BaseSymbol = require('./Symbols/BaseSymbol');
-const VarSymbol = require('./Symbols/VarSymbol');
-const ProcedureSymbol = require('./Symbols/ProcedureSymbol');
+import { NodeVisitor } from './NodeVisitor';
+import { SemanticAnalyzer } from './SemanticAnalyzer';
+import { Scope } from './Scope';
+import { BuiltinsScope } from './BuiltinsScope';
+import { BaseSymbol } from './Symbols/BaseSymbol';
+import { VarSymbol } from './Symbols/VarSymbol';
+import { ProcedureSymbol } from './Symbols/ProcedureSymbol';
 
-const {
+import {
   PLUS,
   MINUS,
   MULTIPLY,
@@ -21,9 +21,7 @@ const {
   GREATER_THAN,
   LESS_THAN_OR_EQUAL,
   GREATER_THAN_OR_EQUAL,
-} = require('./constants');
-
-const { Num, BinOp } = require('./Parser');
+} from './constants';
 
 class Return {
   constructor(value) {
@@ -31,7 +29,7 @@ class Return {
   }
 }
 
-class Interpreter extends NodeVisitor {
+export class Interpreter extends NodeVisitor {
   constructor(parser) {
     super();
 
@@ -236,5 +234,3 @@ class Interpreter extends NodeVisitor {
     return this.visit(ast);
   }
 }
-
-module.exports = Interpreter;

@@ -1,6 +1,6 @@
-const ASTNode = require('./ASTNode');
+import { ASTNode } from './ASTNode';
 
-module.exports = class UnaryOp extends ASTNode {
+export class UnaryOp extends ASTNode {
   constructor(token, expr) {
     super();
 

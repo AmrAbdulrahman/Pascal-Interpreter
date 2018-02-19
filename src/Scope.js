@@ -1,6 +1,6 @@
-const { span } = require('./utils');
+import { span } from './utils';
 
-module.exports = class Scope {
+export class Scope {
   constructor(scopeName, parent = null) {
     this.symbols = {};
     this.scopeName = scopeName;

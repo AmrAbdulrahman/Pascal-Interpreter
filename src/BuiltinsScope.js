@@ -1,9 +1,9 @@
-const Scope = require('./Scope');
-const BuiltinTypeSymbol = require('./Symbols/BuiltinTypeSymbol');
-const BuiltinVarSymbol = require('./Symbols/BuiltinVarSymbol');
-const { INTEGER, REAL, STRING, BOOLEAN } = require('./constants');
+import { Scope } from './Scope';
+import { BuiltinTypeSymbol } from './Symbols/BuiltinTypeSymbol';
+import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
+import { INTEGER, REAL, STRING, BOOLEAN } from './constants';
 
-module.exports = class BuiltinsScope extends Scope {
+export class BuiltinsScope extends Scope {
   constructor() {
     super('builtins');
 

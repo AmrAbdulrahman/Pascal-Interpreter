@@ -1,6 +1,6 @@
-const ASTNode = require('./ASTNode');
+import { ASTNode } from './ASTNode';
 
-module.exports = class If extends ASTNode {
+export class If extends ASTNode {
   constructor(ifs, otherwise = null) {
     super();
 

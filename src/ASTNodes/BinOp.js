@@ -1,6 +1,6 @@
-const ASTNode = require('./ASTNode');
+import { ASTNode } from './ASTNode';
 
-module.exports = class BinOp extends ASTNode {
+export class BinOp extends ASTNode {
   constructor(left, op, right) {
     super();
 

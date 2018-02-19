@@ -1,6 +1,6 @@
-const ASTNode = require('./ASTNode');
+import { ASTNode } from './ASTNode';
 
-module.exports = class ProcedureDecl extends ASTNode {
+export class ProcedureDecl extends ASTNode {
   constructor(id, params, block) {
     super();
 

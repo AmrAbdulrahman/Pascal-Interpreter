@@ -1,7 +1,7 @@
-const Token = require('./Token');
-const { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } = require('./utils');
+import { Token } from './Token';
+import { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } from './utils';
 
-const {
+import {
   // keywords
   PROGRAM, VAR, PROCEDURE, RETURN,
   IF, ELSE, OTHERWISE,
@@ -31,7 +31,7 @@ const {
   SINGLE_QUOTE,
   DOUBLE_QUOTE,
   THEN,
-} = require('./constants');
+} from './constants';
 
 const RESERVED_KEYWORDS = [
   PROGRAM, VAR, PROCEDURE, RETURN,
@@ -41,7 +41,7 @@ const RESERVED_KEYWORDS = [
   THEN,
 ];
 
-class Lexer {
+export class Lexer {
   constructor(text) {
     this.text = text;
     this.pos = 0;
@@ -301,5 +301,3 @@ class Lexer {
     return this.colNumber;
   }
 }
-
-module.exports = Lexer;

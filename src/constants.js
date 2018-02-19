@@ -1,50 +1,48 @@
-module.exports = {
-  PROGRAM: 'PROGRAM',
-  PROCEDURE: 'PROCEDURE',
-  RETURN: 'RETURN',
-  INTEGER_CONST: 'INTEGER_CONST',
-  REAL_CONST: 'REAL_CONST',
-  STRING_LITERAL: 'STRING_LITERAL',
-  PLUS: 'PLUS',
-  MINUS: 'MINUS',
-  MULTIPLY: 'MULTIPLY',
-  EQUALS: 'EQUALS',
-  NOT: 'NOT',
-  NOT_EQUALS: 'NOT_EQUALS',
-  INTEGER_DIVISION: 'INTEGER_DIVISION',
-  FLOAT_DIVISION: 'FLOAT_DIVISION',
-  EOF: 'EOF',
-  OPENBRACE: 'OPENBRACE',
-  CLOSEBRACE: 'CLOSEBRACE',
-  OPEN_CURLY_BRACE: 'OPEN_CURLY_BRACE',
-  CLOSE_CURLY_BRACE: 'CLOSE_CURLY_BRACE',
-  ID: 'ID',
-  ASSIGN: 'ASSIGN',
-  SEMI: 'SEMI',
-  VAR: 'VAR',
-  COLON: 'COLON',
-  COMMA: 'COMMA',
-  INTEGER: 'INTEGER',
-  REAL: 'REAL',
-  STRING: 'STRING',
-  BOOLEAN: 'BOOLEAN',
-  IF: 'IF',
-  ELSE: 'ELSE',
-  OTHERWISE: 'OTHERWISE',
-  AND: 'AND',
-  OR: 'OR',
-  THAN: 'THAN',
-  LESS: 'LESS',
-  LESS_THAN: 'LESS_THAN',
-  LESS_THAN_OR_EQUAL: 'LESS_THAN_OR_EQUAL',
-  GREATER: 'GREATER',
-  GREATER_THAN: 'GREATER_THAN',
-  GREATER_THAN_OR_EQUAL: 'GREATER_THAN_OR_EQUAL',
-  EQUAL: 'EQUAL',
-  THEN: 'THEN',
-  SPACE: ' ',
-  NEWLINE: '\n',
-  SINGLE_QUOTE: `'`,
-  DOUBLE_QUOTE: `"`,
-  PRINT: 'print',
-};
+export const PROGRAM = 'PROGRAM';
+export const PROCEDURE = 'PROCEDURE';
+export const RETURN = 'RETURN';
+export const INTEGER_CONST = 'INTEGER_CONST';
+export const REAL_CONST = 'REAL_CONST';
+export const STRING_LITERAL = 'STRING_LITERAL';
+export const PLUS = 'PLUS';
+export const MINUS = 'MINUS';
+export const MULTIPLY = 'MULTIPLY';
+export const EQUALS = 'EQUALS';
+export const NOT = 'NOT';
+export const NOT_EQUALS = 'NOT_EQUALS';
+export const INTEGER_DIVISION = 'INTEGER_DIVISION';
+export const FLOAT_DIVISION = 'FLOAT_DIVISION';
+export const EOF = 'EOF';
+export const OPENBRACE = 'OPENBRACE';
+export const CLOSEBRACE = 'CLOSEBRACE';
+export const OPEN_CURLY_BRACE = 'OPEN_CURLY_BRACE';
+export const CLOSE_CURLY_BRACE = 'CLOSE_CURLY_BRACE';
+export const ID = 'ID';
+export const ASSIGN = 'ASSIGN';
+export const SEMI = 'SEMI';
+export const VAR = 'VAR';
+export const COLON = 'COLON';
+export const COMMA = 'COMMA';
+export const INTEGER = 'INTEGER';
+export const REAL = 'REAL';
+export const STRING = 'STRING';
+export const BOOLEAN = 'BOOLEAN';
+export const IF = 'IF';
+export const ELSE = 'ELSE';
+export const OTHERWISE = 'OTHERWISE';
+export const AND = 'AND';
+export const OR = 'OR';
+export const THAN = 'THAN';
+export const LESS = 'LESS';
+export const LESS_THAN = 'LESS_THAN';
+export const LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL';
+export const GREATER = 'GREATER';
+export const GREATER_THAN = 'GREATER_THAN';
+export const GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL';
+export const EQUAL = 'EQUAL';
+export const THEN = 'THEN';
+export const SPACE = ' ';
+export const NEWLINE = '\n';
+export const SINGLE_QUOTE = `'`;
+export const DOUBLE_QUOTE = `"`;
+export const PRINT = 'print';

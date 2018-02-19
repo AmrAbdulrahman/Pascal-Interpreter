@@ -1,6 +1,6 @@
-const BaseSymbol = require('./BaseSymbol');
+import { BaseSymbol } from './BaseSymbol';
 
-module.exports = class VarSymbol extends BaseSymbol {
+export class VarSymbol extends BaseSymbol {
   constructor(name, type, value) {
     super(name, type);
 

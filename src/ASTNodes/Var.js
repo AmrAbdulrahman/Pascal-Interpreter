@@ -1,6 +1,6 @@
-const ASTNode = require('./ASTNode');
+import { ASTNode } from './ASTNode';
 
-module.exports = class Var extends ASTNode {
+export class Var extends ASTNode {
   constructor(token) {
     super();
 

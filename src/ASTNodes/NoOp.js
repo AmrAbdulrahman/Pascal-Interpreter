@@ -1,6 +1,6 @@
-const ASTNode = require('./ASTNode');
+import { ASTNode } from './ASTNode';
 
-module.exports = class NoOp extends ASTNode {
+export class NoOp extends ASTNode {
   valueOf() {
     return null;
   }

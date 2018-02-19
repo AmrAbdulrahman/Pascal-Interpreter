@@ -7,29 +7,29 @@ const ASCII = {
   '9': 57,
 };
 
-function isDigit(char) {
+export function isDigit(char) {
   return isNaN(parseInt(char)) === false;
 }
 
-function isAlpha(char) {
+export function isAlpha(char) {
   const charCode = char.charCodeAt(0);
   return (charCode >= ASCII.A && charCode <= ASCII.Z) || (charCode >= ASCII.a && charCode <= ASCII.z);
 }
 
-function isNumeric(char) {
+export function isNumeric(char) {
   const charCode = char.charCodeAt(0);
   return (charCode >= ASCII['0'] && charCode <= ASCII['9']);
 }
 
-function isAlphaNumeric(char) {
+export function isAlphaNumeric(char) {
   return isAlpha(char) || isNumeric(char);
 }
 
-function matchIDCharset(char) {
+export function matchIDCharset(char) {
   return isAlphaNumeric(char) || (char === '_');
 }
 
-function repeat(str, count) {
+export function repeat(str, count) {
   let repeatedStr = '';
 
   while (count--) {
@@ -39,19 +39,19 @@ function repeat(str, count) {
   return repeatedStr;
 }
 
-function concat(destination, source) {
+export function concat(destination, source) {
   source.forEach(elem => destination.push(elem));
 }
 
-function span(str, len) {
+export function span(str, len) {
   return times(' ', len - str.length) + str;
 }
 
-function last(arr) {
+export function last(arr) {
   return arr[arr.length - 1];
 }
 
-function failPositionCodePreview(row, col, code) {
+export function failPositionCodePreview(row, col, code) {
   const codeLines = code.split('\n');
   const previousLineNumber = `${row}: `;
   const lineNumber = `${row + 1}: `;
@@ -65,22 +65,8 @@ function failPositionCodePreview(row, col, code) {
   ].join('\n');
 }
 
-function log(...args) {
+export function log(...args) {
   if (process.argv.indexOf('--enable-logs') !== -1) {
     console.log.apply(console, args);
   }
 }
-
-module.exports = {
-  isDigit,
-  isAlpha,
-  isNumeric,
-  isAlphaNumeric,
-  matchIDCharset,
-  repeat,
-  span,
-  concat,
-  failPositionCodePreview,
-  last,
-  log,
-};

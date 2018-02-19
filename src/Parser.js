@@ -1,7 +1,7 @@
-const { concat, failPositionCodePreview, last, log } = require('./utils');
-const Token = require('./Token');
+import { concat, failPositionCodePreview, last, log } from './utils';
+import { Token } from './Token';
 
-const {
+import {
   PROGRAM,
   INTEGER_CONST,
   REAL_CONST,
@@ -44,9 +44,9 @@ const {
   LESS_THAN_OR_EQUAL,
   GREATER_THAN_OR_EQUAL,
   THEN,
-} = require('./constants');
+} from './constants';
 
-const {
+import {
   Program,
   Block,
   ScopedBlock,
@@ -64,11 +64,11 @@ const {
   Str,
   If,
   Condition,
-} = require('./ASTNodes');
+} from './ASTNodes/*';
 
 const TOKENS_IN_ADVANCE = 3;
 
-class Parser {
+export class Parser {
   constructor(lexer) {
     this.lexer = lexer;
     this.tokens = [];
@@ -616,9 +616,3 @@ class Parser {
     return ast;
   }
 }
-
-module.exports = {
-  Parser,
-  BinOp,
-  Num,
-};

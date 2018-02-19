@@ -1,6 +1,6 @@
-const ASTNode = require('./ASTNode');
+import { ASTNode } from './ASTNode';
 
-module.exports = class ProcedureInvokation extends ASTNode {
+export class ProcedureInvokation extends ASTNode {
   constructor(id, args) {
     super();
 
