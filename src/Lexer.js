@@ -30,6 +30,7 @@ const {
   COMMA,
   SINGLE_QUOTE,
   DOUBLE_QUOTE,
+  THEN,
 } = require('./constants');
 
 const RESERVED_KEYWORDS = [
@@ -37,6 +38,7 @@ const RESERVED_KEYWORDS = [
   IF, ELSE, OTHERWISE,
   INTEGER, REAL, STRING, BOOLEAN,
   DIV, EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
+  THEN,
 ];
 
 class Lexer {

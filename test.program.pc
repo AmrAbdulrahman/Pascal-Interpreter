@@ -8,20 +8,22 @@ program Main {
      return res;
   }
 
-  if (2 less than or equal 1 OR 10 greater than or equal 10) {
-    print('fulfills');
+  if 2 less than or equal 1 OR 10 greater than or equal 10 then {
+    print('fulfills')
+
+  } and if 2 equals 2 then {
+    print('elif');
+
   } otherwise {
     print('fails')
   }
 
   procedure factorial(n : integer) {
-    if (n) {
-      return n * factorial(n - 1);
-    }
-
-    return 1;
+    if n equals 0
+      then return 1
+    otherwise
+      return n * factorial(n - 1)
   }
-
 
   // return expression on the fly
   // procedure cube(n : integer);
@@ -35,17 +37,16 @@ program Main {
   //  return square(n) + cube(n);
   // end;
 
-  if (0)
+  if 0 then
     print('true amr hehe :D');
-  else if (1)
+  and if 1 equals 2 then
     print('else if works!');
   otherwise
     print('false value found!');
 
-
-  x := 2;
+  // x := 2;
   // c := cube(x);
-  s := square(x);
+  // s := square(x);
   //cs := compose(x);
 
   // argument as expression => function invokation
@@ -57,5 +58,5 @@ program Main {
 
   // print('ss', s);
 
-  return factorial(4);
+  return factorial(5);
 }

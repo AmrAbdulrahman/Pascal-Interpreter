@@ -43,6 +43,7 @@ const {
   EQUAL,
   LESS_THAN_OR_EQUAL,
   GREATER_THAN_OR_EQUAL,
+  THEN,
 } = require('./constants');
 
 const {
@@ -300,9 +301,8 @@ class Parser {
     let otherwise = null;
 
     this.eat(IF);
-    this.eat(OPENBRACE);
     condition = this.condition();
-    this.eat(CLOSEBRACE);
+    this.eat(THEN);
     body = this.statement_or_scoped_block();
 
     ifs.push({
@@ -311,12 +311,11 @@ class Parser {
     });
 
     // else if*
-    while (this.currentToken.is(ELSE) && this.nextToken().is(IF)) {
-      this.eat(ELSE);
+    while (this.currentToken.is(AND) && this.nextToken().is(IF)) {
+      this.eat(AND);
       this.eat(IF);
-      this.eat(OPENBRACE);
       condition = this.condition();
-      this.eat(CLOSEBRACE);
+      this.eat(THEN);
       body = this.statement_or_scoped_block();
 
       ifs.push({

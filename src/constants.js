@@ -41,6 +41,7 @@ module.exports = {
   GREATER_THAN: 'GREATER_THAN',
   GREATER_THAN_OR_EQUAL: 'GREATER_THAN_OR_EQUAL',
   EQUAL: 'EQUAL',
+  THEN: 'THEN',
   SPACE: ' ',
   NEWLINE: '\n',
   SINGLE_QUOTE: `'`,
