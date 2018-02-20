@@ -8,7 +8,7 @@ const ASCII = {
 };
 
 export function isDigit(char) {
-  return isNaN(parseInt(char)) === false;
+  return isNaN(parseInt(char, 10)) === false;
 }
 
 export function isAlpha(char) {
@@ -44,7 +44,7 @@ export function concat(destination, source) {
 }
 
 export function span(str, len) {
-  return times(' ', len - str.length) + str;
+  return repeat(' ', len - str.length) + str;
 }
 
 export function last(arr) {
@@ -66,7 +66,7 @@ export function failPositionCodePreview(row, col, code) {
 }
 
 export function log(...args) {
-  if (process.argv.indexOf('--enable-logs') !== -1) {
-    console.log.apply(console, args);
-  }
+  //if (process.argv.indexOf('--enable-logs') !== -1) {
+  //  console.log.apply(console, args);
+  //}
 }

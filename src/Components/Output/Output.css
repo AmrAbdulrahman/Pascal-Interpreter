@@ -1,0 +1,17 @@
+
+.Output {
+  width: 100%;
+  height: 100%;
+  white-space: pre;
+  font-family: monospace;
+  font-size: 14px;
+  padding: 10px;
+}
+
+.Output .Info {
+  color: blue;
+}
+
+.Output .Error {
+  color: red;
+}

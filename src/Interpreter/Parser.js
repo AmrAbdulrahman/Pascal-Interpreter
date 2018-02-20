@@ -1,5 +1,6 @@
-import { concat, failPositionCodePreview, last, log } from './utils';
+import { concat, failPositionCodePreview, log } from './utils';
 import { Token } from './Token';
+import { Lexer } from './Lexer';
 
 import {
   PROGRAM,
@@ -12,7 +13,6 @@ import {
   INTEGER_DIVISION,
   FLOAT_DIVISION,
   EOF,
-  SPACE,
   OPENBRACE,
   CLOSEBRACE,
   OPEN_CURLY_BRACE,
@@ -28,7 +28,6 @@ import {
   PROCEDURE,
   RETURN,
   IF,
-  ELSE,
   OTHERWISE,
   EQUALS,
   NOT,
@@ -69,14 +68,14 @@ import {
 const TOKENS_IN_ADVANCE = 3;
 
 export class Parser {
-  constructor(lexer) {
-    this.lexer = lexer;
+  constructor(code) {
+    this.lexer = new Lexer(code);
     this.tokens = [];
 
-    this.currentToken = lexer.getNextToken();
+    this.currentToken = this.lexer.getNextToken();
 
     for (let i = 0; i < TOKENS_IN_ADVANCE; i++) {
-      this.tokens.push(lexer.getNextToken());
+      this.tokens.push(this.lexer.getNextToken());
     }
   }
 

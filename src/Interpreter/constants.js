@@ -41,6 +41,7 @@ export const GREATER_THAN = 'GREATER_THAN';
 export const GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL';
 export const EQUAL = 'EQUAL';
 export const THEN = 'THEN';
+export const DOT = 'DOT';
 export const SPACE = ' ';
 export const NEWLINE = '\n';
 export const SINGLE_QUOTE = `'`;

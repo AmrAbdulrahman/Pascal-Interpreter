@@ -1,3 +1,4 @@
+export default `
 program Main {
   var x, c, s, cs: real;
 
@@ -53,10 +54,10 @@ program Main {
   // print('x =>', x, ' | sqr =>', s, ' | cube =>', c, ' | compose() =>', compose(x));
   // print('single quoted string');
   // print("double quoted string");
-  // print("string with special \n\'\" characters");
   // print(conditionalProcedure(1));
 
   // print('ss', s);
 
   return factorial(5);
 }
+`;

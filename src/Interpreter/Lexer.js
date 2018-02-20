@@ -6,7 +6,7 @@ import {
   PROGRAM, VAR, PROCEDURE, RETURN,
   IF, ELSE, OTHERWISE,
   INTEGER, REAL, STRING, BOOLEAN,
-  DIV, EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
+  EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
 
   SPACE,
   NEWLINE,
@@ -31,13 +31,14 @@ import {
   SINGLE_QUOTE,
   DOUBLE_QUOTE,
   THEN,
+  DOT,
 } from './constants';
 
 const RESERVED_KEYWORDS = [
   PROGRAM, VAR, PROCEDURE, RETURN,
   IF, ELSE, OTHERWISE,
   INTEGER, REAL, STRING, BOOLEAN,
-  DIV, EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
+  EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
   THEN,
 ];
 
@@ -83,7 +84,7 @@ export class Lexer {
   advance(count = 1) {
     let res = '';
 
-    while (count--) {
+    while (count-- > 0) {
       res += this.advanceOneChar();
     }
 
@@ -128,7 +129,7 @@ export class Lexer {
       return this.newToken(REAL_CONST, parseFloat(numberStr));
     }
 
-    return this.newToken(INTEGER_CONST, parseInt(numberStr));
+    return this.newToken(INTEGER_CONST, parseInt(numberStr, 10));
   }
 
   readID() {
@@ -185,6 +186,8 @@ export class Lexer {
         type = MULTIPLY; break;
       case '/':
         type = FLOAT_DIVISION; break;
+      default:
+        throw new Error(`Unhandled operator`);
     }
 
     if (this.peek(this.pos, 4).toLowerCase() === 'div ') {

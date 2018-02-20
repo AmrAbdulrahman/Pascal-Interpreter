@@ -5,6 +5,7 @@ import { BuiltinsScope } from './BuiltinsScope';
 import { BaseSymbol } from './Symbols/BaseSymbol';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { ProcedureSymbol } from './Symbols/ProcedureSymbol';
+import { Parser } from './Parser';
 
 import {
   PLUS,
@@ -30,10 +31,13 @@ class Return {
 }
 
 export class Interpreter extends NodeVisitor {
-  constructor(parser) {
+  constructor(code, {stdin, stdout, stderr}) {
     super();
 
-    this.parser = parser;
+    this.code = code;
+    this.stdin = stdin;
+    this.stdout = stdout;
+    this.stderr = stderr;
     this.currentScope = new BuiltinsScope();
   }
 
@@ -221,16 +225,39 @@ export class Interpreter extends NodeVisitor {
   }
 
   print(node) {
-    console.log.apply(console, node.args.map(arg => this.visit(arg)));
+    //console.log.apply(console, );
+    const output = node.args.map(arg => this.visit(arg)).join(' ');
+    this.stdout.write(`${output}\n`);
+  }
+
+  // run semantic analysis
+  validate({delegateEx} = {delegateEx: false}) {
+    try {
+      this.stdout.write('Parsing...');
+      const ast = (new Parser(this.code)).parse();
+      this.stdout.write('Parsing: Ok');
+
+      this.stdout.write('Running semantic checks...');
+      (new SemanticAnalyzer()).visit(ast);
+      this.stdout.write('Semantic checks: Ok');
+
+      return ast;
+    } catch(ex) {
+      if (delegateEx) throw ex;
+      this.stderr.write('Code validation fails');
+      this.stderr.write(ex);
+    }
   }
 
   interpret() {
-    const ast = this.parser.parse();
+    try {
+      const ast = this.validate({delegateEx: true});
 
-    // run semantic analysis
-    (new SemanticAnalyzer()).visit(ast);
-
-    // start the program interpretation
-    return this.visit(ast);
+      this.stdout.write('Executing code...');
+      this.stdout.write('');
+      return this.visit(ast);
+    } catch (ex) {
+      this.stderr.write(ex);
+    }
   }
 }
