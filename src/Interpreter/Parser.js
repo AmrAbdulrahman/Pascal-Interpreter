@@ -3,7 +3,6 @@ import { Token } from './Token';
 import { Lexer } from './Lexer';
 
 import {
-  PROGRAM,
   INTEGER_CONST,
   REAL_CONST,
   STRING_LITERAL,
@@ -123,11 +122,7 @@ export class Parser {
     log('program');
     // program : PROGRAM variable block
 
-    this.eat(PROGRAM);
-    const programName = this.variable();
-    const blockNode = this.scoped_block();
-
-    return new Program(programName, blockNode);
+    return new Program(this.statement_list());
   }
 
   // this is just a block, it does't open a new scope

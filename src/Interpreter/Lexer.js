@@ -3,7 +3,7 @@ import { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } from './uti
 
 import {
   // keywords
-  PROGRAM, VAR, PROCEDURE, RETURN,
+  VAR, PROCEDURE, RETURN,
   IF, ELSE, OTHERWISE,
   INTEGER, REAL, STRING, BOOLEAN,
   EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
@@ -35,7 +35,7 @@ import {
 } from './constants';
 
 const RESERVED_KEYWORDS = [
-  PROGRAM, VAR, PROCEDURE, RETURN,
+  VAR, PROCEDURE, RETURN,
   IF, ELSE, OTHERWISE,
   INTEGER, REAL, STRING, BOOLEAN,
   EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,

@@ -1,7 +1,6 @@
 import { NodeVisitor } from './NodeVisitor';
 import { Scope } from './Scope';
 import { BuiltinsScope } from './BuiltinsScope';
-import { BaseSymbol } from './Symbols/BaseSymbol';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
 import { ProcedureSymbol } from './Symbols/ProcedureSymbol';
@@ -15,11 +14,7 @@ export class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitProgram(node) {
-    // insert appName in the builtints scope
-    const appName = new BaseSymbol(node.id.value);
-    this.currentScope.insert(appName);
-
-    this.visit(node.block);
+    this.visitBlock(node);
   }
 
   visitBlock(node) {

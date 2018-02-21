@@ -2,7 +2,6 @@ import { NodeVisitor } from './NodeVisitor';
 import { SemanticAnalyzer } from './SemanticAnalyzer';
 import { Scope } from './Scope';
 import { BuiltinsScope } from './BuiltinsScope';
-import { BaseSymbol } from './Symbols/BaseSymbol';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { ProcedureSymbol } from './Symbols/ProcedureSymbol';
 import { Parser } from './Parser';
@@ -50,10 +49,7 @@ export class Interpreter extends NodeVisitor {
   }
 
   visitProgram(node) {
-    const appName = new BaseSymbol(node.id.value);
-    this.currentScope.insert(appName);
-
-    const returnValue = this.visit(node.block);
+    const returnValue = this.visitBlock(node);
     return returnValue instanceof Return ? returnValue.value : returnValue;
   }
 
@@ -255,7 +251,12 @@ export class Interpreter extends NodeVisitor {
 
       this.stdout.write('Executing code...');
       this.stdout.write('');
-      return this.visit(ast);
+
+      const returnValue = this.visit(ast);
+
+      if (returnValue !== undefined) {
+        this.stdout.write(returnValue);
+      }
     } catch (ex) {
       this.stderr.write(ex);
     }

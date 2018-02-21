@@ -1,4 +1,3 @@
-export const PROGRAM = 'PROGRAM';
 export const PROCEDURE = 'PROCEDURE';
 export const RETURN = 'RETURN';
 export const INTEGER_CONST = 'INTEGER_CONST';

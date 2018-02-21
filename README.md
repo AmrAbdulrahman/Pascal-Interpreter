@@ -11,10 +11,10 @@ Project milestones:
   - [x] logical comparisons `equals`, `not equals`, `less|greater than`, `and`, `or`
 - [x] Build a simpe react application around that interpreter
 - [x] Read code from a textbox, interpret it, and print either errors or output.
-- [ ] Add a descent online code editor the application
-- [ ] Add custom syntax highlighting that matches our keywords
+- [x] Add a descent online code editor the application
+- [x] Add custom syntax highlighting that matches our keywords
 - [ ] Refine the language syntax
-  - [ ] Remove program wrapper
+  - [x] Remove program wrapper
   - [ ] Remove types
   - [ ] Get rid of semi colons
   - [ ] Improve variable creation (`create`, `variable`, ...)
