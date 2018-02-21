@@ -3,7 +3,7 @@ import { SemanticAnalyzer } from './SemanticAnalyzer';
 import { Scope } from './Scope';
 import { BuiltinsScope } from './BuiltinsScope';
 import { VarSymbol } from './Symbols/VarSymbol';
-import { ProcedureSymbol } from './Symbols/ProcedureSymbol';
+import { FunctionSymbol } from './Symbols/FunctionSymbol';
 import { Parser } from './Parser';
 
 import {
@@ -155,33 +155,33 @@ export class Interpreter extends NodeVisitor {
     return new Return(this.visit(node.expr));
   }
 
-  visitProcedureDecl(node) {
-    // add parameters to procedure symbol
+  visitFunctionDecl(node) {
+    // add parameters to function symbol
     const params = node.params.map(param => {
       //const paramType = this.currentScope.lookup(param.type.value);
       const paramName = param.value;
       return new VarSymbol(paramName, null);
     });
 
-    const procedureName = node.id.value;
-    const procedureBody = node.block;
-    const procedureSymbol = new ProcedureSymbol(procedureName, procedureBody, params);
+    const functionName = node.id.value;
+    const functionBody = node.block;
+    const functionSymbol = new FunctionSymbol(functionName, functionBody, params);
 
-    this.currentScope.insert(procedureSymbol);
+    this.currentScope.insert(functionSymbol);
   }
 
-  visitProcedureInvokation(node) {
-    const procedureName = node.id.value;
-    const procedureSymbol = this.currentScope.lookup(procedureName);
+  visitFunctionInvocation(node) {
+    const functionName = node.id.value;
+    const functionSymbol = this.currentScope.lookup(functionName);
 
-    if (procedureName === PRINT) {
+    if (functionName === PRINT) {
       return this.print(node);
     }
 
     // open invokation scope
-    this.openNewScope(procedureName);
+    this.openNewScope(functionName);
 
-    procedureSymbol.params.forEach((param, index) => {
+    functionSymbol.params.forEach((param, index) => {
       //const paramType = this.currentScope.lookup(param.type.value);
       const paramName = param.name;
       const argSymbol = new VarSymbol(
@@ -193,7 +193,7 @@ export class Interpreter extends NodeVisitor {
       this.currentScope.insert(argSymbol);
     });
 
-    const returnValue = this.visit(procedureSymbol.block);
+    const returnValue = this.visit(functionSymbol.block);
 
     // close invokation scope
     this.closeCurrentScope();

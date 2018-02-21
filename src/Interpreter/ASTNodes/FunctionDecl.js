@@ -1,11 +1,12 @@
 import { ASTNode } from './ASTNode';
 
-export class ProcedureInvokation extends ASTNode {
-  constructor(id, args) {
+export class FunctionDecl extends ASTNode {
+  constructor(id, params, block) {
     super();
 
     this.id = id;
-    this.args = args;
+    this.params = params;
+    this.block = block;
   }
 
   valueOf() {

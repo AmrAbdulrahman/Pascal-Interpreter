@@ -3,7 +3,7 @@ import { Scope } from './Scope';
 import { BuiltinsScope } from './BuiltinsScope';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
-import { ProcedureSymbol } from './Symbols/ProcedureSymbol';
+import { FunctionSymbol } from './Symbols/FunctionSymbol';
 import { PRINT } from './constants';
 
 export class SemanticAnalyzer extends NodeVisitor {
@@ -54,20 +54,19 @@ export class SemanticAnalyzer extends NodeVisitor {
     this.visit(node.expr);
   }
 
-  visitProcedureDecl(node) {
-    const procedureName = node.id.value;
+  visitFunctionDecl(node) {
+    const functionName = node.id.value;
+    const functionSymbol = new FunctionSymbol(functionName, node.block);
 
-    const procedureSymbol = new ProcedureSymbol(procedureName, node.block);
-
-    if (this.currentScope.has(procedureName)) {
-      throw new Error(`${procedureName} already declared in the current scope`);
+    if (this.currentScope.has(functionName)) {
+      throw new Error(`${functionName} already declared in the current scope`);
     }
 
-    this.currentScope.insert(procedureSymbol);
+    this.currentScope.insert(functionSymbol);
 
-    const procedureScope = new Scope(procedureName, this.currentScope);
+    const functionScope = new Scope(functionName, this.currentScope);
 
-    this.currentScope = procedureScope;
+    this.currentScope = functionScope;
 
     node.params.forEach(param => {
       //const paramType = this.currentScope.lookup(param.type.value);
@@ -79,7 +78,7 @@ export class SemanticAnalyzer extends NodeVisitor {
       }
 
       this.currentScope.insert(paramSymbol);
-      procedureSymbol.params.push(paramSymbol);
+      functionSymbol.params.push(paramSymbol);
     });
 
     // visit function body
@@ -149,20 +148,20 @@ export class SemanticAnalyzer extends NodeVisitor {
     }
   }
 
-  visitProcedureInvokation(node) {
-    const procedureName = node.id.value;
-    const procedureSymbol = this.currentScope.lookup(procedureName);
+  visitFunctionInvocation(node) {
+    const functionName = node.id.value;
+    const functionSymbol = this.currentScope.lookup(functionName);
 
-    if (procedureName === PRINT) {
+    if (functionName === PRINT) {
       return;
     }
 
-    if (procedureSymbol === null) {
-      throw new Error(`Undeclared procedure '${procedureName}'`);
+    if (functionSymbol === null) {
+      throw new Error(`Undeclared function '${functionName}'`);
     }
 
-    if (procedureSymbol.params.length !== node.args.length) {
-      throw new Error(`Procedure '${procedureName}' accepts (${procedureSymbol.params.length}) argument(s) [${procedureSymbol.params.map(p => p.name).join(',')}]`);
+    if (functionSymbol.params.length !== node.args.length) {
+      throw new Error(`Function '${functionName}' accepts (${functionSymbol.params.length}) argument(s) [${functionSymbol.params.map(p => p.name).join(',')}]`);
     }
   }
 }

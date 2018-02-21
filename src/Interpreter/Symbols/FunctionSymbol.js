@@ -1,6 +1,6 @@
 import { BaseSymbol } from './BaseSymbol';
 
-export class ProcedureSymbol extends BaseSymbol {
+export class FunctionSymbol extends BaseSymbol {
   constructor(name, block, params = []) {
     super(name);
 

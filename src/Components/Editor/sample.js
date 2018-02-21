@@ -1,7 +1,7 @@
 export default `
 create x, c, s, cs
 
-procedure square(n) {
+function square(n) {
    create res
    create real1
    res := n * n
@@ -19,7 +19,7 @@ OR 10 greater than or equal 20 then {
   print('fails')
 }
 
-procedure factorial(n) {
+function factorial(n) {
   if n equals 0
     then return 1
   otherwise

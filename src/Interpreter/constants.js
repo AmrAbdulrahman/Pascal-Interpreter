@@ -1,4 +1,5 @@
-export const PROCEDURE = 'PROCEDURE';
+export const FUNCTION = 'FUNCTION';
+export const TAKES = 'TAKES';
 export const RETURN = 'RETURN';
 export const INTEGER_CONST = 'INTEGER_CONST';
 export const REAL_CONST = 'REAL_CONST';

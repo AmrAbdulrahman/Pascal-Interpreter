@@ -20,7 +20,7 @@ import {
   ASSIGN,
   CREATE,
   COMMA,
-  PROCEDURE,
+  FUNCTION,
   RETURN,
   IF,
   OTHERWISE,
@@ -51,8 +51,8 @@ import {
   Var,
   Assign,
   VariableDeclaration,
-  ProcedureDecl,
-  ProcedureInvokation,
+  FunctionDecl,
+  FunctionInvocation,
   Return,
   Str,
   If,
@@ -166,11 +166,11 @@ export class Parser {
     return variables;
   }
 
-  procedure_declaration() {
-    log('procedure_declaration');
-    // procedure_declaration : PROCEDURE ID OPENBRACE variables_list CLOSEBRACE block
+  function_declaration() {
+    log('function_declaration');
+    // function_declaration : FUNCTION ID OPENBRACE variables_list CLOSEBRACE block
 
-    this.eat(PROCEDURE);
+    this.eat(FUNCTION);
     const id = this.variable();
     let params = [];
 
@@ -184,7 +184,7 @@ export class Parser {
 
     const block = this.block();
 
-    return new ProcedureDecl(id, params, block);
+    return new FunctionDecl(id, params, block);
   }
 
   statement_list() {
@@ -204,11 +204,11 @@ export class Parser {
   statement() {
     log('statement');
     // statement : assignment_statement
-    //           | procedure_invocation
+    //           | function_invocation
     //           | return_statement
     //           | if_block
     //           | var_declaration
-    //           | procedure_declaration
+    //           | function_declaration
     //           | empty
 
     if (this.currentToken.is(IF)) {
@@ -216,7 +216,7 @@ export class Parser {
     }
 
     if (this.currentToken.is(ID) && this.nextToken().is(OPENBRACE)) {
-      return this.procedure_invocation();
+      return this.function_invocation();
     }
 
     if (this.currentToken.is(ID)) {
@@ -231,8 +231,8 @@ export class Parser {
       return this.variables_declaration();
     }
 
-    if (this.currentToken.is(PROCEDURE)) {
-      return this.procedure_declaration();
+    if (this.currentToken.is(FUNCTION)) {
+      return this.function_declaration();
     }
 
     return this.empty();
@@ -452,7 +452,7 @@ export class Parser {
     //        | INTEGER_CONST
     //        | REAL_CONST
     //        | OPENBRACE EXPR CLOSEBRACE
-    //        | procedure_invocation
+    //        | function_invocation
     //        | Variable
     //        | String
     log('expr_factor');
@@ -493,7 +493,7 @@ export class Parser {
 
     // id()
     if (this.currentToken.is(ID) && this.nextToken().is(OPENBRACE)) {
-      return this.procedure_invocation();
+      return this.function_invocation();
     }
 
     // var
@@ -504,11 +504,11 @@ export class Parser {
     this.fail('Expected expression');
   }
 
-  procedure_invocation() {
-    // procedure_invocation: ID OPENBRACE args_list CLOSEBRACE
-    log('procedure_invocation');
+  function_invocation() {
+    // function_invocation: ID OPENBRACE args_list CLOSEBRACE
+    log('function_invocation');
 
-    const procedureName = this.currentToken;
+    const functionName = this.currentToken;
     const args = [];
 
     this.eat(ID);
@@ -526,7 +526,7 @@ export class Parser {
 
     this.eat(CLOSEBRACE);
 
-    return new ProcedureInvokation(procedureName, args);
+    return new FunctionInvocation(functionName, args);
   }
 
   variable() {
