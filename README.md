@@ -14,6 +14,13 @@ Project milestones:
 - [ ] Add a descent online code editor the application
 - [ ] Add custom syntax highlighting that matches our keywords
 - [ ] Refine the language syntax
+  - [ ] Remove program wrapper
+  - [ ] Remove types
+  - [ ] Get rid of semi colons
+  - [ ] Improve variable creation (`create`, `variable`, ...)
+  - [ ] Improve function creation (`function`, `takes`, ...)
+  - [ ] Improve function invocation (`call`, `with`, ...)?
+  - [ ] Improve variable assignment statements (`assign`, `set`, ...)
   - [ ] loops: `for`, `while`, and `do-while`
   - [ ] `classes` and `objects`
   - [ ] `arrays`

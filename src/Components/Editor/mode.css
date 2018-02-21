@@ -1,0 +1,34 @@
+.cm-s-default .cm-keyword {
+  color: #4ca7b3;
+}
+
+.cm-s-default .cm-comment {
+  color: gray;
+}
+
+
+.cm-s-default .cm-number {
+  color: #9eab18;
+}
+
+.cm-operator {
+  color: #f1a637;
+}
+
+.cm-s-default .cm-variable,
+.cm-var-keyword {
+  color: #c44fdd;
+}
+
+.cm-s-default .cm-variable {
+  font-weight: bold;
+}
+
+.cm-procedure-keyword,
+.cm-procedure {
+  color: #7ac431;
+}
+
+.cm-procedure {
+  font-weight: bold;
+}

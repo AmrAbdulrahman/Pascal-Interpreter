@@ -42,6 +42,7 @@ const RESERVED_KEYWORDS = [
   THEN,
 ];
 
+export { RESERVED_KEYWORDS };
 export class Lexer {
   constructor(text) {
     this.text = text;

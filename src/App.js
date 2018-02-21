@@ -52,9 +52,9 @@ class App extends Component {
     (new Interpreter(this.state.code, {stdin, stdout, stderr})).interpret();
   }
 
-  onCodeChange(e) {
+  onCodeChange(code) {
     this.setState({
-      code: e.target.value,
+      code,
     });
   }
 
