@@ -70,9 +70,9 @@ export class SemanticAnalyzer extends NodeVisitor {
     this.currentScope = procedureScope;
 
     node.params.forEach(param => {
-      const paramType = this.currentScope.lookup(param.type.value);
-      const paramName = param.variable.value;
-      const paramSymbol = new VarSymbol(paramName, paramType);
+      //const paramType = this.currentScope.lookup(param.type.value);
+      const paramName = param.value;
+      const paramSymbol = new VarSymbol(paramName, null);
 
       if (this.currentScope.has(paramName)) {
         throw new Error(`Duplicate parameter '${paramName}'`);
@@ -85,14 +85,13 @@ export class SemanticAnalyzer extends NodeVisitor {
     // visit function body
     this.visit(node.block);
 
-    // console.log(this.currentScope);
     // close function scope
     this.currentScope = this.currentScope.parent;
   }
 
   visitVariableDeclaration(node) {
-    const typeName = node.type.value;
-    const typeSymbol = this.currentScope.lookup(typeName);
+    //const typeName = node.type.value;
+    //const typeSymbol = this.currentScope.lookup(typeName);
     const varName = node.variable.value;
     const alreadyExists = this.currentScope.has(varName);
     const existingVarSymbol = this.currentScope.lookup(varName)
@@ -105,7 +104,7 @@ export class SemanticAnalyzer extends NodeVisitor {
       throw new Error(`${node.variable.token.getLocation()} Duplicate identifier '${varName}' found`);
     }
 
-    const varSymbol = new VarSymbol(varName, typeSymbol);
+    const varSymbol = new VarSymbol(varName, null);
 
     this.currentScope.insert(varSymbol);
   }
@@ -163,7 +162,7 @@ export class SemanticAnalyzer extends NodeVisitor {
     }
 
     if (procedureSymbol.params.length !== node.args.length) {
-      throw new Error(`Procedure '${procedureName}' accepts (${procedureSymbol.params.length}) argument(s) [${procedureSymbol.params.map(p => p.name + ':' + p.type.name).join(',')}]`);
+      throw new Error(`Procedure '${procedureName}' accepts (${procedureSymbol.params.length}) argument(s) [${procedureSymbol.params.map(p => p.name).join(',')}]`);
     }
   }
 }

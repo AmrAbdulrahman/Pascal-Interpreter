@@ -3,7 +3,7 @@
 }
 
 .cm-s-default .cm-comment {
-  color: gray;
+  color: #c4c4c4;
 }
 
 
@@ -16,12 +16,13 @@
 }
 
 .cm-s-default .cm-variable,
-.cm-var-keyword {
+.cm-create-keyword {
   color: #c44fdd;
 }
 
 .cm-s-default .cm-variable {
   font-weight: bold;
+  font-size: 14px;
 }
 
 .cm-procedure-keyword,
@@ -31,4 +32,5 @@
 
 .cm-procedure {
   font-weight: bold;
+  font-size: 14px;
 }

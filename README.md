@@ -15,9 +15,9 @@ Project milestones:
 - [x] Add custom syntax highlighting that matches our keywords
 - [ ] Refine the language syntax
   - [x] Remove program wrapper
-  - [ ] Remove types
+  - [x] Remove types
+  - [x] Improve variable creation (`create`, `variable`, ...)
   - [ ] Get rid of semi colons
-  - [ ] Improve variable creation (`create`, `variable`, ...)
   - [ ] Improve function creation (`function`, `takes`, ...)
   - [ ] Improve function invocation (`call`, `with`, ...)?
   - [ ] Improve variable assignment statements (`assign`, `set`, ...)

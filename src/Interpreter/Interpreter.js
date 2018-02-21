@@ -75,10 +75,10 @@ export class Interpreter extends NodeVisitor {
   }
 
   visitVariableDeclaration(node) {
-    const typeName = node.type.value;
-    const typeSymbol = this.currentScope.lookup(typeName);
-    const varName = node.variable.value;
-    const varSymbol = new VarSymbol(varName, typeSymbol);
+    //const typeName = node.type.value;
+    //const typeSymbol = this.currentScope.lookup(typeName);
+    const varName = node.value;
+    const varSymbol = new VarSymbol(varName, null);
 
     this.currentScope.insert(varSymbol);
   }
@@ -158,9 +158,9 @@ export class Interpreter extends NodeVisitor {
   visitProcedureDecl(node) {
     // add parameters to procedure symbol
     const params = node.params.map(param => {
-      const paramType = this.currentScope.lookup(param.type.value);
-      const paramName = param.variable.value;
-      return new VarSymbol(paramName, paramType);
+      //const paramType = this.currentScope.lookup(param.type.value);
+      const paramName = param.value;
+      return new VarSymbol(paramName, null);
     });
 
     const procedureName = node.id.value;
@@ -182,11 +182,11 @@ export class Interpreter extends NodeVisitor {
     this.openNewScope(procedureName);
 
     procedureSymbol.params.forEach((param, index) => {
-      const paramType = this.currentScope.lookup(param.type.value);
+      //const paramType = this.currentScope.lookup(param.type.value);
       const paramName = param.name;
       const argSymbol = new VarSymbol(
         paramName,
-        paramType,
+        null,
         this.visit(node.args[index]) // evaluate arg
       );
 
@@ -221,7 +221,6 @@ export class Interpreter extends NodeVisitor {
   }
 
   print(node) {
-    //console.log.apply(console, );
     const output = node.args.map(arg => this.visit(arg)).join(' ');
     this.stdout.write(`${output}\n`);
   }
@@ -258,6 +257,7 @@ export class Interpreter extends NodeVisitor {
         this.stdout.write(returnValue);
       }
     } catch (ex) {
+      console.log(ex);
       this.stderr.write(ex);
     }
   }

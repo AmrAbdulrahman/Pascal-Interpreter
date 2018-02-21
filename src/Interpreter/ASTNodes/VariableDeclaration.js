@@ -9,6 +9,6 @@ export class VariableDeclaration extends ASTNode {
   }
 
   valueOf() {
-    return this.children.length;
+    return this.name;
   }
 };

@@ -1,4 +1,4 @@
-import { concat, failPositionCodePreview, log } from './utils';
+import { failPositionCodePreview, log } from './utils';
 import { Token } from './Token';
 import { Lexer } from './Lexer';
 
@@ -19,11 +19,8 @@ import {
   ID,
   ASSIGN,
   SEMI,
-  VAR,
+  CREATE,
   COMMA,
-  COLON,
-  INTEGER,
-  REAL,
   PROCEDURE,
   RETURN,
   IF,
@@ -54,7 +51,6 @@ import {
   NoOp,
   Var,
   Assign,
-  Type,
   VariableDeclaration,
   ProcedureDecl,
   ProcedureInvokation,
@@ -120,7 +116,7 @@ export class Parser {
 
   program() {
     log('program');
-    // program : PROGRAM variable block
+    // program : statement_list
 
     return new Program(this.statement_list());
   }
@@ -147,41 +143,14 @@ export class Parser {
     return scopedBlockNode;
   }
 
-  params_list() {
-    log('params_list');
-    // params_list : params (SEMI params)*
-
-    let params = [...this.params()];
-
-    while (this.currentToken.is(SEMI)) {
-      this.eat(SEMI);
-      concat(params, this.params());
-    }
-
-    return params;
-  }
-
-  params() {
-    log('params');
-    // params : variables_list COLON type
-
-    const variables = this.variables_list();
-    this.eat(COLON);
-    const typeNode = this.type_spec();
-
-    return variables.map(variable => new VariableDeclaration(variable, typeNode));
-  }
-
   variables_declaration() {
     log('variables_declaration');
-    // variable_declaration : VAR variables_list COLON type
+    // variable_declaration : VAR variables_list
 
-    this.eat(VAR);
+    this.eat(CREATE);
     const variables = this.variables_list();
-    this.eat(COLON);
-    const typeNode = this.type_spec();
 
-    return variables.map(variable => new VariableDeclaration(variable, typeNode));
+    return variables.map(variable => new VariableDeclaration(variable, null));
   }
 
   variables_list() {
@@ -200,7 +169,7 @@ export class Parser {
 
   procedure_declaration() {
     log('procedure_declaration');
-    // procedure_declaration : PROCEDURE ID OPENBRACE params_list CLOSEBRACE block
+    // procedure_declaration : PROCEDURE ID OPENBRACE variables_list CLOSEBRACE block
 
     this.eat(PROCEDURE);
     const id = this.variable();
@@ -209,7 +178,7 @@ export class Parser {
     this.eat(OPENBRACE);
 
     if (!this.currentToken.is(CLOSEBRACE)) {
-      params = this.params_list();
+      params = this.variables_list();
     }
 
     this.eat(CLOSEBRACE);
@@ -219,19 +188,6 @@ export class Parser {
     this.insert(SEMI); // auto insert SEMI after procedure declaration
 
     return new ProcedureDecl(id, params, block);
-  }
-
-  type_spec() {
-    log('type_spec');
-    const token = this.currentToken;
-
-    if (this.currentToken.is(INTEGER)) {
-      this.eat(INTEGER);
-    } else {
-      this.eat(REAL);
-    }
-
-    return new Type(token);
   }
 
   statement_list() {
@@ -274,7 +230,7 @@ export class Parser {
       return this.return_statement();
     }
 
-    if (this.currentToken.is(VAR)) {
+    if (this.currentToken.is(CREATE)) {
       return this.variables_declaration();
     }
 

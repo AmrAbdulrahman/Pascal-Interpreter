@@ -68,8 +68,8 @@ CodeMirror.defineMode('simple-code', (config, parserConfig) => {
           return 'operator';
         }
 
-        if (id === 'var') {
-          return 'var-keyword';
+        if (id === 'create') {
+          return 'create-keyword';
         }
 
         if (id === 'procedure') {

@@ -1,9 +1,9 @@
 export default `
-var x, c, s, cs: real;
+create x, c, s, cs;
 
-procedure square(n : integer) {
-   var res : integer;
-   var real1 : integer;
+procedure square(n) {
+   create res;
+   create real1;
    res := n * n;
    return res;
 }
@@ -18,7 +18,7 @@ if 2 less than or equal 1 OR 10 greater than or equal 10 then {
   print('fails')
 }
 
-procedure factorial(n : integer) {
+procedure factorial(n) {
   if n equals 0
     then return 1
   otherwise
@@ -31,11 +31,13 @@ procedure factorial(n : integer) {
 //  return n * n * n;
 // end;
 
-// function that calls a function
-// procedure compose(n : integer);
-// begin
-//  return square(n) + cube(n);
-// end;
+/*
+function that calls a function
+procedure compose(n : integer);
+begin
+ return square(n) + cube(n);
+end;
+*/
 
 if 0 then
   print('true amr hehe :D');
