@@ -14,12 +14,14 @@ class Editor extends Component {
 			lineNumbers: true,
       mode: 'simple-code',
       tabSize: 2,
+      fontSize: 16,
 		};
 
     return (
       <CodeMirror
         value={this.props.value}
         onChange={e => this.props.onChange(e)}
+        onCursorActivity={e => this.props.onCursorActivity(e)}
         options={options} />
     );
   }
@@ -28,11 +30,13 @@ class Editor extends Component {
 Editor.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
+  onCursorActivity: PropTypes.func,
 };
 
 Editor.defaultProps = {
   value: '',
   onChange() {},
+  onCursorActivity() {},
 };
 
 export default Editor;

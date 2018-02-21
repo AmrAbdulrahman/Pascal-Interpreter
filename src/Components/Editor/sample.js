@@ -1,18 +1,19 @@
 export default `
-create x, c, s, cs;
+create x, c, s, cs
 
 procedure square(n) {
-   create res;
-   create real1;
-   res := n * n;
-   return res;
+   create res
+   create real1
+   res := n * n
+   return res
 }
 
-if 2 less than or equal 1 OR 10 greater than or equal 10 then {
+if 2 less than or equal 1
+OR 10 greater than or equal 20 then {
   print('fulfills')
 
 } and if 2 equals 2 then {
-  print('elif');
+  print('elif')
 
 } otherwise {
   print('fails')
@@ -40,11 +41,11 @@ end;
 */
 
 if 0 then
-  print('true amr hehe :D');
+  print('true amr hehe :D')
 and if 1 equals 2 then
-  print('else if works!');
+  print('else if works!')
 otherwise
-  print('false value found!');
+  print('false value found!')
 
 // x := 2;
 // c := cube(x);
@@ -59,5 +60,5 @@ otherwise
 
 // print('ss', s);
 
-return factorial(5);
+return factorial(5)
 `;

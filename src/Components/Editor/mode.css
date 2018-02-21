@@ -1,5 +1,5 @@
 .cm-s-default .cm-keyword {
-  color: #4ca7b3;
+  color: #348b97;
 }
 
 .cm-s-default .cm-comment {
@@ -13,6 +13,7 @@
 
 .cm-operator {
   color: #f1a637;
+  /*background-color: #ffefd9;*/
 }
 
 .cm-s-default .cm-variable,
@@ -22,7 +23,6 @@
 
 .cm-s-default .cm-variable {
   font-weight: bold;
-  font-size: 14px;
 }
 
 .cm-procedure-keyword,
@@ -32,5 +32,4 @@
 
 .cm-procedure {
   font-weight: bold;
-  font-size: 14px;
 }

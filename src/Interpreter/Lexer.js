@@ -25,7 +25,6 @@ import {
   CLOSE_CURLY_BRACE,
   ID,
   ASSIGN,
-  SEMI,
   COLON,
   COMMA,
   SINGLE_QUOTE,
@@ -235,10 +234,6 @@ export class Lexer {
 
       if (this.currentChar === ',') {
         return this.newToken(COMMA, this.advance());
-      }
-
-      if (this.currentChar === ';') {
-        return this.newToken(SEMI, this.advance());
       }
 
       if (this.currentChar === '.') {

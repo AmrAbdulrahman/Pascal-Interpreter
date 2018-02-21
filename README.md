@@ -17,13 +17,14 @@ Project milestones:
   - [x] Remove program wrapper
   - [x] Remove types
   - [x] Improve variable creation (`create`, `variable`, ...)
-  - [ ] Get rid of semi colons
+  - [x] Get rid of semi colons
   - [ ] Improve function creation (`function`, `takes`, ...)
   - [ ] Improve function invocation (`call`, `with`, ...)?
   - [ ] Improve variable assignment statements (`assign`, `set`, ...)
   - [ ] loops: `for`, `while`, and `do-while`
   - [ ] `classes` and `objects`
   - [ ] `arrays`
+  - [ ] ternary operator `x if y otherwise z`
 - [ ] Read input from the users
 - [ ] Enable debugging mode, or let's call it a `step-by-step` execution
 - [ ] Visualize the memory at runtime

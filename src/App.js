@@ -58,6 +58,9 @@ class App extends Component {
     });
   }
 
+  onCursorActivity(e) {
+  }
+
   render() {
     return (
       <div className="App">
@@ -67,7 +70,10 @@ class App extends Component {
 
         <div className="Content-Wrapper">
           <div className="EditorWrapper">
-            <Editor value={this.state.code} onChange={(e) => this.onCodeChange(e)}/>
+            <Editor
+              value={this.state.code}
+              onChange={e => this.onCodeChange(e)}
+              onCursorActivity={e => this.onCursorActivity(e)}/>
           </div>
           <div className="OutputWrapper">
             <div className="Actions">

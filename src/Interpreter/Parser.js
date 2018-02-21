@@ -1,4 +1,4 @@
-import { failPositionCodePreview, log } from './utils';
+import { failPositionCodePreview, log, last } from './utils';
 import { Token } from './Token';
 import { Lexer } from './Lexer';
 
@@ -18,7 +18,6 @@ import {
   CLOSE_CURLY_BRACE,
   ID,
   ASSIGN,
-  SEMI,
   CREATE,
   COMMA,
   PROCEDURE,
@@ -185,21 +184,19 @@ export class Parser {
 
     const block = this.block();
 
-    this.insert(SEMI); // auto insert SEMI after procedure declaration
-
     return new ProcedureDecl(id, params, block);
   }
 
   statement_list() {
     log('statement_list');
-    // statement_list : statement (SEMI statement)*
+    // statement_list : statement*
 
-    const nodes = [this.statement()];
+    const nodes = [];
 
-    while (this.currentToken.is(SEMI)) {
-      this.eat(SEMI);
+    do {
       nodes.push(this.statement());
-    }
+    } while (this.currentToken.is(EOF) === false &&
+             last(nodes) instanceof NoOp === false);
 
     return nodes;
   }
@@ -279,8 +276,6 @@ export class Parser {
       otherwise = this.statement_or_scoped_block();
     }
 
-    this.insert(SEMI); // auto insert SEMI after if statement
-
     return new If(ifs, otherwise);
   }
 
@@ -291,9 +286,7 @@ export class Parser {
     if (this.currentToken.is(OPEN_CURLY_BRACE)) {
       return this.scoped_block();
     } else {
-      const statement = this.statement();
-      this.eatOptional(SEMI);
-      return statement;
+      return this.statement();
     }
   }
 

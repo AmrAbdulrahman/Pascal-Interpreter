@@ -18,7 +18,6 @@ export const OPEN_CURLY_BRACE = 'OPEN_CURLY_BRACE';
 export const CLOSE_CURLY_BRACE = 'CLOSE_CURLY_BRACE';
 export const ID = 'ID';
 export const ASSIGN = 'ASSIGN';
-export const SEMI = 'SEMI';
 export const CREATE = 'CREATE';
 export const COLON = 'COLON';
 export const COMMA = 'COMMA';

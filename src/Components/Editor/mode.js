@@ -68,13 +68,13 @@ CodeMirror.defineMode('simple-code', (config, parserConfig) => {
           return 'operator';
         }
 
-        if (id === 'create') {
-          return 'create-keyword';
-        }
-
-        if (id === 'procedure') {
-          return 'procedure-keyword';
-        }
+        // if (id === 'create') {
+        //   return 'create-keyword';
+        // }
+        //
+        // if (id === 'procedure') {
+        //   return 'procedure-keyword';
+        // }
 
         const keywordsRegExp = new RegExp(`^(${keywords.join('|')})$`, 'i');
         if (keywordsRegExp.test(id)) {
