@@ -1,12 +1,14 @@
 export default `
 create x, c, s, cs
 
-function square(n) {
+function square takes (n) {
    create res
    create real1
    res := n * n
    return res
 }
+
+print(square(4))
 
 if 2 less than or equal 1
 OR 10 greater than or equal 20 then {
@@ -19,7 +21,7 @@ OR 10 greater than or equal 20 then {
   print('fails')
 }
 
-function factorial(n) {
+function factorial takes(n) {
   if n equals 0
     then return 1
   otherwise
@@ -39,6 +41,14 @@ begin
  return square(n) + cube(n);
 end;
 */
+
+function sayHello takes name, title {
+	print('hello', title, name)
+}
+
+sayHello('hanaa', 'mrs')
+sayHello('amr', 'mr')
+
 
 if 0 then
   print('true amr hehe :D')

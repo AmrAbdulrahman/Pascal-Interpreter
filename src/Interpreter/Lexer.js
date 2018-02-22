@@ -10,6 +10,7 @@ import {
 
   SPACE,
   NEWLINE,
+  TAB,
   INTEGER_CONST,
   REAL_CONST,
   STRING_LITERAL,
@@ -92,7 +93,9 @@ export class Lexer {
   }
 
   skipWhiteSpace() {
-    while (this.currentCharIs(SPACE) || this.currentCharIs(NEWLINE)) {
+    while (this.currentCharIs(SPACE) ||
+           this.currentCharIs(NEWLINE) ||
+           this.currentCharIs(TAB)) {
       this.advance();
     }
   }

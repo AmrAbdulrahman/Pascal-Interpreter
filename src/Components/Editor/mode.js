@@ -41,12 +41,14 @@ CodeMirror.defineMode('simple-code', (config, parserConfig) => {
       // single quoted string string
       if (stream.match(`'`)) {
         stream.skipTo(`'`);
+        stream.next(); // skip closing quote
         return 'string';
       }
 
       // double quoted string string
       if (stream.match(`"`)) {
         stream.skipTo(`"`);
+        stream.next(); // skip closing quote
         return 'string';
       }
 

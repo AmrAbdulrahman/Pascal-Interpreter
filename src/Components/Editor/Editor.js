@@ -14,7 +14,7 @@ class Editor extends Component {
 			lineNumbers: true,
       mode: 'simple-code',
       tabSize: 2,
-      fontSize: 16,
+      indentWithTabs: false,
 		};
 
     return (

@@ -21,6 +21,7 @@ import {
   CREATE,
   COMMA,
   FUNCTION,
+  TAKES,
   RETURN,
   IF,
   OTHERWISE,
@@ -168,19 +169,27 @@ export class Parser {
 
   function_declaration() {
     log('function_declaration');
-    // function_declaration : FUNCTION ID OPENBRACE variables_list CLOSEBRACE block
+    // function_declaration : FUNCTION ID (TAKES variables_list)? block
 
     this.eat(FUNCTION);
     const id = this.variable();
     let params = [];
 
-    this.eat(OPENBRACE);
+    if (this.currentToken.is(TAKES)) {
+      this.eat(TAKES);
 
-    if (!this.currentToken.is(CLOSEBRACE)) {
+      let withBraces = false;
+      if (this.currentToken.is(OPENBRACE)) {
+        withBraces = true;
+        this.eat(OPENBRACE);
+      }
+
       params = this.variables_list();
-    }
 
-    this.eat(CLOSEBRACE);
+      if (withBraces) {
+        this.eat(CLOSEBRACE);
+      }
+    }
 
     const block = this.block();
 

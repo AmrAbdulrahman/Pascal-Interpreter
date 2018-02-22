@@ -77,7 +77,7 @@ export class Interpreter extends NodeVisitor {
   visitVariableDeclaration(node) {
     //const typeName = node.type.value;
     //const typeSymbol = this.currentScope.lookup(typeName);
-    const varName = node.value;
+    const varName = node.variable.value;
     const varSymbol = new VarSymbol(varName, null);
 
     this.currentScope.insert(varSymbol);

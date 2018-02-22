@@ -18,13 +18,19 @@ Project milestones:
   - [x] Remove types
   - [x] Improve variable creation (`create`, `variable`, ...)
   - [x] Get rid of semi colons
-  - [ ] Improve function creation (`function`, `takes`, ...)
+  - [x] Improve function creation (`function`, `takes`, ...)
   - [ ] Improve function invocation (`call`, `with`, ...)?
   - [ ] Improve variable assignment statements (`assign`, `set`, ...)
+  - [ ] `arrays`
   - [ ] loops: `for`, `while`, and `do-while`
   - [ ] `classes` and `objects`
-  - [ ] `arrays`
   - [ ] ternary operator `x if y otherwise z`
+- [ ] Improve Editor usability
+  - [ ] Auto format
+  - [ ] Auto complete
+  - [ ] Syntax validation
+  - [ ] Color theme
+  - [ ] Visually group one operator keywords by having common background
 - [ ] Read input from the users
 - [ ] Enable debugging mode, or let's call it a `step-by-step` execution
 - [ ] Visualize the memory at runtime

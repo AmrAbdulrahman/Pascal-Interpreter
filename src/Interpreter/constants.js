@@ -42,6 +42,7 @@ export const EQUAL = 'EQUAL';
 export const THEN = 'THEN';
 export const DOT = 'DOT';
 export const SPACE = ' ';
+export const TAB = '\t';
 export const NEWLINE = '\n';
 export const SINGLE_QUOTE = `'`;
 export const DOUBLE_QUOTE = `"`;
