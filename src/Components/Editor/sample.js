@@ -1,14 +1,15 @@
 export default `
-create x, c, s, cs
+create a = 12,
+       b = a + 1
 
-function square takes (n) {
-   create res
-   create real1
-   res := n * n
-   return res
+print('a is', a, 'and b is', b)
+
+function square takes n {
+  create res = n * n
+  return res
 }
 
-print(square(4))
+print('square of 4 is', square(4))
 
 if 2 less than or equal 1
 OR 10 greater than or equal 20 then {
@@ -21,54 +22,31 @@ OR 10 greater than or equal 20 then {
   print('fails')
 }
 
-function factorial takes(n) {
-  if n equals 0
-    then return 1
-  otherwise
-    return n * factorial(n - 1)
+function factorial takes n {
+  if n equals 0 then return 1
+  otherwise return n * factorial(n - 1)
 }
 
-// return expression on the fly
-// procedure cube(n : integer);
-// begin
-//  return n * n * n;
-// end;
+// line comment
 
 /*
-function that calls a function
-procedure compose(n : integer);
-begin
- return square(n) + cube(n);
-end;
+block comment
+block comment
+block comment
 */
 
-function sayHello takes name, title {
+function printWelcomeMessage {
+	print('Herzlisch welkommen')
+}
+
+printWelcomeMessage()
+
+function sayHello takes title, name {
 	print('hello', title, name)
 }
 
-sayHello('hanaa', 'mrs')
-sayHello('amr', 'mr')
-
-
-if 0 then
-  print('true amr hehe :D')
-and if 1 equals 2 then
-  print('else if works!')
-otherwise
-  print('false value found!')
-
-// x := 2;
-// c := cube(x);
-// s := square(x);
-//cs := compose(x);
-
-// argument as expression => function invokation
-// print('x =>', x, ' | sqr =>', s, ' | cube =>', c, ' | compose() =>', compose(x));
-// print('single quoted string');
-// print("double quoted string");
-// print(conditionalProcedure(1));
-
-// print('ss', s);
+sayHello('mrs', 'hanaa')
+sayHello('mr', 'amr')
 
 return factorial(5)
 `;

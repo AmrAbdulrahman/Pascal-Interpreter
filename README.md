@@ -19,12 +19,15 @@ Project milestones:
   - [x] Improve variable creation (`create`, `variable`, ...)
   - [x] Get rid of semi colons
   - [x] Improve function creation (`function`, `takes`, ...)
-  - [ ] Improve function invocation (`call`, `with`, ...)?
+  - [x] Add assignment on declaration
+  - [ ] Improve function invocation (`call`, `with`, `of`, ...)?
   - [ ] Improve variable assignment statements (`assign`, `set`, ...)
   - [ ] `arrays`
   - [ ] loops: `for`, `while`, and `do-while`
   - [ ] `classes` and `objects`
   - [ ] ternary operator `x if y otherwise z`
+  - [ ] named/labeled arguments
+  - [ ] Add default parameters
 - [ ] Improve Editor usability
   - [ ] Auto format
   - [ ] Auto complete

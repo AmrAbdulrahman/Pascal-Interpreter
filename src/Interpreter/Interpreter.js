@@ -90,6 +90,8 @@ export class Interpreter extends NodeVisitor {
     this.currentScope
       .lookup(varName)
       .setValue(value);
+
+    return value;
   }
 
   visitNoOp(node) {

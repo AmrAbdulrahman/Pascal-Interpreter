@@ -227,8 +227,8 @@ export class Lexer {
         return this.readString();
       }
 
-      if (this.peek(this.pos, 2) === ':=') {
-        return this.newToken(ASSIGN, this.advance(2));
+      if (this.currentChar === '=') {
+        return this.newToken(ASSIGN, this.advance());
       }
 
       if (this.currentChar === ':') {

@@ -1,4 +1,4 @@
-import { failPositionCodePreview, log, last } from './utils';
+import { failPositionCodePreview, log, last, concat } from './utils';
 import { Token } from './Token';
 import { Lexer } from './Lexer';
 
@@ -145,31 +145,62 @@ export class Parser {
 
   variables_declaration() {
     log('variables_declaration');
-    // variable_declaration : VAR variables_list
+    // variable_declaration : CREATE variables_list
 
     this.eat(CREATE);
-    const variables = this.variables_list();
 
-    return variables.map(variable => new VariableDeclaration(variable, null));
+    return this.variables_list();
+  }
+
+  params_list() {
+    log('variables_list');
+    // variables_list: variable (COMMA variable)*
+
+    const nodes = [this.variable()];
+
+    while (this.currentToken.is(COMMA)) {
+      this.eat(COMMA);
+      nodes.push(this.variable());
+    }
+
+    return nodes;
   }
 
   variables_list() {
     log('variables_list');
-    // variables_list: ID (COMMA ID)*
+    // variables_list: variable_declaration (COMMA variable_declaration)*
 
-    const variables = [this.variable()];
+    const nodes = this.variable_declaration_and_assignment();
 
     while (this.currentToken.is(COMMA)) {
       this.eat(COMMA);
-      variables.push(this.variable());
+      concat(nodes, this.variable_declaration_and_assignment());
     }
 
-    return variables;
+    return nodes;
+  }
+
+  variable_declaration_and_assignment() {
+    log('variable_declaration');
+    // variable_declaration_and_possible_assignment : ID (= expr)?
+    const varNode = this.variable();
+    const variableDeclarationNode = new VariableDeclaration(varNode, null);
+    const nodes = [variableDeclarationNode];
+
+    if (this.currentToken.is(ASSIGN)) {
+      this.eat(ASSIGN);
+
+      const expr = this.expr();
+      const assignNode = new Assign(varNode, expr);
+      nodes.push(assignNode);
+    }
+
+    return nodes;
   }
 
   function_declaration() {
     log('function_declaration');
-    // function_declaration : FUNCTION ID (TAKES variables_list)? block
+    // function_declaration : FUNCTION ID (TAKES params_list)? block
 
     this.eat(FUNCTION);
     const id = this.variable();
@@ -184,7 +215,7 @@ export class Parser {
         this.eat(OPENBRACE);
       }
 
-      params = this.variables_list();
+      params = this.params_list();
 
       if (withBraces) {
         this.eat(CLOSEBRACE);
@@ -319,10 +350,10 @@ export class Parser {
     // assignment_statement : variable ASSIGN expr
 
     const leftNode = this.variable();
-    const operatorNode = this.operator(ASSIGN);
+    this.eat(ASSIGN);
     const rightNode = this.expr();
 
-    return new Assign(leftNode, operatorNode, rightNode);
+    return new Assign(leftNode, rightNode);
   }
 
   get expr_precedence() {
