@@ -39,6 +39,7 @@ import {
   LESS_THAN_OR_EQUAL,
   GREATER_THAN_OR_EQUAL,
   THEN,
+  COLON,
 } from './constants';
 
 import {
@@ -58,6 +59,7 @@ import {
   Str,
   If,
   Condition,
+  ObjectLiteral,
 } from './ASTNodes/*';
 
 const TOKENS_IN_ADVANCE = 3;
@@ -495,6 +497,7 @@ export class Parser {
     //        | function_invocation
     //        | Variable
     //        | String
+    //        | Object_Literal
     log('expr_factor');
 
     const token = this.currentToken;
@@ -541,7 +544,45 @@ export class Parser {
       return this.variable();
     }
 
+    // object literal
+    if (this.currentToken.is(OPEN_CURLY_BRACE)) {
+      return this.object_literal();
+    }
+
     this.fail('Expected expression');
+  }
+
+  object_literal() {
+    // object_literal: OPEN_CURLY_BRACE ()* CLOSE_CURLY_BRACE
+    const nodes = [];
+
+    this.eat(OPEN_CURLY_BRACE);
+
+    while (this.currentToken.is(ID)) {
+      const variable = this.variable();
+
+      if (this.currentToken.is(COLON)) {
+        this.eat(COLON);
+      } else {
+        this.eat(ASSIGN);
+      }
+
+      nodes.push({
+        key: new VariableDeclaration(variable),
+        value: this.expr(),
+      });
+
+      // if comma, continue, else close
+      if (this.currentToken.is(COMMA)) {
+        this.eat(COMMA);
+      } else {
+        break;
+      }
+    }
+
+    this.eat(CLOSE_CURLY_BRACE);
+
+    return new ObjectLiteral(nodes);
   }
 
   function_invocation() {
@@ -579,7 +620,7 @@ export class Parser {
   }
 
   empty() {
-    // empty:
+    // empty: NoOp
     return new NoOp();
   }
 

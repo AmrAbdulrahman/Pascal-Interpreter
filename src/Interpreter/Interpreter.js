@@ -222,8 +222,41 @@ export class Interpreter extends NodeVisitor {
     return !!this.visit(node.expr);
   }
 
+  visitObjectLiteral(node) {
+    this.openNewScope('object');
+
+    const obj = {};
+
+    node.children.forEach(node => {
+      // calculate the value before declaring the variable
+      // to handle dependency on the same variable name
+      const value = this.visit(node.value);
+
+      // declare the variable
+      this.visit(node.key);
+
+      const varName = node.key.variable.value;
+
+      // set variable value in current scope
+      this.currentScope
+        .lookup(varName)
+        .setValue(value);
+
+      // construct object
+      obj[varName] = value;
+    });
+
+    this.closeCurrentScope();
+
+    return obj;
+  }
+
   print(node) {
-    const output = node.args.map(arg => this.visit(arg)).join(' ');
+    const output = node.args
+      .map(arg => this.visit(arg))
+      .map(argVal => argVal instanceof Object ? JSON.stringify(argVal) : argVal)
+      .join(' ');
+
     this.stdout.write(`${output}\n`);
   }
 

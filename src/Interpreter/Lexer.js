@@ -32,6 +32,8 @@ import {
   DOUBLE_QUOTE,
   THEN,
   DOT,
+  OPEN_SQUARE_BRACKET,
+  CLOSE_SQUARE_BRACKET,
 } from './constants';
 
 const RESERVED_KEYWORDS = [
@@ -257,6 +259,14 @@ export class Lexer {
 
       if (this.currentCharIs('}')) {
         return this.newToken(CLOSE_CURLY_BRACE, this.advance());
+      }
+
+      if (this.currentCharIs('[')) {
+        return this.newToken(OPEN_SQUARE_BRACKET, this.advance());
+      }
+
+      if (this.currentCharIs(']')) {
+        return this.newToken(CLOSE_SQUARE_BRACKET, this.advance());
       }
 
       if (this.currentCharIsArithmeticOperator()) {

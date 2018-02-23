@@ -9,7 +9,12 @@ function square takes n {
   return res
 }
 
-print('square of 4 is', square(4))
+create obj = {
+  a: 3,
+  s: square(a),
+}
+
+print('obj is', obj)
 
 if 2 less than or equal 1
 OR 10 greater than or equal 20 then {

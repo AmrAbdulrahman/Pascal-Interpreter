@@ -15,3 +15,4 @@ export { Return } from './Return';
 export { Str } from './Str';
 export { If } from './If';
 export { Condition } from './Condition';
+export { ObjectLiteral } from './ObjectLiteral';

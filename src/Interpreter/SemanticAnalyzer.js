@@ -13,6 +13,14 @@ export class SemanticAnalyzer extends NodeVisitor {
     this.currentScope = new BuiltinsScope();
   }
 
+  openNewScope(name) {
+    this.currentScope = new Scope(name, this.currentScope);
+  }
+
+  closeCurrentScope() {
+    this.currentScope = this.currentScope.parent;
+  }
+
   visitProgram(node) {
     this.visitBlock(node);
   }
@@ -22,11 +30,9 @@ export class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitScopedBlock(node) {
-    this.currentScope = new Scope('block', this.currentScope);
-
+    this.openNewScope('block');
     this.visitBlock(node);
-
-    this.currentScope = this.currentScope.parent;
+    this.closeCurrentScope();
   }
 
   visitBinOp(node) {
@@ -64,9 +70,7 @@ export class SemanticAnalyzer extends NodeVisitor {
 
     this.currentScope.insert(functionSymbol);
 
-    const functionScope = new Scope(functionName, this.currentScope);
-
-    this.currentScope = functionScope;
+    this.openNewScope(functionName);
 
     node.params.forEach(param => {
       //const paramType = this.currentScope.lookup(param.type.value);
@@ -84,8 +88,7 @@ export class SemanticAnalyzer extends NodeVisitor {
     // visit function body
     this.visit(node.block);
 
-    // close function scope
-    this.currentScope = this.currentScope.parent;
+    this.closeCurrentScope();
   }
 
   visitVariableDeclaration(node) {
@@ -163,5 +166,16 @@ export class SemanticAnalyzer extends NodeVisitor {
     if (functionSymbol.params.length !== node.args.length) {
       throw new Error(`Function '${functionName}' accepts (${functionSymbol.params.length}) argument(s) [${functionSymbol.params.map(p => p.name).join(',')}]`);
     }
+  }
+
+  visitObjectLiteral(node) {
+    this.openNewScope('object');
+
+    node.children.forEach(node => {
+      this.visit(node.key); // var declaration
+      this.visit(node.value); // expr
+    });
+
+    this.closeCurrentScope();
   }
 }
