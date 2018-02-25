@@ -12,9 +12,13 @@ function square takes n {
 create obj = {
   a: 3,
   s: square(a),
+  c: {
+    z: 1
+  }
 }
 
 print('obj is', obj)
+print('s of obj', z of c of obj)
 
 if 2 less than or equal 1
 OR 10 greater than or equal 20 then {

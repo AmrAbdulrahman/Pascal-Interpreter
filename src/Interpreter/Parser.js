@@ -40,6 +40,7 @@ import {
   GREATER_THAN_OR_EQUAL,
   THEN,
   COLON,
+  OF,
 } from './constants';
 
 import {
@@ -540,6 +541,11 @@ export class Parser {
     }
 
     // var
+    if (this.currentToken.is(ID) && this.nextToken().is(OF)) {
+      return this.expr_chain();
+    }
+
+    // Var
     if (this.currentToken.is(ID)) {
       return this.variable();
     }
@@ -550,6 +556,57 @@ export class Parser {
     }
 
     this.fail('Expected expression');
+  }
+
+/* a of b of c of d
+c =>    a
+
+
+
+c=>    B
+      a b
+r = c
+
+
+c=>   B
+     a  B <
+       b  c
+r = d
+
+
+c=>   B
+     a  B
+       b  B
+        c   d
+r = d
+
+
+*/
+  expr_chain() {
+    // expr_chain: ID (of ID)*
+
+    log('expr_chain');
+
+    let root = this.variable();
+    let current = null;
+
+    if (this.currentToken.is(OF)) {
+      let operator = this.operator(OF);
+      let right = this.variable();
+
+      root = new BinOp(root, operator, right);
+      current = root;
+    }
+
+    while (this.currentToken.is(OF)) {
+      let operator = this.operator(OF);
+      let right = this.variable();
+
+      current.right = new BinOp(current.right, operator, right);
+      current = current.right;
+    }
+
+    return root;
   }
 
   object_literal() {

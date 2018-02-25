@@ -4,7 +4,8 @@ import { BuiltinsScope } from './BuiltinsScope';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
 import { FunctionSymbol } from './Symbols/FunctionSymbol';
-import { PRINT } from './constants';
+import { PRINT, OF } from './constants';
+import { Var } from './ASTNodes/Var';
 
 export class SemanticAnalyzer extends NodeVisitor {
   constructor() {
@@ -36,8 +37,20 @@ export class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitBinOp(node) {
+    if (node.op.type === OF) {
+      return this.visitMemberAccessNode(node);
+    }
+
     this.visit(node.left);
     this.visit(node.right);
+  }
+
+  visitMemberAccessNode(node) {
+    this.visit(node.right);
+
+    if (node.left instanceof Var === false) {
+      throw new Error(`'${node.left}' must be a key`);
+    }
   }
 
   visitNoOp(node) {
@@ -154,6 +167,8 @@ export class SemanticAnalyzer extends NodeVisitor {
   visitFunctionInvocation(node) {
     const functionName = node.id.value;
     const functionSymbol = this.currentScope.lookup(functionName);
+
+    node.args.forEach(arg => this.visit(arg));
 
     if (functionName === PRINT) {
       return;

@@ -43,6 +43,8 @@ export const THEN = 'THEN';
 export const DOT = 'DOT';
 export const OPEN_SQUARE_BRACKET = 'OPEN_SQUARE_BRACKET';
 export const CLOSE_SQUARE_BRACKET = 'CLOSE_SQUARE_BRACKET';
+export const OF = 'OF';
+
 export const SPACE = ' ';
 export const TAB = '\t';
 export const NEWLINE = '\n';

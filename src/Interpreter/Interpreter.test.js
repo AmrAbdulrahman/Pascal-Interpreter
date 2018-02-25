@@ -12,7 +12,7 @@ function interpretProgram(code) {
     }
   }
 
-  return (new Interpreter(`program p { ${code} }`, {stdout, stderr})).interpret();
+  return (new Interpreter(code, {stdout, stderr})).interpret();
 }
 
 
@@ -22,15 +22,65 @@ describe('Interpreter', () => {
     expect(retuenValue).toEqual(3);
   });
 
-  it('procedure declaration and invokation', () => {
+  it('function declaration and invokation', () => {
     const retuenValue = interpretProgram(`
-      procedure simpleProcedure(n: integer) {
-        return n + 1;
+      function simpleProcedure takes (n) {
+        return n + 1
       }
 
-      return simpleProcedure(1 + 1);
+      return simpleProcedure(1 + 1)
     `);
 
     expect(retuenValue).toEqual(3);
+  });
+
+  it('member access chain', () => {
+    const retuenValue = interpretProgram(`
+      create a = {
+        b: {
+          c: {
+            d: 1
+          }
+        }
+      }
+
+      return d of c of b of a
+    `);
+
+    expect(retuenValue).toEqual(1);
+  });
+
+
+  it('member access chain', () => {
+    const badCode = () => interpretProgram(`
+      create a = {
+        b: {
+          c: {
+            d: 1
+          }
+        }
+      }
+
+      return a of cc of b of a
+    `);
+
+    expect(badCode).toThrow(`object has no property`);
+  });
+
+  it('member access chain', () => {
+    const badCode = () => interpretProgram(`
+      create a = ''
+      return b of a
+    `);
+
+    expect(badCode).toThrow(`Can't call`);
+  });
+
+  it('member access chain', () => {
+    const badCode = () => interpretProgram(`
+      return b of a
+    `);
+
+    expect(badCode).toThrow(`Undeclared variable 'a'`);
   });
 });

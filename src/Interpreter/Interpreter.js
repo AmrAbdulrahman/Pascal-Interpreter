@@ -5,6 +5,7 @@ import { BuiltinsScope } from './BuiltinsScope';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { FunctionSymbol } from './Symbols/FunctionSymbol';
 import { Parser } from './Parser';
+import { Var } from './ASTNodes/Var';
 
 import {
   PLUS,
@@ -21,6 +22,7 @@ import {
   GREATER_THAN,
   LESS_THAN_OR_EQUAL,
   GREATER_THAN_OR_EQUAL,
+  OF,
 } from './constants';
 
 class Return {
@@ -105,6 +107,10 @@ export class Interpreter extends NodeVisitor {
   }
 
   visitBinOp(node) {
+    if (node.op.type === OF) {
+      return this.visitMemberAccessNode(node);
+    }
+
     const left = this.visit(node.left);
     const right = this.visit(node.right);
 
@@ -139,6 +145,26 @@ export class Interpreter extends NodeVisitor {
       default:
         throw new Error(`Unhandled operator type ${node.op.type}`);
     }
+  }
+
+  visitMemberAccessNode(node) {
+    const right = this.visit(node.right);
+    const leftName = node.left.value;
+
+    if (right instanceof Object === false) {
+      throw new Error(`Can't call '${leftName}' of '${right}' because '${right}' is not an object`);
+    }
+
+
+    if (Object
+        .keys(right)
+        .map(k => k.toLowerCase())
+        .indexOf(leftName.toLowerCase()) === -1) {
+
+      throw new Error(`object has no property '${leftName}'`);
+    }
+
+    return right[leftName];
   }
 
   visitNum(node) {
@@ -291,8 +317,10 @@ export class Interpreter extends NodeVisitor {
       if (returnValue !== undefined) {
         this.stdout.write(returnValue);
       }
+
+      return returnValue;
     } catch (ex) {
-      console.log(ex);
+      //console.log(ex);
       this.stderr.write(ex);
     }
   }
