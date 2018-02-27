@@ -8,6 +8,14 @@ export class FunctionSymbol extends BaseSymbol {
     this.params = params;
   }
 
+  setScope(scope) {
+    this.scope = scope;
+  }
+
+  getScope() {
+    return this.scope;
+  }
+
   toString() {
     return `<${this.constructor.name} (name=${this.name})>`;
   }

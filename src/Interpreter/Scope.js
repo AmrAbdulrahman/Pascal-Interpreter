@@ -1,4 +1,5 @@
 import { span } from './utils';
+import { VarSymbol } from './Symbols/VarSymbol';
 
 export class Scope {
   constructor(scopeName, parent = null) {
@@ -32,6 +33,12 @@ export class Scope {
 
   has(name) {
     return !!this.symbols[name];
+  }
+
+  getOwnVarSymbols() {
+    return this.keys
+      .map(key => this.symbols[key])
+      .filter(symbol => symbol instanceof VarSymbol);
   }
 
   get keys() {

@@ -3,7 +3,9 @@ import { Interpreter } from './Interpreter';
 
 function interpretProgram(code) {
   const stdout = {
-    write() {}
+    write(msg) {
+    //  console.log(msg);
+    }
   };
 
   const stderr = {
@@ -82,5 +84,48 @@ describe('Interpreter', () => {
     `);
 
     expect(badCode).toThrow(`Undeclared variable 'a'`);
+  });
+
+  it('recursion', () => {
+    const retuenValue = interpretProgram(`
+      function factorial takes n { // function scope
+        if n equals 0 or n equals 1 then return 1
+        otherwise { // open block scope
+          create x = n
+          print('x before => ', x)
+
+          // 1. keep block scope on hold which has 'x'
+          // 2. switch to 'factorial' scope
+          // 3. execute factorial body which recursively open new block scopes
+          // 4. restore the block scope
+          create nextCallValue = factorial(x - 1)
+
+          print('x after => ', x)
+
+          return x * nextCallValue
+        }
+      }
+
+      return factorial(5)
+    `);
+
+    expect(retuenValue).toEqual(120);
+  });
+
+  it('recursion', () => {
+    const retuenValue = interpretProgram(`
+      function factorial takes n {
+        if n equals 0 or n equals 1 then return 1
+        otherwise return n * factorial(n - 1)
+      }
+
+      function factorialWrapper takes n {
+        return factorial(n)
+      }
+
+      return factorialWrapper(5)
+    `);
+
+    expect(retuenValue).toEqual(120);
   });
 });

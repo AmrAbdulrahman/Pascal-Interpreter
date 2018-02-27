@@ -5,7 +5,8 @@ import { BuiltinsScope } from './BuiltinsScope';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { FunctionSymbol } from './Symbols/FunctionSymbol';
 import { Parser } from './Parser';
-import { Var } from './ASTNodes/Var';
+import { Var, VariableDeclaration } from './ASTNodes/*';
+import { CallStack } from './CallStack/CallStack';
 
 import {
   PLUS,
@@ -40,6 +41,7 @@ export class Interpreter extends NodeVisitor {
     this.stdout = stdout;
     this.stderr = stderr;
     this.currentScope = new BuiltinsScope();
+    this.callStack = new CallStack();
   }
 
   openNewScope(name) {
@@ -184,18 +186,39 @@ export class Interpreter extends NodeVisitor {
   }
 
   visitFunctionDecl(node) {
-    // add parameters to function symbol
-    const params = node.params.map(param => {
-      //const paramType = this.currentScope.lookup(param.type.value);
-      const paramName = param.value;
-      return new VarSymbol(paramName, null);
-    });
-
     const functionName = node.id.value;
-    const functionBody = node.block;
-    const functionSymbol = new FunctionSymbol(functionName, functionBody, params);
+    const functionSymbol = new FunctionSymbol(functionName, node.block);
 
     this.currentScope.insert(functionSymbol);
+
+    this.openNewScope(functionName);
+
+    functionSymbol.setScope(this.currentScope);
+
+    // declare params
+    node.params.forEach(param => {
+      const paramName = param.value;
+      const paramSymbol = new VarSymbol(paramName, null);
+
+      this.currentScope.insert(paramSymbol);
+      functionSymbol.params.push(paramSymbol);
+    });
+
+    // visit all declaration nodes inside the function
+    this.visitFunctionLocalDeclarations(node.block);
+
+    this.closeCurrentScope();
+  }
+
+  visitFunctionLocalDeclarations(node) {
+    for (let index in node.children) {
+      const statement = node.children[index];
+
+      // declare variables
+      if (statement instanceof VariableDeclaration) {
+        this.visit(statement);
+      }
+    }
   }
 
   visitFunctionInvocation(node) {
@@ -206,25 +229,36 @@ export class Interpreter extends NodeVisitor {
       return this.print(node);
     }
 
-    // open invokation scope
-    this.openNewScope(functionName);
+    const functionScope = functionSymbol.getScope();
 
+    // 1) save locally declared variables state
+    const functionVarSymbols = functionScope.getOwnVarSymbols();
+    this.callStack.push(functionVarSymbols);
+
+    // 2) evaluate function args before switching scopes
+    const evaluatedArgs = node.args.map(arg => this.visit(arg));
+
+    // 3) set current scope to function scope
+    const initialCurrentScope = this.currentScope;
+    this.currentScope = functionScope;
+
+    // 4) evaluate and set function args
     functionSymbol.params.forEach((param, index) => {
-      //const paramType = this.currentScope.lookup(param.type.value);
       const paramName = param.name;
-      const argSymbol = new VarSymbol(
-        paramName,
-        null,
-        this.visit(node.args[index]) // evaluate arg
-      );
+      const argSymbol = functionScope.lookup(paramName);
+      const argValue = evaluatedArgs[index];
 
-      this.currentScope.insert(argSymbol);
+      argSymbol.setValue(argValue);
     });
 
+    // 5) execute function body
     const returnValue = this.visit(functionSymbol.block);
 
-    // close invokation scope
-    this.closeCurrentScope();
+    // 6) restore local variables state
+    this.callStack.pull();
+
+    // 7) set back currentScope
+    this.currentScope = initialCurrentScope;
 
     return returnValue instanceof Return ? returnValue.value : returnValue;
   }
