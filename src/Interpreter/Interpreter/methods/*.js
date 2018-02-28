@@ -18,3 +18,4 @@ export { visitIf } from './If';
 export { visitCondition } from './Condition';
 export { visitObjectLiteral } from './ObjectLiteral';
 export { visitPrint } from './Print';
+export { visitDottedMemberAccessNode } from './DottedMemberAccessNode';

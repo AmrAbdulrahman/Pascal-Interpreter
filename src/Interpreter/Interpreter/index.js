@@ -26,6 +26,7 @@ import {
   visitCondition,
   visitObjectLiteral,
   visitPrint,
+  visitDottedMemberAccessNode,
 } from './methods/*';
 
 export class Interpreter extends NodeVisitor {
@@ -72,6 +73,7 @@ export class Interpreter extends NodeVisitor {
       visitCondition,
       visitObjectLiteral,
       visitPrint,
+      visitDottedMemberAccessNode,
     };
 
     // bind methods

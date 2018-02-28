@@ -53,7 +53,7 @@ describe('Interpreter', () => {
   });
 
 
-  it('member access chain', () => {
+  it('member access chain (of)', () => {
     const badCode = () => interpretProgram(`
       create a = {
         b: {
@@ -67,6 +67,42 @@ describe('Interpreter', () => {
     `);
 
     expect(badCode).toThrow(`object has no property`);
+  });
+
+  it('member access chain (dot)', () => {
+    const returnValue = interpretProgram(`
+      create a = {
+        b: {
+          c: {
+            d: 1
+          }
+        }
+      }
+
+      return a.b.c.d
+    `);
+
+    expect(returnValue).toEqual(1);
+  });
+
+  it('mixed (of) and (dot)', () => {
+    const returnValue = interpretProgram(`
+      create a = {
+        b: {
+          c: {
+            d: 'value'
+          }
+        }
+      }
+
+      create obj = {
+        key: 2
+      }
+
+      return d of a.b.c
+    `);
+
+    expect(returnValue).toEqual('value');
   });
 
   it('member access chain', () => {

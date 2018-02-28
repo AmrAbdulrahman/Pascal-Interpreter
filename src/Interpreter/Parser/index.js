@@ -26,6 +26,7 @@ import {
   eatExprArithmeticMultiply,
   eatExprFactor,
   eatExprChain,
+  eatExprDottedChain,
   eatObjectLiteral,
   eatFunctionInvocation,
   eatVariable,
@@ -160,6 +161,9 @@ export class Parser {
       // expr_chain: ID (of ID)*
       eatExprChain,
 
+      // expr_dotted_chain: ID (DOT ID)*
+      eatExprDottedChain,
+
       // object_literal: OPEN_CURLY_BRACE (ID COLON|ASSIGN expr COMMA)* CLOSE_CURLY_BRACE
       eatObjectLiteral,
 
@@ -194,6 +198,8 @@ export class Parser {
       'eatExprLogicalLessOrGeaterThan',
       'eatExprArithmeticPlusOrMinus',
       'eatExprArithmeticMultiply',
+      'eatExprChain', // of
+      'eatExprDottedChain',
       'eatExprFactor',
     ];
 

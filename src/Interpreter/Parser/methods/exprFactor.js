@@ -1,5 +1,7 @@
 import { PLUS, MINUS, OPENBRACE, CLOSEBRACE, STRING_LITERAL,
-         INTEGER_CONST, REAL_CONST, ID, OF, OPEN_CURLY_BRACE } from '../../constants';
+         INTEGER_CONST, REAL_CONST, ID, OPEN_CURLY_BRACE
+       } from '../../constants';
+
 import { UnaryOp, Str, Num } from '../../ASTNodes/*';
 
 
@@ -49,11 +51,6 @@ export function eatExprFactor() {
   // id()
   if (this.currentToken.is(ID) && this.nextToken().is(OPENBRACE)) {
     return this.eatFunctionInvocation();
-  }
-
-  // expr chain
-  if (this.currentToken.is(ID) && this.nextToken().is(OF)) {
-    return this.eatExprChain();
   }
 
   // Var

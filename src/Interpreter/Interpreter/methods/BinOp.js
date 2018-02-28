@@ -12,11 +12,16 @@ import {
   LESS_THAN_OR_EQUAL,
   GREATER_THAN_OR_EQUAL,
   OF,
+  DOT,
 } from '../../constants';
 
 export function visitBinOp(node) {
   if (node.op.type === OF) {
     return this.visitMemberAccessNode(node);
+  }
+
+  if (node.op.type === DOT) {
+    return this.visitDottedMemberAccessNode(node);
   }
 
   const left = this.visit(node.left);
