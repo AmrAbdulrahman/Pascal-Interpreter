@@ -1,7 +1,6 @@
-import { Scope } from './Scope';
-import { BuiltinTypeSymbol } from './Symbols/BuiltinTypeSymbol';
-import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
-import { INTEGER, REAL, STRING, BOOLEAN } from './constants';
+import { Scope } from '.';
+import { BuiltinTypeSymbol, BuiltinVarSymbol } from '../Symbols/*';
+import { INTEGER, REAL, STRING, BOOLEAN } from '../constants';
 
 export class BuiltinsScope extends Scope {
   constructor() {

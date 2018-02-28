@@ -1,5 +1,5 @@
 import { Token } from './Token';
-import { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } from './utils';
+import { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } from '../Utils/*';
 
 import {
   // keywords
@@ -17,8 +17,7 @@ import {
   PLUS,
   MINUS,
   MULTIPLY,
-  INTEGER_DIVISION,
-  FLOAT_DIVISION,
+  DIVISION,
   EOF,
   OPENBRACE,
   CLOSEBRACE,
@@ -34,7 +33,7 @@ import {
   DOT,
   OPEN_SQUARE_BRACKET,
   CLOSE_SQUARE_BRACKET,
-} from './constants';
+} from '../constants';
 
 const RESERVED_KEYWORDS = [
   CREATE, FUNCTION, TAKES, RETURN,
@@ -190,22 +189,12 @@ export class Lexer {
       case '*':
         type = MULTIPLY; break;
       case '/':
-        type = FLOAT_DIVISION; break;
+        type = DIVISION; break;
       default:
         throw new Error(`Unhandled operator`);
     }
 
-    if (this.peek(this.pos, 4).toLowerCase() === 'div ') {
-      type = INTEGER_DIVISION;
-    }
-
-    if (type === null) {
-      throw new Error(`Unable to map arithmetic operator`);
-    }
-
-    const operator = type === INTEGER_DIVISION ? this.advance(3) : this.advance();
-
-    return this.newToken(type, operator);
+    return this.newToken(type, this.advance());
   }
 
   getNextToken() {

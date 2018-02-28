@@ -1,5 +1,5 @@
-import { span } from './utils';
-import { VarSymbol } from './Symbols/VarSymbol';
+import { span } from '../Utils/span';
+import { VarSymbol } from '../Symbols/VarSymbol';
 
 export class Scope {
   constructor(scopeName, parent = null) {

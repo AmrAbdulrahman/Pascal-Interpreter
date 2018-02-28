@@ -1,6 +1,6 @@
-import { NodeVisitor } from './NodeVisitor';
+import { NodeVisitor } from './Common/NodeVisitor';
 import { Scope } from './Scope';
-import { BuiltinsScope } from './BuiltinsScope';
+import { BuiltinsScope } from './Scope/BuiltinsScope';
 import { VarSymbol } from './Symbols/VarSymbol';
 import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
 import { FunctionSymbol } from './Symbols/FunctionSymbol';
@@ -102,6 +102,10 @@ export class SemanticAnalyzer extends NodeVisitor {
     this.visit(node.block);
 
     this.closeCurrentScope();
+  }
+
+  visitVariablesDeclaration(node) {
+    node.children.forEach(varDeclaration => this.visit(varDeclaration));
   }
 
   visitVariableDeclaration(node) {
