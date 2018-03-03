@@ -15,6 +15,7 @@ export { visitFunctionDecl } from './FunctionDecl';
 export { visitFunctionLocalDeclarations } from './FunctionLocalDeclarations';
 export { visitFunctionInvocation } from './FunctionInvocation';
 export { visitIf } from './If';
+export { visitRepeat } from './Repeat';
 export { visitCondition } from './Condition';
 export { visitObjectLiteral } from './ObjectLiteral';
 export { visitPrint } from './Print';

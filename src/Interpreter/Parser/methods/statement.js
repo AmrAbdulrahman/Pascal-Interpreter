@@ -1,9 +1,10 @@
-import { IF, ID, OPENBRACE, RETURN, CREATE, FUNCTION } from '../../constants';
+import { IF, REPEAT, ID, OPENBRACE, RETURN, CREATE, FUNCTION } from '../../constants';
 
 // statement : assignment_statement
 //           | function_invocation
 //           | return_statement
 //           | if_block
+//           | repeat_block
 //           | var_declaration
 //           | function_declaration
 //           | empty
@@ -11,6 +12,10 @@ import { IF, ID, OPENBRACE, RETURN, CREATE, FUNCTION } from '../../constants';
 export function eatStatement() {
   if (this.currentToken.is(IF)) {
     return this.eatIfBlock();
+  }
+
+  if (this.currentToken.is(REPEAT)) {
+    return this.eatRepeatBlock();
   }
 
   if (this.currentToken.is(ID) && this.nextToken().is(OPENBRACE)) {

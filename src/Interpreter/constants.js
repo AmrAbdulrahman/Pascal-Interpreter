@@ -43,6 +43,8 @@ export const DOT = 'DOT';
 export const OPEN_SQUARE_BRACKET = 'OPEN_SQUARE_BRACKET';
 export const CLOSE_SQUARE_BRACKET = 'CLOSE_SQUARE_BRACKET';
 export const OF = 'OF';
+export const REPEAT = 'REPEAT';
+export const TIMES = 'TIMES';
 
 export const SPACE = ' ';
 export const TAB = '\t';

@@ -177,6 +177,11 @@ export class SemanticAnalyzer extends NodeVisitor {
     }
   }
 
+  visitRepeat(node) {
+    this.visit(node.count);
+    this.visit(node.block);
+  }
+
   visitFunctionInvocation(node) {
     const functionName = node.id.value;
     const functionSymbol = this.currentScope.lookup(functionName);

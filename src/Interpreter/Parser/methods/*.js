@@ -9,6 +9,7 @@ export { eatFunctionDeclaration } from './functionDeclaration';
 export { eatStatementList } from './statementList';
 export { eatStatement } from './statement';
 export { eatIfBlock } from './ifBlock';
+export { eatRepeatBlock } from './repeatBlock';
 export { eatStatementOrScopedBlock } from './statementOrScopedBlock';
 export { eatCondition } from './condition';
 export { eatReturnStatement } from './returnStatement';

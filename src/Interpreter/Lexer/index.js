@@ -5,8 +5,8 @@ import {
   // keywords
   CREATE, FUNCTION, TAKES, RETURN,
   IF, ELSE, OTHERWISE,
-  INTEGER, REAL, STRING, BOOLEAN,
   EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL, OF,
+  REPEAT, TIMES,
 
   SPACE,
   NEWLINE,
@@ -38,12 +38,12 @@ import {
 const RESERVED_KEYWORDS = [
   CREATE, FUNCTION, TAKES, RETURN,
   IF, ELSE, OTHERWISE,
-  INTEGER, REAL, STRING, BOOLEAN,
   EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
-  THEN, OF,
+  THEN, OF, REPEAT, TIMES,
 ];
 
-export { RESERVED_KEYWORDS };
+export { RESERVED_KEYWORDS }; // export it for the syntax highlighting
+
 export class Lexer {
   constructor(text) {
     this.text = text;

@@ -14,6 +14,7 @@ import {
   eatStatementList,
   eatStatement,
   eatIfBlock,
+  eatRepeatBlock,
   eatStatementOrScopedBlock,
   eatCondition,
   eatReturnStatement,
@@ -116,8 +117,11 @@ export class Parser {
       //           | empty
       eatStatement,
 
-      // if_block: if OPENBRACE condition CLOSEBRACE statement_or_block (ELSE IF condition statement_or_block)* (OTHERWISE statement_or_block)?
+      // if_block: IF OPENBRACE condition CLOSEBRACE statement_or_block (ELSE IF condition statement_or_block)* (OTHERWISE statement_or_block)?
       eatIfBlock,
+
+      // repeat_block: REPEAT ID|INTEGER_CONST TIMES statement_or_block
+      eatRepeatBlock,
 
       // statement_or_block : (statement SEMI?) | scoped_block
       eatStatementOrScopedBlock,
