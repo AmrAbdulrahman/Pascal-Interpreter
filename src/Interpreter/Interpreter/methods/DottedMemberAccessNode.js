@@ -1,7 +1,6 @@
-export function visitDottedMemberAccessNode(node) {
-  // WARNING!
-  // take care that the SemanticAnalyzer already swapped
-  // node.left and node.right
+import { BinOp } from '../../ASTNodes/BinOp';
 
+export function visitDottedMemberAccessNode(node) {
+  node = new BinOp(node.right, node.op, node.left); // swap left and right
   return this.visitMemberAccessNode(node);
 }

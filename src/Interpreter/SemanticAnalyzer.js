@@ -5,7 +5,7 @@ import { VarSymbol } from './Symbols/VarSymbol';
 import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
 import { FunctionSymbol } from './Symbols/FunctionSymbol';
 import { PRINT, OF, DOT } from './constants';
-import { Var } from './ASTNodes/Var';
+import { Var, BinOp } from './ASTNodes/*';
 
 export class SemanticAnalyzer extends NodeVisitor {
   constructor() {
@@ -58,7 +58,7 @@ export class SemanticAnalyzer extends NodeVisitor {
   }
 
   visitDottedMemberAccessNode(node) {
-    [node.left, node.right] = [node.right, node.left]; // swap
+    node = new BinOp(node.right, node.op, node.left); // swap left and right
     this.visitMemberAccessNode(node);
   }
 
