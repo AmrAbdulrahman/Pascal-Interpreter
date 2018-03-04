@@ -1,7 +1,7 @@
 import { IF, THEN, AND, OTHERWISE } from '../../Common/constants';
 import { If } from '../ASTNodes/If';
-
-// if_block: if OPENBRACE condition CLOSEBRACE statement_or_block (ELSE IF condition statement_or_block)* (OTHERWISE statement_or_block)?
+0
+// if_block: if condition THEN? statement_or_block (ELSE IF condition THEN? d cstatement_or_block)* (OTHERWISE statement_or_block)?
 export function eatIfBlock() {
   const ifs = [];
   let condition = null;
@@ -10,7 +10,7 @@ export function eatIfBlock() {
 
   this.eat(IF);
   condition = this.eatCondition();
-  this.eat(THEN);
+  this.eatOptional(THEN);
   body = this.eatStatementOrScopedBlock();
 
   ifs.push({
@@ -23,7 +23,7 @@ export function eatIfBlock() {
     this.eat(AND);
     this.eat(IF);
     condition = this.eatCondition();
-    this.eat(THEN);
+    this.eatOptional(THEN);
     body = this.eatStatementOrScopedBlock();
 
     ifs.push({

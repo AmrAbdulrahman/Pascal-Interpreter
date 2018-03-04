@@ -18,3 +18,5 @@ export { Condition } from './Condition';
 export { ObjectLiteral } from './ObjectLiteral';
 export { Repeat } from './Repeat';
 export { While } from './While';
+export { Break } from './Break';
+export { Continue } from './Continue';

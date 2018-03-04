@@ -21,3 +21,5 @@ export { visitCondition } from './Condition';
 export { visitObjectLiteral } from './ObjectLiteral';
 export { visitPrint } from './Print';
 export { visitDottedMemberAccessNode } from './DottedMemberAccessNode';
+export { visitBreak } from './Break';
+export { visitContinue } from './Continue';

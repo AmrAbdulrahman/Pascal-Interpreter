@@ -29,3 +29,5 @@ export { eatFunctionInvocation } from './functionInvocation';
 export { eatVariable } from './variable';
 export { eatEmpty } from './empty';
 export { eatOperator } from './operator';
+export { eatBreak } from './break';
+export { eatContinue } from './continue';

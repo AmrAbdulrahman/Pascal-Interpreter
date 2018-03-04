@@ -74,4 +74,39 @@ describe('Interpreter:Repeat', () => {
 
     expect(retuenValue).toEqual(100);
   });
+
+  it('repeat with break', () => {
+    const retuenValue = interpret(`
+      create i = 0
+
+      repeat 10 times {
+        i = i + 1
+
+        if i equals 5 then return i
+      }
+    `);
+
+    expect(retuenValue).toEqual(5);
+  });
+
+  it('break only breaks inner loop', () => {
+    const retuenValue = interpret(`
+      create i = 0
+
+      repeat 10 times {
+        create j = 0
+
+        repeat 10 times {
+          i = i + 1
+          j = j + 1
+
+          if j equals 5 then break
+        }
+      }
+
+      return i
+    `);
+
+    expect(retuenValue).toEqual(50);
+  });
 });

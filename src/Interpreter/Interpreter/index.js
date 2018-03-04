@@ -29,6 +29,8 @@ import {
   visitObjectLiteral,
   visitPrint,
   visitDottedMemberAccessNode,
+  visitBreak,
+  visitContinue,
 } from './methods/*';
 
 export class Interpreter extends NodeVisitor {
@@ -78,6 +80,8 @@ export class Interpreter extends NodeVisitor {
       visitObjectLiteral,
       visitPrint,
       visitDottedMemberAccessNode,
+      visitBreak,
+      visitContinue,
     };
 
     // bind methods

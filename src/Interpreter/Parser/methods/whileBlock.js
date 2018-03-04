@@ -6,11 +6,7 @@ export function eatWhileBlock() {
   this.eat(WHILE);
 
   const conditionNode = this.eatCondition();
-
-  if (this.currentToken.is(REPEAT, DO)) {
-    this.eat(REPEAT, DO);
-  }
-
+  this.eatOptional(REPEAT, DO);
   const blockNode = this.eatStatementOrScopedBlock();
 
   return new While(conditionNode, blockNode);

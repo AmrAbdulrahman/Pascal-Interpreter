@@ -19,6 +19,8 @@ import {
   eatStatementOrScopedBlock,
   eatCondition,
   eatReturnStatement,
+  eatBreak,
+  eatContinue,
   eatAssignmentStatement,
   eatExpr,
   eatExprLogicalAndOr,
@@ -68,6 +70,12 @@ export class Parser {
       this.tokens.push(this.lexer.getNextToken());
     } else {
       this.fail(`Expected ${types.join('|')} but found ${this.currentToken.type}`);
+    }
+  }
+
+  eatOptional(...types) {
+    if (this.currentToken.is(...types)) {
+      this.eat(...types);
     }
   }
 
@@ -135,6 +143,12 @@ export class Parser {
 
       // return_statement : RETURN expr
       eatReturnStatement,
+
+      // break: break
+      eatBreak,
+
+      // continue: continue
+      eatContinue,
 
       // assignment_statement : variable ASSIGN expr
       eatAssignmentStatement,

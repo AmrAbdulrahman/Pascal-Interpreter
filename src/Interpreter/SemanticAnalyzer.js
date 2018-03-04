@@ -60,18 +60,6 @@ export class SemanticAnalyzer extends NodeVisitor {
     this.visitMemberAccessNode(node);
   }
 
-  visitNoOp(node) {
-    // do nothing here, void, blackhole...
-  }
-
-  visitNum(node) {
-    // do nothing
-  }
-
-  visitStr(node) {
-    // do nothing
-  }
-
   visitCondition(node) {
     this.visit(node.expr);
   }
@@ -213,5 +201,25 @@ export class SemanticAnalyzer extends NodeVisitor {
     });
 
     this.closeCurrentScope();
+  }
+
+  visitNoOp(node) {
+    // do nothing
+  }
+
+  visitNum(node) {
+    // do nothing
+  }
+
+  visitStr(node) {
+    // do nothing
+  }
+
+  visitContinue(node) {
+    // do nothing
+  }
+
+  visitBreak(node) {
+    // do nothing
   }
 }

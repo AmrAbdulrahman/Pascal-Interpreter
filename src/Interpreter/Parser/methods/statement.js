@@ -16,11 +16,11 @@ import {
 
 export function eatStatement() {
   if (this.currentToken.is(BREAK)) {
-    return new Break();
+    return this.eatBreak();
   }
 
   if (this.currentToken.is(CONTINUE)) {
-    return new Continue();
+    return this.eatContinue();
   }
 
   if (this.currentToken.is(IF)) {

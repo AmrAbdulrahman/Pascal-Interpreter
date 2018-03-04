@@ -1,4 +1,6 @@
 import { Return } from '../branching/Return';
+import { Break } from '../branching/Break';
+import { Continue } from '../branching/Continue';
 import { PRINT } from '../../Common/constants';
 
 export function visitFunctionInvocation(node) {
@@ -39,6 +41,11 @@ export function visitFunctionInvocation(node) {
 
   // 7) set back currentScope
   this.currentScope = initialCurrentScope;
+
+  if (returnValue instanceof Break ||
+      returnValue instanceof Continue) {
+    throw new Error('Invalid break/continue statement');
+  }
 
   return returnValue instanceof Return ? returnValue.value : returnValue;
 }

@@ -47,6 +47,8 @@ export const REPEAT = 'REPEAT';
 export const TIMES = 'TIMES';
 export const WHILE = 'WHILE';
 export const DO = 'DO';
+export const BREAK = 'BREAK';
+export const CONTINUE = 'CONTINUE';
 
 export const SPACE = ' ';
 export const TAB = '\t';

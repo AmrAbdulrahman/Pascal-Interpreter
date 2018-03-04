@@ -109,4 +109,48 @@ describe('Interpreter:While', () => {
 
     expect(retuenValue).toEqual('return');
   });
+
+  it('(continue) inside while loop', () => {
+    const retuenValue = interpret(`
+      function count135 {
+        create n = 1,
+               res = 0
+
+        while n less than or equal 5 repeat {
+          n = n + 1
+
+          if n equals 2 or n equals 4 then
+            continue // skip whatever left in the closest loop block
+
+          res = res + 1
+        }
+
+        return res
+      }
+
+      return count135()
+    `);
+
+    expect(retuenValue).toEqual(3);
+  });
+
+  it('(break) inside while loop', () => {
+    const retuenValue = interpret(`
+      function breakOn takes br {
+        create n = 1,
+               max = 10
+
+        while n less than or equal max repeat {
+          if n equals br then break
+          n = n + 1 // inc
+        }
+
+        return n
+      }
+
+      return breakOn(4)
+    `);
+
+    expect(retuenValue).toEqual(4);
+  });
 });
