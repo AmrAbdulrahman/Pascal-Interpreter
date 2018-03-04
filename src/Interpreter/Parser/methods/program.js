@@ -1,4 +1,4 @@
-import { Program } from '../../ASTNodes/Program';
+import { Program } from '../ASTNodes/Program';
 
 // program : statement_list
 export function eatProgram() {

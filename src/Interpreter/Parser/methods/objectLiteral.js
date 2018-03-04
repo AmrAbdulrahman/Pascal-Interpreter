@@ -1,5 +1,5 @@
-import { OPEN_CURLY_BRACE, CLOSE_CURLY_BRACE, ID, COLON, ASSIGN, COMMA } from '../../constants';
-import { VariableDeclaration, ObjectLiteral } from '../../ASTNodes/*';
+import { OPEN_CURLY_BRACE, CLOSE_CURLY_BRACE, ID, COLON, ASSIGN, COMMA } from '../../Common/constants';
+import { VariableDeclaration, ObjectLiteral } from '../ASTNodes/*';
 
 // object_literal: OPEN_CURLY_BRACE (ID COLON|ASSIGN expr COMMA)* CLOSE_CURLY_BRACE
 export function eatObjectLiteral() {

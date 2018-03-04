@@ -1,4 +1,4 @@
-import { Return } from '../Return';
+import { Return } from '../branching/Return';
 
 export function visitProgram(node) {
   const returnValue = this.visitBlock(node);

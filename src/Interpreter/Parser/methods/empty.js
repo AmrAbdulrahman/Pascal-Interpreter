@@ -1,4 +1,4 @@
-import { NoOp } from '../../ASTNodes/NoOp';
+import { NoOp } from '../ASTNodes/NoOp';
 
 // empty: NoOp
 export function eatEmpty() {

@@ -1,4 +1,4 @@
-import { VariableDeclaration } from '../../ASTNodes/*';
+import { VariableDeclaration } from '../../Parser/ASTNodes/*';
 
 export function visitFunctionLocalDeclarations(node) {
   for (let index in node.children) {

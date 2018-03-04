@@ -1,4 +1,4 @@
-import { Return } from '../Return';
+import { Return } from '../branching/Return';
 
 export function visitWhile(node) {
   let conditionValue = this.visit(node.condition);

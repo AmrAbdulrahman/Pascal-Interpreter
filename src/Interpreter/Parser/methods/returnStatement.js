@@ -1,5 +1,5 @@
-import { RETURN } from '../../constants';
-import { Return } from '../../ASTNodes/Return';
+import { RETURN } from '../../Common/constants';
+import { Return } from '../ASTNodes/Return';
 
 // return_statement : RETURN expr
 export function eatReturnStatement() {

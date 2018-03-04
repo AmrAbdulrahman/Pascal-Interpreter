@@ -1,8 +1,8 @@
 import { NodeVisitor } from '../Common/NodeVisitor';
 import { SemanticAnalyzer } from '../SemanticAnalyzer';
-import { Scope } from '../Scope';
-import { BuiltinsScope } from '../Scope/BuiltinsScope';
-import { CallStack } from '../CallStack';
+import { Scope } from '../Common/Scope';
+import { BuiltinsScope } from '../Common/Scope/BuiltinsScope';
+import { CallStack } from './CallStack';
 import { Parser } from '../Parser';
 
 import {

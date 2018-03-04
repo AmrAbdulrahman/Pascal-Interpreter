@@ -1,5 +1,5 @@
-import { EQUALS, NOT, NOT_EQUALS } from '../../constants';
-import { BinOp } from '../../ASTNodes/BinOp';
+import { EQUALS, NOT, NOT_EQUALS } from '../../Common/constants';
+import { BinOp } from '../ASTNodes/BinOp';
 
 // expr_logical_equals : ex (NOT? EQUALS expr1)*
 export function eatExprLogicalEquals() {

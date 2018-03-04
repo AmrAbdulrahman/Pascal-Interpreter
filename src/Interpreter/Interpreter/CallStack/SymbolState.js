@@ -1,4 +1,4 @@
-import { VarSymbol } from '../Symbols/VarSymbol';
+import { VarSymbol } from '../../Common/Symbols/VarSymbol';
 
 export class SymbolState {
   constructor(symbol) {

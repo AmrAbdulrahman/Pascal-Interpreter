@@ -1,4 +1,4 @@
-import { VarSymbol, FunctionSymbol } from '../../Symbols/*';
+import { VarSymbol, FunctionSymbol } from '../../Common/Symbols/*';
 
 export function visitFunctionDecl(node) {
   const functionName = node.id.value;

@@ -1,5 +1,5 @@
-import { ASSIGN, COLON } from '../../constants';
-import { VariableDeclaration, Assign } from '../../ASTNodes/*';
+import { ASSIGN, COLON } from '../../Common/constants';
+import { VariableDeclaration, Assign } from '../ASTNodes/*';
 
 // variable_declaration_and_possible_assignment : ID (= expr)?
 export function eatVariableDeclarationAndAssignment() {

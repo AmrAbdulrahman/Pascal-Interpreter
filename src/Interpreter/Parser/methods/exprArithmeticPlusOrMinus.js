@@ -1,5 +1,5 @@
-import { PLUS, MINUS } from '../../constants';
-import { BinOp } from '../../ASTNodes/BinOp';
+import { PLUS, MINUS } from '../../Common/constants';
+import { BinOp } from '../ASTNodes/BinOp';
 
 // expr_arithmetic_plus : something ((PLUS | MINUS) something)*
 export function eatExprArithmeticPlusOrMinus() {

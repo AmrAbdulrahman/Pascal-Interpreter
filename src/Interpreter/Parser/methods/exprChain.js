@@ -1,5 +1,5 @@
-import { OF } from '../../constants';
-import { BinOp } from '../../ASTNodes/BinOp';
+import { OF } from '../../Common/constants';
+import { BinOp } from '../ASTNodes/BinOp';
 
 // expr_chain: ID (of ID)*
 export function eatExprChain() {

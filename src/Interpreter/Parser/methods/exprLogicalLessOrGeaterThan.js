@@ -1,6 +1,6 @@
 import { LESS, GREATER, THAN, OR, EQUAL, LESS_THAN_OR_EQUAL,
-         GREATER_THAN_OR_EQUAL, LESS_THAN, GREATER_THAN } from '../../constants';
-import { BinOp } from '../../ASTNodes/BinOp';
+         GREATER_THAN_OR_EQUAL, LESS_THAN, GREATER_THAN } from '../../Common/constants';
+import { BinOp } from '../ASTNodes/BinOp';
 import { Token } from '../../Lexer/Token';
 
 // expr_logical_less_or_geater_than: something ((LESS_THAN | GREETER_THAN | LESS_THAN_OR_EQUAL | GREATER_THAN_OR_EQUAL) something)*

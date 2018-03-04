@@ -1,4 +1,4 @@
-import { COMMA } from '../../constants';
+import { COMMA } from '../../Common/constants';
 
 // variables_list: variable (COMMA variable)*
 export function eatParamsList() {

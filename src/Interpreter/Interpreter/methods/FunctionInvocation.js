@@ -1,5 +1,5 @@
-import { Return } from '../Return';
-import { PRINT } from '../../constants';
+import { Return } from '../branching/Return';
+import { PRINT } from '../../Common/constants';
 
 export function visitFunctionInvocation(node) {
   const functionName = node.id.value;

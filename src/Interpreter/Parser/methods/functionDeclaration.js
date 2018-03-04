@@ -1,5 +1,5 @@
-import { FUNCTION, TAKES, OPENBRACE, CLOSEBRACE } from '../../constants';
-import { FunctionDecl } from '../../ASTNodes/FunctionDecl';
+import { FUNCTION, TAKES, OPENBRACE, CLOSEBRACE } from '../../Common/constants';
+import { FunctionDecl } from '../ASTNodes/FunctionDecl';
 
 // function_declaration : FUNCTION ID (TAKES params_list)? block
 export function eatFunctionDeclaration() {

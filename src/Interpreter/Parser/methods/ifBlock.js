@@ -1,5 +1,5 @@
-import { IF, THEN, AND, OTHERWISE } from '../../constants';
-import { If } from '../../ASTNodes/If';
+import { IF, THEN, AND, OTHERWISE } from '../../Common/constants';
+import { If } from '../ASTNodes/If';
 
 // if_block: if OPENBRACE condition CLOSEBRACE statement_or_block (ELSE IF condition statement_or_block)* (OTHERWISE statement_or_block)?
 export function eatIfBlock() {

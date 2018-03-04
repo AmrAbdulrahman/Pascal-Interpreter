@@ -33,7 +33,7 @@ import {
   DOT,
   OPEN_SQUARE_BRACKET,
   CLOSE_SQUARE_BRACKET,
-} from '../constants';
+} from '../Common/constants';
 
 const RESERVED_KEYWORDS = [
   CREATE, FUNCTION, TAKES, RETURN,

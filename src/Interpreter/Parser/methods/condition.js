@@ -1,4 +1,4 @@
-import { Condition } from '../../ASTNodes/Condition';
+import { Condition } from '../ASTNodes/Condition';
 
 // condition: expr
 export function eatCondition() {

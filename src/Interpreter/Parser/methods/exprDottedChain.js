@@ -1,5 +1,5 @@
-import { DOT } from '../../constants';
-import { BinOp } from '../../ASTNodes/BinOp';
+import { DOT } from '../../Common/constants';
+import { BinOp } from '../ASTNodes/BinOp';
 
 // expr_dotted_chain : something (DOT something)*
 export function eatExprDottedChain() {

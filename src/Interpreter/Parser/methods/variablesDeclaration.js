@@ -1,4 +1,4 @@
-import { CREATE } from '../../constants';
+import { CREATE } from '../../Common/constants';
 
 // variable_declaration : CREATE variables_list
 export function eatVariablesDeclaration() {

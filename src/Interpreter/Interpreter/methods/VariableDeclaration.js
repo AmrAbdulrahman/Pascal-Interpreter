@@ -1,4 +1,4 @@
-import { VarSymbol } from '../../Symbols/*';
+import { VarSymbol } from '../../Common/Symbols/*';
 
 export function visitVariableDeclaration(node) {
   const varName = node.variable.value;

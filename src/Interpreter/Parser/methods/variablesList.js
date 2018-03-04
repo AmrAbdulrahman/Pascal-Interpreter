@@ -1,5 +1,5 @@
 import { concat } from '../../Utils/*';
-import { COMMA } from '../../constants';
+import { COMMA } from '../../Common/constants';
 
 // variables_list: variable_declaration (COMMA variable_declaration)*
 export function eatVariablesList() {

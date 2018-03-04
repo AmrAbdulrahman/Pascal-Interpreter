@@ -1,8 +1,8 @@
 import { PLUS, MINUS, OPENBRACE, CLOSEBRACE, STRING_LITERAL,
          INTEGER_CONST, REAL_CONST, ID, OPEN_CURLY_BRACE
-       } from '../../constants';
+       } from '../../Common/constants';
 
-import { UnaryOp, Str, Num } from '../../ASTNodes/*';
+import { UnaryOp, Str, Num } from '../ASTNodes/*';
 
 
 // factor : (PLUS | MINUS) FACTOR

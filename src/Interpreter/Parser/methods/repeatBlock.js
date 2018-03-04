@@ -1,5 +1,5 @@
-import { REPEAT, TIMES, INTEGER_CONST } from '../../constants';
-import { Repeat, Num } from '../../ASTNodes/*';
+import { REPEAT, TIMES, INTEGER_CONST } from '../../Common/constants';
+import { Repeat, Num } from '../ASTNodes/*';
 
 // repeat_block: REPEAT INTEGER_CONST|EXPR_CHAIN TIMES statement_or_block
 export function eatRepeatBlock() {

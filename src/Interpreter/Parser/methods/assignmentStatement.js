@@ -1,5 +1,5 @@
-import { ASSIGN } from '../../constants';
-import { Assign } from '../../ASTNodes/Assign';
+import { ASSIGN } from '../../Common/constants';
+import { Assign } from '../ASTNodes/Assign';
 
 // assignment_statement : variable ASSIGN expr
 export function eatAssignmentStatement() {

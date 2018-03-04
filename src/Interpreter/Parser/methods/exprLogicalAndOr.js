@@ -1,5 +1,5 @@
-import { AND, OR } from '../../constants';
-import { BinOp } from '../../ASTNodes/BinOp';
+import { AND, OR } from '../../Common/constants';
+import { BinOp } from '../ASTNodes/BinOp';
 
 // expr_logical_and_or: something ((AND | OR) something)*
 export function eatExprLogicalAndOr() {

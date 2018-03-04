@@ -1,5 +1,5 @@
-import { ID } from '../../constants';
-import { Var } from '../../ASTNodes/*';
+import { ID } from '../../Common/constants';
+import { Var } from '../ASTNodes/*';
 
 // variable: ID
 export function eatVariable() {

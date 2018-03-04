@@ -1,5 +1,5 @@
-import { OPEN_CURLY_BRACE, CLOSE_CURLY_BRACE } from '../../constants';
-import { Block } from '../../ASTNodes/Block';
+import { OPEN_CURLY_BRACE, CLOSE_CURLY_BRACE } from '../../Common/constants';
+import { Block } from '../ASTNodes/Block';
 
 // this is just a block, it does't open a new scope
 // it's useful as `function`, `while`, or `for` body

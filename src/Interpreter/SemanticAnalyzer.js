@@ -1,11 +1,9 @@
 import { NodeVisitor } from './Common/NodeVisitor';
-import { Scope } from './Scope';
-import { BuiltinsScope } from './Scope/BuiltinsScope';
-import { VarSymbol } from './Symbols/VarSymbol';
-import { BuiltinVarSymbol } from './Symbols/BuiltinVarSymbol';
-import { FunctionSymbol } from './Symbols/FunctionSymbol';
-import { PRINT, OF, DOT } from './constants';
-import { Var, BinOp } from './ASTNodes/*';
+import { Scope } from './Common/Scope';
+import { BuiltinsScope } from './Common/Scope/BuiltinsScope';
+import { FunctionSymbol, BuiltinVarSymbol, VarSymbol } from './Common/Symbols/*';
+import { PRINT, OF, DOT } from './Common/constants';
+import { Var, BinOp } from './Parser/ASTNodes/*';
 
 export class SemanticAnalyzer extends NodeVisitor {
   constructor() {

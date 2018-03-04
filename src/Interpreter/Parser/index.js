@@ -1,6 +1,6 @@
 import { failPositionCodePreview, log, last, concat } from '../Utils/*';
 import { Lexer } from '../Lexer';
-import { EOF } from '../constants';
+import { EOF } from '../Common/constants';
 
 import {
   eatProgram,

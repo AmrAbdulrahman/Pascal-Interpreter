@@ -1,5 +1,5 @@
-import { MULTIPLY, DIVISION } from '../../constants';
-import { BinOp } from '../../ASTNodes/BinOp';
+import { MULTIPLY, DIVISION } from '../../Common/constants';
+import { BinOp } from '../ASTNodes/BinOp';
 
 // expr_arithmetic_multiply : something ((MUL | DIV) something)*
 export function eatExprArithmeticMultiply() {

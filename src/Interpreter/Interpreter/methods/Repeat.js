@@ -1,4 +1,4 @@
-import { Return } from '../Return';
+import { Return } from '../branching/Return';
 
 export function visitRepeat(node) {
   const count = this.visit(node.count);

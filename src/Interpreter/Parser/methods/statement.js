@@ -1,9 +1,11 @@
 import {
-  IF, WHILE, REPEAT, ID, OPENBRACE, RETURN, CREATE, FUNCTION
-} from '../../constants';
+  IF, WHILE, REPEAT, ID, OPENBRACE, RETURN, CREATE, FUNCTION, BREAK, CONTINUE,
+} from '../../Common/constants';
 
 // statement : assignment_statement
 //           | function_invocation
+//           | break
+//           | continue
 //           | return_statement
 //           | if_block
 //           | repeat_block
@@ -13,6 +15,14 @@ import {
 //           | empty
 
 export function eatStatement() {
+  if (this.currentToken.is(BREAK)) {
+    return new Break();
+  }
+
+  if (this.currentToken.is(CONTINUE)) {
+    return new Continue();
+  }
+
   if (this.currentToken.is(IF)) {
     return this.eatIfBlock();
   }

@@ -1,4 +1,4 @@
-import { Return } from '../Return';
+import { Return } from '../branching/Return';
 
 export function visitBlock(node) {
   for (let index in node.children) {

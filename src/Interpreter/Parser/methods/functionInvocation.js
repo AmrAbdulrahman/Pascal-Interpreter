@@ -1,5 +1,5 @@
-import { ID, OPENBRACE, CLOSEBRACE, COMMA } from '../../constants';
-import { FunctionInvocation } from '../../ASTNodes/FunctionInvocation';
+import { ID, OPENBRACE, CLOSEBRACE, COMMA } from '../../Common/constants';
+import { FunctionInvocation } from '../ASTNodes/FunctionInvocation';
 
 // function_invocation: ID OPENBRACE args_list CLOSEBRACE
 export function eatFunctionInvocation() {

@@ -13,7 +13,7 @@ import {
   GREATER_THAN_OR_EQUAL,
   OF,
   DOT,
-} from '../../constants';
+} from '../../Common/constants';
 
 export function visitBinOp(node) {
   if (node.op.type === OF) {

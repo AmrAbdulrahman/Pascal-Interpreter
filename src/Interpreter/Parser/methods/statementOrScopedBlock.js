@@ -1,4 +1,4 @@
-import { OPEN_CURLY_BRACE } from '../../constants';
+import { OPEN_CURLY_BRACE } from '../../Common/constants';
 
 // statement_or_block : (statement SEMI?) | scoped_block
 export function eatStatementOrScopedBlock() {
