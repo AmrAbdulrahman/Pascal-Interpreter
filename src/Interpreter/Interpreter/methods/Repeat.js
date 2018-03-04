@@ -1,3 +1,5 @@
+import { Return } from '../Return';
+
 export function visitRepeat(node) {
   const count = this.visit(node.count);
 
@@ -6,6 +8,10 @@ export function visitRepeat(node) {
   }
 
   for (var i = 0; i < count; i++) {
-    this.visit(node.block);
+    const blockValue = this.visit(node.block);
+
+    if (blockValue instanceof Return) {
+      return blockValue;
+    }
   }
 }

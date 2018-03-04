@@ -182,6 +182,11 @@ export class SemanticAnalyzer extends NodeVisitor {
     this.visit(node.block);
   }
 
+  visitWhile(node) {
+    this.visit(node.condition);
+    this.visit(node.block);
+  }
+
   visitFunctionInvocation(node) {
     const functionName = node.id.value;
     const functionSymbol = this.currentScope.lookup(functionName);

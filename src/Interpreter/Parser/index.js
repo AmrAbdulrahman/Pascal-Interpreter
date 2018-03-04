@@ -15,6 +15,7 @@ import {
   eatStatement,
   eatIfBlock,
   eatRepeatBlock,
+  eatWhileBlock,
   eatStatementOrScopedBlock,
   eatCondition,
   eatReturnStatement,
@@ -122,6 +123,9 @@ export class Parser {
 
       // repeat_block: REPEAT ID|INTEGER_CONST TIMES statement_or_block
       eatRepeatBlock,
+
+      // while_block: WHILE condition (REPEAT|DO)? statement_or_block
+      eatWhileBlock,
 
       // statement_or_block : (statement SEMI?) | scoped_block
       eatStatementOrScopedBlock,
