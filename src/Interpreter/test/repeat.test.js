@@ -1,8 +1,8 @@
 import { interpret } from './common/interpret';
 
 describe('Interpreter:Repeat', () => {
-  it('repeat with a number literal', () => {
-    const retuenValue = interpret(`
+  it('repeat with a number literal', async() => {
+    const retuenValue = await interpret(`
       create n = 0
 
       repeat 5 times
@@ -14,8 +14,8 @@ describe('Interpreter:Repeat', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('repeat with a variable', () => {
-    const retuenValue = interpret(`
+  it('repeat with a variable', async() => {
+    const retuenValue = await interpret(`
       create n = 0,
              count = 5
 
@@ -28,8 +28,8 @@ describe('Interpreter:Repeat', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('repeat with a chain', () => {
-    const retuenValue = interpret(`
+  it('repeat with a chain', async() => {
+    const retuenValue = await interpret(`
       create n = 0,
              obj = {
                count = 5
@@ -44,8 +44,8 @@ describe('Interpreter:Repeat', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('repeat with a block', () => {
-    const retuenValue = interpret(`
+  it('repeat with a block', async() => {
+    const retuenValue = await interpret(`
       create n = 0,
              count = 5
 
@@ -60,8 +60,8 @@ describe('Interpreter:Repeat', () => {
     expect(retuenValue).toEqual(10);
   });
 
-  it('nested repeat loop', () => {
-    const retuenValue = interpret(`
+  it('nested repeat loop', async() => {
+    const retuenValue = await interpret(`
       create res = 0,
              count = 10
 
@@ -75,8 +75,8 @@ describe('Interpreter:Repeat', () => {
     expect(retuenValue).toEqual(100);
   });
 
-  it('repeat with break', () => {
-    const retuenValue = interpret(`
+  it('repeat with break', async() => {
+    const retuenValue = await interpret(`
       create i = 0
 
       repeat 10 times {
@@ -89,8 +89,8 @@ describe('Interpreter:Repeat', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('break only breaks inner loop', () => {
-    const retuenValue = interpret(`
+  it('break only breaks inner loop', async() => {
+    const retuenValue = await interpret(`
       create i = 0
 
       repeat 10 times {

@@ -1,6 +1,7 @@
-import { Interpreter } from '../../Interpreter';
+import { Interpreter } from '../../';
 
-export function interpret(code) {
+export async function interpret(code, options = {}) {
+  const { stepByStep } = options;
   const stdout = {
     write(msg) {
       //console.log(msg);
@@ -13,5 +14,5 @@ export function interpret(code) {
     }
   }
 
-  return (new Interpreter(code, {stdout, stderr})).interpret();
+  return await (new Interpreter(code, {stdout, stderr, stepByStep})).interpret();
 }

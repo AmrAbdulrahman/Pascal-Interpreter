@@ -1,3 +1,5 @@
-export function visitStr(node) {
-  return node.value;
+export async function visitStr(node) {
+  if (this.stepByStep) await this.wait('str');
+
+  return Promise.resolve(node.value);
 }

@@ -3,12 +3,14 @@ import { Break } from '../branching/Break';
 import { Continue } from '../branching/Continue';
 import { PRINT } from '../../Common/constants';
 
-export function visitFunctionInvocation(node) {
+export async function visitFunctionInvocation(node) {
+  if (this.stepByStep) await this.wait('function invocation');
+
   const functionName = node.id.value;
   const functionSymbol = this.currentScope.lookup(functionName);
 
   if (functionName === PRINT) {
-    return this.visitPrint(node);
+    return await this.visitPrint(node);
   }
 
   const functionScope = functionSymbol.getScope();
@@ -18,7 +20,11 @@ export function visitFunctionInvocation(node) {
   this.callStack.push(functionVarSymbols);
 
   // 2) evaluate function args before switching scopes
-  const evaluatedArgs = node.args.map(arg => this.visit(arg));
+  const evaluatedArgs = [];
+
+  for (let i in node.args) {
+    evaluatedArgs.push(await this.visit(node.args[i]))
+  }
 
   // 3) set current scope to function scope
   const initialCurrentScope = this.currentScope;
@@ -34,7 +40,7 @@ export function visitFunctionInvocation(node) {
   });
 
   // 5) execute function body
-  const returnValue = this.visit(functionSymbol.block);
+  const returnValue = await this.visit(functionSymbol.block);
 
   // 6) restore local variables state
   this.callStack.pull();
@@ -47,5 +53,6 @@ export function visitFunctionInvocation(node) {
     throw new Error('Invalid break/continue statement');
   }
 
-  return returnValue instanceof Return ? returnValue.value : returnValue;
+  const res = returnValue instanceof Return ? returnValue.value : returnValue;
+  return Promise.resolve(res);
 }

@@ -1,4 +1,5 @@
 import { NodeVisitor } from '../Common/NodeVisitor';
+import { Defer } from '../Common/Defer';
 import { SemanticAnalyzer } from '../SemanticAnalyzer';
 import { Scope } from '../Common/Scope';
 import { BuiltinsScope } from '../Common/Scope/BuiltinsScope';
@@ -33,18 +34,36 @@ import {
   visitContinue,
 } from './methods/*';
 
-export class Interpreter extends NodeVisitor {
-  constructor(code, {stdin, stdout, stderr}) {
-    super();
-
+export class Interpreter {
+  constructor(code, {stdin, stdout, stderr, stepByStep}) {
+    this.stepByStep = stepByStep;
     this.code = code;
     this.stdin = stdin;
     this.stdout = stdout;
     this.stderr = stderr;
     this.currentScope = new BuiltinsScope();
     this.callStack = new CallStack();
+    this.waitingDefer = null;
 
     this.initMethods();
+  }
+
+  async visit(node) {
+    const methodName = node.name;
+
+    if (Array.isArray(node)) {
+      for (let i in node) {
+        await this.visit(node[i]);
+      }
+
+      return Promise.resolve();
+    }
+
+    if (this[`visit${methodName}`]) {
+      return await this[`visit${methodName}`](node);
+    }
+
+    throw new Error(`a method visit${methodName} is missing`);
   }
 
   openNewScope(name) {
@@ -53,6 +72,24 @@ export class Interpreter extends NodeVisitor {
 
   closeCurrentScope() {
     this.currentScope = this.currentScope.parent;
+  }
+
+  wait(message) {
+    if (this.waitingDefer) {
+      throw new Error(`Two methods can't wait asyncrounsly`);
+    }
+
+    this.waitingDefer = new Defer();
+
+    this.stdout.write('>', message);
+    this.stdout.write('> hit (c) to continue\n');
+
+    this.stdin.on('input', data => {
+      this.waitingDefer.resolve();
+      this.waitingDefer = null;
+    });
+
+    return this.waitingDefer.promise;
   }
 
   initMethods() {
@@ -86,7 +123,7 @@ export class Interpreter extends NodeVisitor {
 
     // bind methods
     for (let method in this.methods) {
-      this[method] = (...args) => this.methods[method].call(this, ...args);
+      this[method] = async(...args) => await this.methods[method].call(this, ...args);
     }
   }
 
@@ -109,20 +146,20 @@ export class Interpreter extends NodeVisitor {
     }
   }
 
-  interpret() {
+  async interpret() {
     try {
       const ast = this.validate({delegateEx: true});
 
       this.stdout.write('Executing code...');
       this.stdout.write('');
 
-      const returnValue = this.visit(ast);
+      const returnValue = await this.visit(ast);
 
       if (returnValue !== undefined) {
-        this.stdout.write(returnValue);
+        this.stdout.write('Program returns:', returnValue);
       }
 
-      return returnValue;
+      return Promise.resolve(returnValue);
     } catch (ex) {
       //console.log(ex);
       this.stderr.write(ex);

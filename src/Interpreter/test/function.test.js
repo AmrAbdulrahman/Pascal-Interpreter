@@ -1,8 +1,8 @@
 import { interpret } from './common/interpret';
 
 describe('Interpreter:Function', () => {
-  it('function without parenthes', () => {
-    const retuenValue = interpret(`
+  it('function without parenthes', async() => {
+    const retuenValue = await interpret(`
       function whateverPlusOne takes n {
         return n + 1
       }
@@ -13,8 +13,8 @@ describe('Interpreter:Function', () => {
     expect(retuenValue).toEqual(3);
   });
 
-  it('function with parenthes', () => {
-    const retuenValue = interpret(`
+  it('function with parenthes', async() => {
+    const retuenValue = await interpret(`
       function whateverPlusOne takes (n) {
         return n + 1
       }
@@ -25,8 +25,8 @@ describe('Interpreter:Function', () => {
     expect(retuenValue).toEqual(3);
   });
 
-  it('function with multiple parenthes', () => {
-    const retuenValue = interpret(`
+  it('function with multiple parenthes', async() => {
+    const retuenValue = await interpret(`
       function sum takes a, b {
         return a + b
       }
@@ -37,8 +37,8 @@ describe('Interpreter:Function', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('recursion', () => {
-    const retuenValue = interpret(`
+  it('recursion', async() => {
+    const retuenValue = await interpret(`
       function factorial takes n { // function scope
         if n equals 0 or n equals 1 then return 1
         otherwise { // open block scope
@@ -63,8 +63,8 @@ describe('Interpreter:Function', () => {
     expect(retuenValue).toEqual(120);
   });
 
-  it('function calls function', () => {
-    const retuenValue = interpret(`
+  it('function calls function', async() => {
+    const retuenValue = await interpret(`
       function factorial takes n {
         if n equals 0 or n equals 1 then return 1
         otherwise return n * factorial(n - 1)

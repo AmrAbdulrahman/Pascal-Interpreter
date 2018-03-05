@@ -2,14 +2,16 @@ import { Return } from '../branching/Return';
 import { Break } from '../branching/Break';
 import { Continue } from '../branching/Continue';
 
-export function visitWhile(node) {
-  let conditionValue = this.visit(node.condition);
+export async function visitWhile(node) {
+  if (this.stepByStep) await this.wait('while');
+
+  let conditionValue = await this.visit(node.condition);
 
   while (conditionValue === true) {
-    const blockValue = this.visit(node.block);
+    const blockValue = await this.visit(node.block);
 
     if (blockValue instanceof Return) {
-      return blockValue;
+      return Promise.resolve(blockValue);
     }
 
     if (blockValue instanceof Break) {
@@ -20,6 +22,8 @@ export function visitWhile(node) {
       // do nothing
     }
 
-    conditionValue = this.visit(node.condition);
+    conditionValue = await this.visit(node.condition);
   }
+
+  return Promise.resolve();
 }

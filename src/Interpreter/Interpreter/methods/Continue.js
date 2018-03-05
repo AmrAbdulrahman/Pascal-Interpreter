@@ -1,5 +1,7 @@
 import { Continue } from '../branching/Continue';
 
-export function visitContinue() {
-  return new Continue();
+export async function visitContinue() {
+  if (this.stepByStep) await this.wait('continue');
+
+  return Promise.resolve(new Continue());
 }

@@ -1,8 +1,8 @@
 import { interpret } from './common/interpret';
 
 describe('Interpreter:Object', () => {
-  it('create object literal', () => {
-    interpret(`
+  it('create object literal', async() => {
+    await interpret(`
       create obj = {
         a: 1,
         b: 2
@@ -10,8 +10,8 @@ describe('Interpreter:Object', () => {
     `);
   });
 
-  it('object keys assigned with colon or equal sign', () => {
-    interpret(`
+  it('object keys assigned with colon or equal sign', async() => {
+    await interpret(`
       create obj = {
         a : 1,
         b = 2,
@@ -20,8 +20,8 @@ describe('Interpreter:Object', () => {
     `);
   });
 
-  it('member access using (of)', () => {
-    const returnValue = interpret(`
+  it('member access using (of)', async() => {
+    const returnValue = await interpret(`
       create obj = {
         a : 1,
       }
@@ -32,8 +32,8 @@ describe('Interpreter:Object', () => {
     expect(returnValue).toEqual(1);
   });
 
-  it('member access using (dot)', () => {
-    const returnValue = interpret(`
+  it('member access using (dot)', async() => {
+    const returnValue = await interpret(`
       create obj = {
         a : {
           b: 2
@@ -46,8 +46,8 @@ describe('Interpreter:Object', () => {
     expect(returnValue).toEqual(2);
   });
 
-  it('(of) has higher precedence than (dot)', () => {
-    const returnValue = interpret(`
+  it('(of) has higher precedence than (dot)', async() => {
+    const returnValue = await interpret(`
       create a = {
         b: {
           c: {

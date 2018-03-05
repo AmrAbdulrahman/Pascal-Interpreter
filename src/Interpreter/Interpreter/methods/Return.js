@@ -1,5 +1,10 @@
 import { Return } from '../branching/Return';
 
-export function visitReturn(node) {
-  return new Return(this.visit(node.expr));
+export async function visitReturn(node) {
+  if (this.stepByStep) await this.wait('return');
+
+  const exprValue = await this.visit(node.expr);
+  const returnValue = new Return(exprValue);
+
+  return Promise.resolve(returnValue);
 }

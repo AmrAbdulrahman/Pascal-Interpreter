@@ -15,45 +15,50 @@ import {
   DOT,
 } from '../../Common/constants';
 
-export function visitBinOp(node) {
+export async function visitBinOp(node) {
+  if (this.stepByStep) await this.wait('bin op');
+
   if (node.op.type === OF) {
-    return this.visitMemberAccessNode(node);
+    return await this.visitMemberAccessNode(node);
   }
 
   if (node.op.type === DOT) {
-    return this.visitDottedMemberAccessNode(node);
+    return await this.visitDottedMemberAccessNode(node);
   }
 
-  const left = this.visit(node.left);
-  const right = this.visit(node.right);
+  const left = await this.visit(node.left);
+  const right = await this.visit(node.right);
+  let res;
 
   switch (node.op.type) {
     case PLUS:
-      return left + right;
+      res = left + right; break;
     case MINUS:
-      return left - right;
+      res = left - right; break;
     case MULTIPLY:
-      return left * right;
+      res = left * right; break;
     case DIVISION:
-      return left / right;
+      res = left / right; break;
     case EQUALS:
-      return left === right;
+      res = left === right; break;
     case NOT_EQUALS:
-      return left !== right;
+      res = left !== right; break;
     case AND:
-      return !!(left && right);
+      res = !!(left && right); break;
     case OR:
-      return !!(left || right);
+      res = !!(left || right); break;
     case LESS_THAN:
-      return left < right;
+      res = left < right; break;
     case GREATER_THAN:
-      return left > right;
+      res = left > right; break;
     case LESS_THAN_OR_EQUAL:
-      return left <= right;
+      res = left <= right; break;
     case GREATER_THAN_OR_EQUAL:
-      return left >= right;
+      res = left >= right; break;
 
     default:
       throw new Error(`Unhandled operator type ${node.op.type}`);
   }
+
+  return Promise.resolve(res);
 }

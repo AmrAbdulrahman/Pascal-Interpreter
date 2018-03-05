@@ -1,8 +1,8 @@
 import { interpret } from './common/interpret';
 
 describe('Interpreter:While', () => {
-  it('while with a statement', () => {
-    const retuenValue = interpret(`
+  it('while with a statement', async() => {
+    const retuenValue = await interpret(`
       create n = 0
 
       while n less than 5
@@ -14,8 +14,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('while with block', () => {
-    const retuenValue = interpret(`
+  it('while with block', async() => {
+    const retuenValue = await interpret(`
       create n = 0
 
       while n less than 5 {
@@ -29,8 +29,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual(6);
   });
 
-  it('while...repeat', () => {
-    const retuenValue = interpret(`
+  it('while...repeat', async() => {
+    const retuenValue = await interpret(`
       create n = 0
 
       while n less than 5 repeat
@@ -42,8 +42,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('while...do', () => {
-    const retuenValue = interpret(`
+  it('while...do', async() => {
+    const retuenValue = await interpret(`
       create n = 0
 
       while n less than 5 do
@@ -55,8 +55,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual(5);
   });
 
-  it('while without (repeat|do)', () => {
-    const retuenValue = interpret(`
+  it('while without (repeat|do)', async() => {
+    const retuenValue = await interpret(`
       create n = 0
 
       while n less than or equal 5
@@ -68,8 +68,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual(6);
   });
 
-  it('nested while loop', () => {
-    const retuenValue = interpret(`
+  it('nested while loop', async() => {
+    const retuenValue = await interpret(`
       create i = 0,
              res = 0,
              count = 10
@@ -91,8 +91,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual(100);
   });
 
-  it('while loop returns if it contains a return statement', () => {
-    const retuenValue = interpret(`
+  it('while loop returns if it contains a return statement', async() => {
+    const retuenValue = await interpret(`
       function foo {
         create n = 0
 
@@ -110,8 +110,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual('return');
   });
 
-  it('(continue) inside while loop', () => {
-    const retuenValue = interpret(`
+  it('(continue) inside while loop', async() => {
+    const retuenValue = await interpret(`
       function count135 {
         create n = 1,
                res = 0
@@ -134,8 +134,8 @@ describe('Interpreter:While', () => {
     expect(retuenValue).toEqual(3);
   });
 
-  it('(break) inside while loop', () => {
-    const retuenValue = interpret(`
+  it('(break) inside while loop', async() => {
+    const retuenValue = await interpret(`
       function breakOn takes br {
         create n = 1,
                max = 10

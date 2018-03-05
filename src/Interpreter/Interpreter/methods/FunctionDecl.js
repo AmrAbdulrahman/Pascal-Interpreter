@@ -1,6 +1,8 @@
 import { VarSymbol, FunctionSymbol } from '../../Common/Symbols/*';
 
-export function visitFunctionDecl(node) {
+export async function visitFunctionDecl(node) {
+  if (this.stepByStep) await this.wait('function declaration');
+
   const functionName = node.id.value;
   const functionSymbol = new FunctionSymbol(functionName, node.block);
 
@@ -20,7 +22,9 @@ export function visitFunctionDecl(node) {
   });
 
   // visit all declaration nodes inside the function
-  this.visitFunctionLocalDeclarations(node.block);
+  await this.visitFunctionLocalDeclarations(node.block);
 
   this.closeCurrentScope();
+
+  return Promise.resolve();
 }

@@ -1,17 +1,21 @@
-export function visitObjectLiteral(node) {
+export async function visitObjectLiteral(node) {
+  if (this.stepByStep) await this.wait('object literal');
+
   this.openNewScope('object');
 
   const obj = {};
 
-  node.children.forEach(node => {
+  for (let i in node.children) {
+    const child = node.children[i];
+
     // calculate the value before declaring the variable
     // to handle dependency on the same variable name
-    const value = this.visit(node.value);
+    const value = await this.visit(child.value);
 
     // declare the variable
-    this.visit(node.key);
+    await this.visit(child.key);
 
-    const varName = node.key.variable.value;
+    const varName = child.key.variable.value;
 
     // set variable value in current scope
     this.currentScope
@@ -20,9 +24,9 @@ export function visitObjectLiteral(node) {
 
     // construct object
     obj[varName] = value;
-  });
+  }
 
   this.closeCurrentScope();
 
-  return obj;
+  return Promise.resolve(obj);
 }

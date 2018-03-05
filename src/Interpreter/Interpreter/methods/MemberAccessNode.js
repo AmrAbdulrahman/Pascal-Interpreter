@@ -1,11 +1,12 @@
-export function visitMemberAccessNode(node) {
-  const right = this.visit(node.right);
+export async function visitMemberAccessNode(node) {
+  if (this.stepByStep) await this.wait('member access');
+
+  const right = await this.visit(node.right);
   const leftName = node.left.value;
 
   if (right instanceof Object === false) {
     throw new Error(`Can't call '${leftName}' of '${right}' because '${right}' is not an object`);
   }
-
 
   if (Object
       .keys(right)
@@ -15,5 +16,5 @@ export function visitMemberAccessNode(node) {
     throw new Error(`object has no property '${leftName}'`);
   }
 
-  return right[leftName];
+  return Promise.resolve(right[leftName]);
 }

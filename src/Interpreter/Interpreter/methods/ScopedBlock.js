@@ -1,9 +1,9 @@
-export function visitScopedBlock(node) {
+export async function visitScopedBlock(node) {
   this.openNewScope('block');
 
-  const blockReturnValue = this.visitBlock(node);
+  const blockReturnValue = await this.visitBlock(node);
 
   this.closeCurrentScope();
 
-  return blockReturnValue;
+  return Promise.resolve(blockReturnValue);
 };

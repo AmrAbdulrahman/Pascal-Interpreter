@@ -1,3 +1,7 @@
-export function visitCondition(node) {
-  return !!this.visit(node.expr);
+export async function visitCondition(node) {
+  if (this.stepByStep) await this.wait('condition');
+
+  const conditionValue = await this.visit(node.expr);
+
+  return Promise.resolve(!!conditionValue);
 }
