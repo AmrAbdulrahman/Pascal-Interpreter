@@ -1,6 +1,6 @@
 import { IF, THEN, AND, OTHERWISE } from '../../Common/constants';
 import { If } from '../ASTNodes/If';
-0
+
 // if_block: if condition THEN? statement_or_block (ELSE IF condition THEN? d cstatement_or_block)* (OTHERWISE statement_or_block)?
 export function eatIfBlock() {
   const ifs = [];
@@ -8,6 +8,7 @@ export function eatIfBlock() {
   let body = null;
   let otherwise = null;
 
+  const ifToken = this.currentToken;
   this.eat(IF);
   condition = this.eatCondition();
   this.eatOptional(THEN);
@@ -37,5 +38,5 @@ export function eatIfBlock() {
     otherwise = this.eatStatementOrScopedBlock();
   }
 
-  return new If(ifs, otherwise);
+  return new If(ifToken, ifs, otherwise);
 }

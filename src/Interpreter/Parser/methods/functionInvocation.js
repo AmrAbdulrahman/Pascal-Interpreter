@@ -19,7 +19,8 @@ export function eatFunctionInvocation() {
     }
   }
 
+  const closeBraceToken = this.currentToken;
   this.eat(CLOSEBRACE);
 
-  return new FunctionInvocation(functionName, args);
+  return new FunctionInvocation(functionName, args, closeBraceToken);
 }

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import * as Icon from 'react-fontawesome';
+
 import './App.css';
 
 import Editor from './Components/Editor/Editor';
 import Output from './Components/Output/Output';
 import sampleCode from './Components/Editor/sample';
-import { Interpreter } from './Interpreter';
+import { Interpreter, StepByStep } from './Interpreter';
 
 class App extends Component {
   constructor(props) {
@@ -13,6 +15,7 @@ class App extends Component {
     this.state = {
       code: sampleCode,
       output: [],
+      stepByStepMode: false,
     };
   }
 
@@ -20,15 +23,15 @@ class App extends Component {
     setTimeout(() => this.run());
   }
 
-  writeOutput(record) {
+  writeOutput(message) {
     this.setState({
-      output: [...this.state.output, {out: record.toString()}],
+      output: [...this.state.output, { message }],
     });
   }
 
-  writeError(record) {
+  writeError(error) {
     this.setState({
-      output: [...this.state.output, {err: record.toString()}],
+      output: [...this.state.output, { error }],
     });
   }
 
@@ -41,15 +44,63 @@ class App extends Component {
   run() {
     this.clearOutputLogs();
 
-    const stdin = {};
-    const stdout = {
-      write: record => setTimeout(() => this.writeOutput(record)),
-    };
-    const stderr = {
-      write: record => setTimeout(() => this.writeError(record)),
-    };
+    this.interpreter = new Interpreter(this.state.code);
 
-    (new Interpreter(this.state.code, {stdin, stdout, stderr})).interpret();
+    this.interpreter.on.output(msg => this.writeOutput(msg));
+    this.interpreter.on.error(err => this.writeError(err));
+
+    setTimeout(() => this.interpreter.interpret());
+  }
+
+  stepByStep() {
+    this.clearOutputLogs();
+
+    this.stepper = new StepByStep(this.state.code);
+
+    this.stepper.on.error(err => {
+      this.setState({
+        stepByStepMode: false,
+        error: err,
+      });
+    });
+
+    this.stepper.on.step(step => {
+      this.writeOutput(step.message);
+      this.setState({
+        markText: {
+          from: step.node.from,
+          to: step.node.to,
+        },
+      });
+    });
+
+    this.stepper.on.output(msg => this.writeOutput(msg));
+
+    this.stepper.on.finish(() => {
+      this.setState({
+        stepByStepMode: false,
+        markText: null,
+      });
+    });
+
+    this.setState({
+      stepByStepMode: true,
+    });
+
+    // don't block React Life Cycle
+    setTimeout(() => this.stepper.start());
+  }
+
+  next() {
+    this.stepper.actions.next();
+  }
+
+  stop() {
+    this.stepper.actions.stop();
+  }
+
+  ['continue']() {
+    this.stepper.actions.continue();
   }
 
   onCodeChange(code) {
@@ -72,13 +123,42 @@ class App extends Component {
           <div className="EditorWrapper">
             <Editor
               value={this.state.code}
+              markText={this.state.markText}
               onChange={e => this.onCodeChange(e)}
               onCursorActivity={e => this.onCursorActivity(e)}/>
           </div>
           <div className="OutputWrapper">
-            <div className="Actions">
-              <button onClick={() => this.run()} className="RunButton">Run</button>
-            </div>
+            {
+              !this.state.stepByStepMode
+              ?
+              <div className="Actions">
+                <button onClick={() => this.run()} className="Run Button">
+                  <Icon name="play" /> Run
+                </button>
+                <button onClick={() => this.stepByStep()} className="StepByStep Button">
+                  <Icon name="step-forward" /> Step by Step
+                </button>
+                <button onClick={() => this.clearOutputLogs()} className="ClearLogs Button OnlyIcon">
+                  <Icon name="ban" />
+                </button>
+              </div>
+              :
+              <div className="Actions">
+                <button onClick={() => this.stop()} className="Stop Button">
+                  <Icon name="stop" />Stop
+                </button>
+                <button onClick={() => this.next()} className="Next Button">
+                  <Icon name="step-forward" /> Next
+                </button>
+                <button onClick={() => this.continue()} className="Continue Button">
+                  <Icon name="play" /> Continue
+                </button>
+                <button onClick={() => this.clearOutputLogs()} className="ClearLogs Button OnlyIcon">
+                  <Icon name="ban" />
+                </button>
+              </div>
+            }
+
             <Output records={this.state.output} />
           </div>
         </div>

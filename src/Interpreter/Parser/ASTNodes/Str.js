@@ -1,4 +1,5 @@
 import { ASTNode } from './ASTNode';
+import { Position } from '../../Common/Position';
 
 export class Str extends ASTNode {
   constructor(token) {
@@ -10,5 +11,14 @@ export class Str extends ASTNode {
 
   valueOf() {
     return this.value;
+  }
+
+  get from() {
+    // the surrounding single/double quotes
+    return new Position(this.token.from.row, this.token.from.col - 2);
+  }
+
+  get to() {
+    return this.token.to;
   }
 }

@@ -1,4 +1,5 @@
 import { Token } from './Token';
+import { Position } from '../Common/Position';
 import { isDigit, isAlpha, matchIDCharset, failPositionCodePreview } from '../Utils/*';
 
 import {
@@ -292,7 +293,10 @@ export class Lexer {
   }
 
   newToken(type, value) {
-    return new Token(type, value, this.row, this.col - (value + '').length);
+    const col = this.col - (value + '').length;
+    const pos = new Position(this.row, col);
+    
+    return new Token(type, value, pos);
   }
 
   get row() {

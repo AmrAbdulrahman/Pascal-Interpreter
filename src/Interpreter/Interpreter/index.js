@@ -1,5 +1,3 @@
-import { NodeVisitor } from '../Common/NodeVisitor';
-import { Defer } from '../Common/Defer';
 import { SemanticAnalyzer } from '../SemanticAnalyzer';
 import { Scope } from '../Common/Scope';
 import { BuiltinsScope } from '../Common/Scope/BuiltinsScope';
@@ -35,15 +33,11 @@ import {
 } from './methods/*';
 
 export class Interpreter {
-  constructor(code, {stdin, stdout, stderr, stepByStep}) {
-    this.stepByStep = stepByStep;
+  constructor(code) {
     this.code = code;
-    this.stdin = stdin;
-    this.stdout = stdout;
-    this.stderr = stderr;
     this.currentScope = new BuiltinsScope();
     this.callStack = new CallStack();
-    this.waitingDefer = null;
+    this.listeners = {};
 
     this.initMethods();
   }
@@ -74,22 +68,25 @@ export class Interpreter {
     this.currentScope = this.currentScope.parent;
   }
 
-  wait(message) {
-    if (this.waitingDefer) {
-      throw new Error(`Two methods can't wait asyncrounsly`);
+  get on() {
+    return {
+      error: listener => this.register('error', listener),
+      output: listener => this.register('output', listener),
+    };
+  }
+
+  register(event, listener) {
+    this.listeners[event] = this.listeners[event] || [];
+    this.listeners[event].push(listener);
+  }
+
+  notify(event, ...args) {
+    if (!this.listeners[event]) {
+      return false; // event has not listeners, lonely!
     }
 
-    this.waitingDefer = new Defer();
-
-    this.stdout.write('>', message);
-    this.stdout.write('> hit (c) to continue\n');
-
-    this.stdin.on('input', data => {
-      this.waitingDefer.resolve();
-      this.waitingDefer = null;
-    });
-
-    return this.waitingDefer.promise;
+    this.listeners[event].forEach(listener => listener(...args));
+    return true;
   }
 
   initMethods() {
@@ -127,22 +124,35 @@ export class Interpreter {
     }
   }
 
+  output(...args) {
+    this.notify('output', args.join(' '));
+  }
+
+  error(err) {
+    if (err.stack) {
+      console.log(err.stack);
+      return this.notify('error', err.stack);
+    }
+
+    return this.notify('error', err);
+  }
+
   // run semantic analysis
   validate({delegateEx} = {delegateEx: false}) {
     try {
-      this.stdout.write('Parsing...');
+      this.output('Parsing...');
       const ast = (new Parser(this.code)).parse();
-      this.stdout.write('Parsing: Ok');
+      this.output('Parsing: Ok');
 
-      this.stdout.write('Running semantic checks...');
+      this.output('Running semantic checks...');
       (new SemanticAnalyzer()).visit(ast);
-      this.stdout.write('Semantic checks: Ok');
+      this.output('Semantic checks: Ok');
 
       return ast;
     } catch(ex) {
       if (delegateEx) throw ex;
-      this.stderr.write('Code validation fails');
-      this.stderr.write(ex);
+      this.error('Code validation fails');
+      this.error(ex);
     }
   }
 
@@ -150,19 +160,21 @@ export class Interpreter {
     try {
       const ast = this.validate({delegateEx: true});
 
-      this.stdout.write('Executing code...');
-      this.stdout.write('');
+      this.output('Executing code...');
 
       const returnValue = await this.visit(ast);
 
       if (returnValue !== undefined) {
-        this.stdout.write('Program returns:', returnValue);
+        this.output('Program returns:', returnValue);
       }
 
       return Promise.resolve(returnValue);
     } catch (ex) {
-      //console.log(ex);
-      this.stderr.write(ex);
+      // only throw if there isn't any listener
+      // we need some attention here, a hug maybe.
+      if (!this.error(ex)) {
+        throw ex; // shout then...
+      }
     }
   }
 }

@@ -5,6 +5,7 @@ import { VariableDeclaration, ObjectLiteral } from '../ASTNodes/*';
 export function eatObjectLiteral() {
   const nodes = [];
 
+  const openCurlyBraceToken = this.currentToken;
   this.eat(OPEN_CURLY_BRACE);
 
   while (this.currentToken.is(ID)) {
@@ -29,7 +30,8 @@ export function eatObjectLiteral() {
     }
   }
 
+  const closeCurlyBraceToken = this.currentToken;
   this.eat(CLOSE_CURLY_BRACE);
 
-  return new ObjectLiteral(nodes);
+  return new ObjectLiteral(nodes, openCurlyBraceToken, closeCurlyBraceToken);
 }

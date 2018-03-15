@@ -3,6 +3,7 @@ import { Repeat, Num } from '../ASTNodes/*';
 
 // repeat_block: REPEAT INTEGER_CONST|EXPR_CHAIN TIMES statement_or_block
 export function eatRepeatBlock() {
+  const repeatToken = this.currentToken;
   this.eat(REPEAT);
 
   let countNode;
@@ -17,5 +18,5 @@ export function eatRepeatBlock() {
   this.eat(TIMES);
   const blockNode = this.eatStatementOrScopedBlock();
 
-  return new Repeat(countNode, blockNode);
+  return new Repeat(repeatToken, countNode, blockNode);
 }

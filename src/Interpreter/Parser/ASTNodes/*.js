@@ -7,7 +7,6 @@ export { Var } from './Var';
 export { Block } from './Block';
 export { ScopedBlock } from './ScopedBlock';
 export { Program } from './Program';
-export { Type } from './Type';
 export { VariableDeclaration } from './VariableDeclaration';
 export { FunctionDecl } from './FunctionDecl';
 export { FunctionInvocation } from './FunctionInvocation';

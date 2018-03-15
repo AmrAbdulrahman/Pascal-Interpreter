@@ -11,4 +11,12 @@ export class Var extends ASTNode {
   valueOf() {
     return this.value;
   }
+
+  get from() {
+    return this.token.from;
+  }
+
+  get to() {
+    return this.token.to;
+  }
 }

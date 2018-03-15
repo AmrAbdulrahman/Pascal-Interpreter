@@ -33,3 +33,8 @@
 .cm-procedure {
   font-weight: bold;
 }
+
+.simple-code-marked-text {
+  background-color: #8ccff5;
+  font-weight: bold;
+}

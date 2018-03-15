@@ -30,11 +30,33 @@
   background-color: #f0f0f0;
 }
 
-.RunButton {
+.Button {
   border-radius: 0;
   font-size: 15px;
-  background: #a4cba4;
   border: none;
+  margin-right: 5px;
+}
+
+.Button .fa {
+  margin-right: 5px;
+}
+
+.Button.OnlyIcon .fa {
+  margin-right: 0;
+}
+
+.Run.Button,
+.Continue.Button {
+  background: #a4cba4;
+}
+
+.StepByStep.Button,
+.Next.Button {
+  background: #8ccff5;
+}
+
+.Stop.Button {
+  background: #ffc9c9;
 }
 
 .EditorWrapper, .OutputWrapper {

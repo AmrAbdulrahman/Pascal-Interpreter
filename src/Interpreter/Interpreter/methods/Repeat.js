@@ -3,7 +3,12 @@ import { Break } from '../branching/Break';
 import { Continue } from '../branching/Continue';
 
 export async function visitRepeat(node) {
-  if (this.stepByStep) await this.wait('repeat');
+  if (this.stepByStep) {
+    await this.step({
+      message: 'repeat',
+      node,
+    });
+  }
 
   const count = await this.visit(node.count);
 

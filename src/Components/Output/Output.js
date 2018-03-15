@@ -2,9 +2,25 @@ import React, { Component } from 'react';
 import './Output.css';
 
 class Output extends Component {
+  getOutputString(record) {
+    if (!record) {
+      return '';
+    }
+
+    if (record.message) {
+      return record.message.toString();
+    }
+
+    if (record.error) {
+      return record.error.toString();
+    }
+
+    return '';
+  }
+
   renderOutputRecord(record, index) {
     return (
-      <div key={index} className={record.err ? 'Error' : 'Info'}>&gt;&nbsp;{record.out || record.err}</div>
+      <div key={index} className={record.error ? 'Error' : 'Info'}>&gt;&nbsp;{this.getOutputString(record)}</div>
     );
   }
 

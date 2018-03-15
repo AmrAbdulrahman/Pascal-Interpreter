@@ -5,9 +5,13 @@ import { Block } from '../ASTNodes/Block';
 // it's useful as `function`, `while`, or `for` body
 // block : OPEN_CURLY_BRACE block CLOSE_CURLY_BRACE
 export function eatBlock() {
+  const openCurlyBraceToken = this.currentToken;
   this.eat(OPEN_CURLY_BRACE);
-  const blockNode = new Block(this.eatStatementList());
+
+  const statementList = this.eatStatementList();
+
+  const closeCurlyBraceToken = this.currentToken;
   this.eat(CLOSE_CURLY_BRACE);
 
-  return blockNode;
+  return new Block(statementList, openCurlyBraceToken, closeCurlyBraceToken);
 }

@@ -8,6 +8,14 @@ export class Condition extends ASTNode {
   }
 
   valueOf() {
-    return this.name;
+    return `${this.expr}`;
+  }
+
+  get from() {
+    return this.expr.from;
+  }
+
+  get to() {
+    return this.expr.to;
   }
 }

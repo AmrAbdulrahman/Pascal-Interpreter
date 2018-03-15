@@ -1,9 +1,10 @@
+import { Position } from '../Common/Position';
+
 export class Token {
-  constructor(type, value, rowIndex, colIndex) {
+  constructor(type, value, pos) {
     this.type = type;
     this.value = value;
-    this.rowIndex = rowIndex;
-    this.colIndex = colIndex;
+    this.pos = pos;
   }
 
   toString() {
@@ -11,7 +12,7 @@ export class Token {
   }
 
   getLocation() {
-    return `(${this.rowIndex + 1}:${this.colIndex + 1})`;
+    return `(${this.pos.row + 1}:${this.pos.col + 1})`;
   }
 
   repr() {
@@ -20,5 +21,13 @@ export class Token {
 
   is(...types) {
     return types.indexOf(this.type) !== -1;
+  }
+
+  get from() {
+    return this.pos;
+  }
+
+  get to() {
+    return new Position(this.from.row, this.from.col + this.value.toString().length);
   }
 }

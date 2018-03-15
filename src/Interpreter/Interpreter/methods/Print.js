@@ -1,5 +1,10 @@
 export async function visitPrint(node) {
-  if (this.stepByStep) await this.wait('print');
+  if (this.stepByStep) {
+    await this.step({
+      message: 'print',
+      node,
+    });
+  }
 
   const evaluatedArgs = [];
 
@@ -11,7 +16,7 @@ export async function visitPrint(node) {
     .map(argVal => argVal instanceof Object ? JSON.stringify(argVal) : argVal)
     .join(' ');
 
-  this.stdout.write(`${output}\n`);
+  this.output(`${output}\n`);
 
   return Promise.resolve();
 }

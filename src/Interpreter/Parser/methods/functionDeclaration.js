@@ -3,6 +3,7 @@ import { FunctionDecl } from '../ASTNodes/FunctionDecl';
 
 // function_declaration : FUNCTION ID (TAKES params_list)? block
 export function eatFunctionDeclaration() {
+  const functionToken = this.currentToken;
   this.eat(FUNCTION);
   const id = this.eatVariable();
   let params = [];
@@ -26,5 +27,5 @@ export function eatFunctionDeclaration() {
 
   const block = this.eatBlock();
 
-  return new FunctionDecl(id, params, block);
+  return new FunctionDecl(id, params, block, functionToken);
 }

@@ -11,4 +11,12 @@ export class Assign extends ASTNode {
   valueOf() {
     return `${this.left} = ${this.right}`;
   }
+
+  get from() {
+    return this.left.from;
+  }
+
+  get to() {
+    return this.right.to;
+  }
 }

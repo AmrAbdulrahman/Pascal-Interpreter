@@ -1,8 +1,14 @@
 export async function visitIf(node) {
-  if (this.stepByStep) await this.wait('if');
-
   for (var i = 0; i < node.ifs.length; i++) {
     const { condition, body } = node.ifs[i];
+
+    if (this.stepByStep) {
+      await this.step({
+        message: `if (${condition})`,
+        node,
+      });
+    }
+
     const conditionValue = await this.visit(condition);
 
     if (conditionValue === true) {

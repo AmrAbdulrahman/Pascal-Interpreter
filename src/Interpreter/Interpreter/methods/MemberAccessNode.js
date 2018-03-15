@@ -1,5 +1,10 @@
 export async function visitMemberAccessNode(node) {
-  if (this.stepByStep) await this.wait('member access');
+  if (this.stepByStep) {
+    await this.step({
+      message: 'member access',
+      node,
+    });
+  }
 
   const right = await this.visit(node.right);
   const leftName = node.left.value;

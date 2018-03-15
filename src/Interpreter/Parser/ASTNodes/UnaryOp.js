@@ -11,4 +11,12 @@ export class UnaryOp extends ASTNode {
   valueOf() {
     return null;
   }
+
+  get from() {
+    return this.token.from;
+  }
+
+  get to() {
+    return this.expr.to;
+  }
 };

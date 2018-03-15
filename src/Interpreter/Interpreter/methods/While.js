@@ -3,7 +3,12 @@ import { Break } from '../branching/Break';
 import { Continue } from '../branching/Continue';
 
 export async function visitWhile(node) {
-  if (this.stepByStep) await this.wait('while');
+  if (this.stepByStep) {
+    await this.step({
+      message: 'while',
+      node,
+    });
+  }
 
   let conditionValue = await this.visit(node.condition);
 

@@ -1,4 +1,4 @@
-import { failPositionCodePreview, log, last, concat } from '../Utils/*';
+import { failPositionCodePreview } from '../Utils/*';
 import { Lexer } from '../Lexer';
 import { EOF } from '../Common/constants';
 

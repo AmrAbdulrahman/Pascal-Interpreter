@@ -14,6 +14,14 @@ export class BinOp extends ASTNode {
   }
 
   valueOf() {
-    return this.op.value;
+    return `${this.left} ${this.op.value} ${this.right}`;
+  }
+
+  get from() {
+    return this.left.from;
+  }
+
+  get to() {
+    return this.right.to;
   }
 }

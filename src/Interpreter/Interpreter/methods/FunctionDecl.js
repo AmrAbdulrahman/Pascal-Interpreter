@@ -1,9 +1,15 @@
 import { VarSymbol, FunctionSymbol } from '../../Common/Symbols/*';
 
 export async function visitFunctionDecl(node) {
-  if (this.stepByStep) await this.wait('function declaration');
-
   const functionName = node.id.value;
+
+  if (this.stepByStep) {
+    await this.step({
+      message: `declaring function '${functionName}' in '${this.currentScope}' scope`,
+      node,
+    });
+  }
+
   const functionSymbol = new FunctionSymbol(functionName, node.block);
 
   this.currentScope.insert(functionSymbol);

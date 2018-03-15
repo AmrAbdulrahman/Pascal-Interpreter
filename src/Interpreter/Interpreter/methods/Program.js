@@ -3,9 +3,7 @@ import { Break } from '../branching/Break';
 import { Continue } from '../branching/Continue';
 
 export async function visitProgram(node) {
-  if (this.stepByStep) await this.wait('program');
-
-  const returnValue = await this.visitBlock(node);
+  const returnValue = await this.visitScopedBlock(node, 'global');
 
   if (returnValue instanceof Break ||
       returnValue instanceof Continue) {

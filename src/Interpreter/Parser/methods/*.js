@@ -21,7 +21,7 @@ export { eatExprLogicalEquals } from './exprLogicalEquals';
 export { eatExprLogicalLessOrGeaterThan } from './exprLogicalLessOrGeaterThan';
 export { eatExprArithmeticPlusOrMinus } from './exprArithmeticPlusOrMinus';
 export { eatExprArithmeticMultiply } from './exprArithmeticMultiply';
-export { eatExprFactor } from './ExprFactor';
+export { eatExprFactor } from './exprFactor';
 export { eatExprChain } from './exprChain';
 export { eatExprDottedChain } from './exprDottedChain';
 export { eatObjectLiteral } from './objectLiteral';

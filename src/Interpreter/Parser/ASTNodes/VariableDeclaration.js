@@ -11,4 +11,12 @@ export class VariableDeclaration extends ASTNode {
   valueOf() {
     return this.name;
   }
+
+  get from() {
+    return this.variable.from;
+  }
+
+  get to() {
+    return this.variable.to;
+  }
 };

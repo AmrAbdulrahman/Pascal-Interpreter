@@ -10,7 +10,8 @@ export function eatExprLogicalLessOrGeaterThan() {
 
     while (this.currentToken.is(LESS, GREATER)) {
       const isLess = this.currentToken.is(LESS);
-      let operatorKey;
+      let operatorKey,
+          operatorValue;
 
       this.eat(LESS, GREATER);
       this.eat(THAN);
@@ -20,11 +21,13 @@ export function eatExprLogicalLessOrGeaterThan() {
         this.eat(EQUAL);
 
         operatorKey = isLess ? LESS_THAN_OR_EQUAL : GREATER_THAN_OR_EQUAL;
+        operatorValue = isLess ? 'less than or equal' : 'greater than or equal';
       } else {
         operatorKey = isLess ? LESS_THAN : GREATER_THAN;
+        operatorValue = isLess ? 'less than' : 'greater than';
       }
 
-      const operator = new Token(operatorKey);
+      const operator = new Token(operatorKey, operatorValue);
       const right = this.eatHigherPrecedenceExprOf(MYSELF);
 
       left = new BinOp(left, operator, right);

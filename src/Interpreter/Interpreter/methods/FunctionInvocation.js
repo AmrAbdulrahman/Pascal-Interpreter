@@ -4,7 +4,12 @@ import { Continue } from '../branching/Continue';
 import { PRINT } from '../../Common/constants';
 
 export async function visitFunctionInvocation(node) {
-  if (this.stepByStep) await this.wait('function invocation');
+  if (this.stepByStep) {
+    await this.step({
+      message: `function invocation ${node}`,
+      node,
+    });
+  }
 
   const functionName = node.id.value;
   const functionSymbol = this.currentScope.lookup(functionName);
@@ -41,6 +46,13 @@ export async function visitFunctionInvocation(node) {
 
   // 5) execute function body
   const returnValue = await this.visit(functionSymbol.block);
+
+  if (this.stepByStep && returnValue instanceof Return) {
+    await this.step({
+      message: `function invocation ${node} = ${returnValue.value}`,
+      node,
+    });
+  }
 
   // 6) restore local variables state
   this.callStack.pull();

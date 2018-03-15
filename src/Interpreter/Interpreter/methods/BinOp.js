@@ -16,7 +16,12 @@ import {
 } from '../../Common/constants';
 
 export async function visitBinOp(node) {
-  if (this.stepByStep) await this.wait('bin op');
+  if (this.stepByStep) {
+    await this.step({
+      message: `resolving '${node}'`,
+      node,
+    });
+  };
 
   if (node.op.type === OF) {
     return await this.visitMemberAccessNode(node);

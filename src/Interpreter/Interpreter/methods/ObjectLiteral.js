@@ -1,5 +1,10 @@
 export async function visitObjectLiteral(node) {
-  if (this.stepByStep) await this.wait('object literal');
+  if (this.stepByStep) {
+    await this.step({
+      message: 'object literal',
+      node,
+    });
+  }
 
   this.openNewScope('object');
 

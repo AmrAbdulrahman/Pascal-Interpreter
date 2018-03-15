@@ -44,4 +44,8 @@ export class Scope {
   get keys() {
     return Object.keys(this.symbols);
   }
+
+  valueOf() {
+    return this.scopeName;
+  }
 };
