@@ -1,7 +1,7 @@
 import { IF, THEN, AND, OTHERWISE } from '../../Common/constants';
 import { If } from '../ASTNodes/If';
 
-// if_block: if condition THEN? statement_or_block (ELSE IF condition THEN? d cstatement_or_block)* (OTHERWISE statement_or_block)?
+// if_block: if condition THEN? statement_or_block (ELSE IF condition THEN? d cstatement_or_block)* (OTHERWISE statement_or_scopedBlock)?
 export function eatIfBlock() {
   const ifs = [];
   let condition = null;

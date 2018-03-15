@@ -19,13 +19,13 @@ export function eatExprFactor() {
   // +factor
   if (this.currentToken.is(PLUS)) {
     this.eat(PLUS);
-    return new UnaryOp(token, this.eatFactor());
+    return new UnaryOp(token, this.eatExprFactor());
   }
 
   // -factor
   if (this.currentToken.is(MINUS)) {
     this.eat(MINUS);
-    return new UnaryOp(token, this.eatFactor());
+    return new UnaryOp(token, this.eatExprFactor());
   }
 
   // expr

@@ -26,6 +26,7 @@ export function eatFunctionDeclaration() {
   }
 
   const block = this.eatBlock();
-
+  //add params to current scope.
   return new FunctionDecl(id, params, block, functionToken);
 }
+

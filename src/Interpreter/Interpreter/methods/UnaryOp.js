@@ -1,4 +1,5 @@
-import { PLUS } from '../../Common/constants';
+import { PLUS, NAMEOF } from '../../Common/constants';
+import { Var } from '../../Parser/ASTNodes/Var';
 
 export async function visitUnaryOp(node) {
   if (this.stepByStep) {
@@ -6,6 +7,14 @@ export async function visitUnaryOp(node) {
       message: 'unary op',
       node,
     });
+  }
+
+  if (node.op.type === NAMEOF) {
+    if (node.expr instanceof Var) {
+      return Promise.resolve(node.expr.token.value);
+    }
+
+    throw new Error('nameof expects a variable as an argument.');
   }
 
   const exprValue = await this.visit(node.expr);

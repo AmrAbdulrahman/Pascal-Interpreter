@@ -24,6 +24,7 @@ export { eatExprArithmeticMultiply } from './exprArithmeticMultiply';
 export { eatExprFactor } from './exprFactor';
 export { eatExprChain } from './exprChain';
 export { eatExprDottedChain } from './exprDottedChain';
+export { eatExprNameof } from './exprNameof';
 export { eatObjectLiteral } from './objectLiteral';
 export { eatFunctionInvocation } from './functionInvocation';
 export { eatVariable } from './variable';

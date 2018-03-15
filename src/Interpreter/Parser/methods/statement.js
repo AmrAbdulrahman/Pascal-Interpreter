@@ -1,5 +1,5 @@
 import {
-  IF, WHILE, REPEAT, ID, OPENBRACE, RETURN, CREATE, FUNCTION, BREAK, CONTINUE,
+  IF, WHILE, REPEAT, ID, OPENBRACE, RETURN, CREATE, FUNCTION, BREAK, CONTINUE, OPEN_CURLY_BRACE,
 } from '../../Common/constants';
 
 // statement : assignment_statement

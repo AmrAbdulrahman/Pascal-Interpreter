@@ -49,6 +49,7 @@ export const WHILE = 'WHILE';
 export const DO = 'DO';
 export const BREAK = 'BREAK';
 export const CONTINUE = 'CONTINUE';
+export const NAMEOF = 'NAMEOF';
 
 export const SPACE = ' ';
 export const TAB = '\t';

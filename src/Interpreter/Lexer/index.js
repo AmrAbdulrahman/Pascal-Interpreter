@@ -7,7 +7,7 @@ import {
   CREATE, FUNCTION, TAKES, RETURN,
   IF, ELSE, OTHERWISE,
   EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL, OF,
-  REPEAT, TIMES, WHILE, DO, BREAK, CONTINUE,
+  REPEAT, TIMES, WHILE, DO, BREAK, CONTINUE, NAMEOF,
 
   SPACE,
   NEWLINE,
@@ -41,7 +41,7 @@ const RESERVED_KEYWORDS = [
   IF, ELSE, OTHERWISE,
   EQUALS, NOT, AND, OR, THAN, LESS, GREATER, EQUAL,
   THEN, OF, REPEAT, TIMES, WHILE, DO,
-  BREAK, CONTINUE,
+  BREAK, CONTINUE, NAMEOF,
 ];
 
 export { RESERVED_KEYWORDS }; // export it for the syntax highlighting
@@ -287,8 +287,7 @@ export class Lexer {
       this.currentCharIs('+') ||
       this.currentCharIs('-') ||
       this.currentCharIs('*') ||
-      this.currentCharIs('/') ||
-      this.peek(this.pos, 4).toLowerCase() === 'div '
+      this.currentCharIs('/')
     );
   }
 

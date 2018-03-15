@@ -30,6 +30,7 @@ import {
   eatExprArithmeticMultiply,
   eatExprFactor,
   eatExprChain,
+  eatExprNameof,
   eatExprDottedChain,
   eatObjectLiteral,
   eatFunctionInvocation,
@@ -186,8 +187,12 @@ export class Parser {
       // expr_dotted_chain: ID (DOT ID)*
       eatExprDottedChain,
 
+      // nameof: NAMEOF? EXPRESSION
+      eatExprNameof,
+
       // object_literal: OPEN_CURLY_BRACE (ID COLON|ASSIGN expr COMMA)* CLOSE_CURLY_BRACE
       eatObjectLiteral,
+
 
       // function_invocation: ID OPENBRACE args_list CLOSEBRACE
       eatFunctionInvocation,
@@ -222,6 +227,7 @@ export class Parser {
       'eatExprArithmeticMultiply',
       'eatExprChain', // of
       'eatExprDottedChain',
+      'eatExprNameof',
       'eatExprFactor',
     ];
 
