@@ -1,7 +1,8 @@
 export class Step {
-  constructor({message, node}) {
+  constructor({message, node, scope}) {
     this.message = message;
     this.node = node;
+    this.scope = scope;
   }
 
   get from() {

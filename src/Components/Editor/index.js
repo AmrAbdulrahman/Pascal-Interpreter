@@ -6,7 +6,7 @@ import CodeMirror from 'react-codemirror';
 import 'codemirror/addon/selection/mark-selection';
 
 import '../../../node_modules/codemirror/lib/codemirror.css';
-import './Editor.css';
+import './styles.css';
 
 import './syntax-highlighting';
 import './syntax-highlighting.css';

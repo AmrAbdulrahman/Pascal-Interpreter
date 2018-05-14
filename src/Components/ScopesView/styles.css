@@ -1,0 +1,83 @@
+.scope {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px dashed #969696;
+  background-color: rgba(100, 100, 100, 0.05);
+}
+
+.scope-name {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.scopesView {
+  height: 100%;
+  padding: 0 10px 0 10px;
+}
+
+.scopesWrapper {
+  height: calc(100% - 50px);
+  overflow-y: auto;
+  padding-bottom: 40px;
+}
+
+.log {
+  font-family: monospace;
+  margin-top: 12px;
+  padding: 12px;
+  font-weight: bold;
+  background-color: #c9e3ed;
+}
+
+.symbols {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.symbol {
+  font-family: monospace;
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  padding: 10px;
+}
+
+.symbol.var {
+  background-color: #c9e3ee;
+  border: 1px solid #aed2e1;
+}
+
+.symbol.function {
+  background-color: #fadeff;
+  border: 1px solid #e9cced;
+}
+
+.symbol-name {
+  font-weight: bold;
+  font-size: 20px;
+  color: #c54ede;
+}
+
+.symbol-value {
+  padding: 8px;
+  border: 1px solid #7cbeda;
+  background-color: #e0f5fd;
+  margin-top: 5px;
+  align-self: center;
+  white-space: pre;
+}
+
+.symbol-value.empty {
+  border: 1px dashed #e1c05e;
+  background-color: #eee1c9;
+}
+
+.params {
+  margin-top: 8px;
+}
+
+.param-names {
+  font-weight: bold;
+}

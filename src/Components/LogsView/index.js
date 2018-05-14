@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './Output.css';
+import './styles.css';
 
-class Output extends Component {
+class LogsView extends Component {
   getOutputString(record) {
     if (!record) {
       return '';
@@ -35,4 +35,4 @@ class Output extends Component {
   }
 }
 
-export default Output;
+export default LogsView;

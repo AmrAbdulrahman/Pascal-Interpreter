@@ -77,7 +77,7 @@ export class StepByStep extends Interpreter {
     this.notify('finish', event);
   }
 
-  step(...args) {
+  step({message, node}) {
     if (this.stepperDefer) {
       throw new Error(`Two methods can't wait asyncrounsly`);
     }
@@ -88,7 +88,11 @@ export class StepByStep extends Interpreter {
 
     this.stepperDefer = new Defer();
 
-    const stepObject = new Step(...args);
+    const stepObject = new Step({
+      scope: this.currentScope,
+      node,
+      message,
+    });
 
     this.notify('step', stepObject);
 

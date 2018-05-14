@@ -3,8 +3,9 @@ import * as Icon from 'react-fontawesome';
 
 import './App.css';
 
-import Editor from './Components/Editor/Editor';
-import Output from './Components/Output/Output';
+import Editor from './Components/Editor';
+import LogsView from './Components/LogsView';
+import ScopesView from './Components/ScopesView';
 import sampleCode from './Components/Editor/sample';
 import { Interpreter, StepByStep } from './Interpreter';
 
@@ -14,8 +15,9 @@ class App extends Component {
 
     this.state = {
       code: sampleCode,
-      output: [],
+      logs: [],
       stepByStepMode: false,
+      currentStep: null,
     };
   }
 
@@ -25,19 +27,19 @@ class App extends Component {
 
   writeOutput(message) {
     this.setState({
-      output: [...this.state.output, { message }],
+      logs: [...this.state.logs, { message }],
     });
   }
 
   writeError(error) {
     this.setState({
-      output: [...this.state.output, { error }],
+      logs: [...this.state.logs, { error }],
     });
   }
 
   clearOutputLogs() {
     this.setState({
-      output: [],
+      logs: [],
     });
   }
 
@@ -49,7 +51,8 @@ class App extends Component {
     this.interpreter.on.output(msg => this.writeOutput(msg));
     this.interpreter.on.error(err => this.writeError(err));
 
-    setTimeout(() => this.interpreter.interpret());
+    //setTimeout(() => this.interpreter.interpret());
+    setTimeout(() => this.stepByStep());
   }
 
   stepByStep() {
@@ -66,7 +69,9 @@ class App extends Component {
 
     this.stepper.on.step(step => {
       this.writeOutput(step.message);
+
       this.setState({
+        currentStep: step,
         markText: {
           from: step.node.from,
           to: step.node.to,
@@ -159,7 +164,12 @@ class App extends Component {
               </div>
             }
 
-            <Output records={this.state.output} />
+            {/* <Output records={this.state.logs} /> */}
+            <ScopesView
+              logs={this.state.logs}
+              step={this.state.currentStep}
+              displayBuiltins={false}
+            />
           </div>
         </div>
       </div>
